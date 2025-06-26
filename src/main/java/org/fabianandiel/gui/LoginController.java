@@ -1,12 +1,19 @@
 package org.fabianandiel.gui;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
-import org.w3c.dom.Text;
+import javafx.scene.text.Text;
+import org.fabianandiel.dto.LoginRequest;
+
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 
 public class LoginController implements Initializable {
@@ -18,7 +25,7 @@ public class LoginController implements Initializable {
     private TextField loginPassword;
 
     @FXML
-    private Text errorText;
+    private Text loginErrorText;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -31,7 +38,27 @@ public class LoginController implements Initializable {
      */
     public void conductLogin(){
         //TODO get the data from field, validate use Annotation Validation from Hibernate, show or hide error text
+        String username = this.loginUsername.getText();
+        String password = this.loginPassword.getText();
+        //Helper object to run bean validation on
+        LoginRequest lr = new LoginRequest(username,password);
 
+        // Validate
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+
+        Set<ConstraintViolation<LoginRequest>> violations = validator.validate(lr);
+
+        if (!violations.isEmpty()) {
+            // Show error
+            ConstraintViolation<LoginRequest> firstViolation = violations.iterator().next();
+            this.loginErrorText.setText(firstViolation.getMessage());
+            this.loginErrorText.setVisible(true);
+        } else {
+            // No errors
+            this.loginErrorText.setVisible(false);
+            // Continue with login logic (e.g., checking credentials)
+        }
     }
 
 
