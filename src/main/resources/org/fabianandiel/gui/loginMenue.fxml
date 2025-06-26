@@ -6,27 +6,31 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="344.0" prefWidth="540.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.fabianandiel.gui.LoginController">
    <children>
-      <Text layoutX="254.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login " wrappingWidth="92.4088134765625">
+      <Text layoutX="154.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login " wrappingWidth="92.4088134765625">
          <font>
             <Font size="33.0" />
          </font>
       </Text>
-      <Text layoutX="158.0" layoutY="120.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username">
+      <Text layoutX="98.0" layoutY="112.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username">
          <font>
             <Font size="16.0" />
          </font>
       </Text>
-      <TextField fx:id="loginUsername" layoutX="158.0" layoutY="131.0" prefHeight="26.0" prefWidth="192.0" />
-      <Text layoutX="158.0" layoutY="194.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password">
+      <TextField fx:id="loginUsername" layoutX="98.0" layoutY="124.0" prefHeight="26.0" prefWidth="192.0" />
+      <Text layoutX="95.0" layoutY="194.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password">
          <font>
             <Font size="16.0" />
          </font>
       </Text>
-      <TextField fx:id="loginPassword" layoutX="158.0" layoutY="201.0" prefHeight="26.0" prefWidth="192.0" />
-      <Button fx:id="loginButton" layoutX="158.0" layoutY="261.0" mnemonicParsing="false" text="Login" />
-      <Button fx:id="loginExitButton" layoutX="254.0" layoutY="261.0" mnemonicParsing="false" text="End the programm" />
+      <TextField fx:id="loginPassword" layoutX="95.0" layoutY="207.0" prefHeight="26.0" prefWidth="192.0" />
+      <Button fx:id="loginButton" layoutX="95.0" layoutY="268.0" mnemonicParsing="false" onAction="#conductLogin" text="Login" />
+      <Button fx:id="loginExitButton" layoutX="154.0" layoutY="268.0" mnemonicParsing="false" onAction="#endProgramm" text="End the programm" />
+      <Text fill="#f73a3a" layoutX="161.0" layoutY="260.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Invalid username and/or password!!!!" visible="false" wrappingWidth="301.336669921875">
+         <font>
+            <Font size="17.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>
