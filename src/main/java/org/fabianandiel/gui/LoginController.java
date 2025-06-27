@@ -53,8 +53,9 @@ public class LoginController implements Initializable {
             this.loginErrorText.setText(firstViolation.getMessage());
             this.loginErrorText.setVisible(true);
         } else {
+            if(this.loginErrorText.isVisible())
             this.loginErrorText.setVisible(false);
-            //Todo Continue with login logic (e.g., checking credentials)
+            //Todo check credentials with database
         }
     }
 
