@@ -5,12 +5,16 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import org.fabianandiel.dto.LoginRequest;
 
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -56,6 +60,21 @@ public class LoginController implements Initializable {
             if(this.loginErrorText.isVisible())
             this.loginErrorText.setVisible(false);
             //Todo check credentials with database
+
+            //Go to main view
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("mainView.fxml"));
+                Scene scene = new Scene(fxmlLoader.load(), 600, 400);
+
+                Stage stage = (Stage) loginUsername.getScene().getWindow();
+                stage.setScene(scene);
+                stage.setTitle("Main View");
+                stage.show();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
