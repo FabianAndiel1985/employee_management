@@ -37,27 +37,24 @@ public class LoginController implements Initializable {
      * Conducts the login when the user enters the correct data
      */
     public void conductLogin(){
-        //TODO get the data from field, validate use Annotation Validation from Hibernate, show or hide error text
         String username = this.loginUsername.getText();
         String password = this.loginPassword.getText();
         //Helper object to run bean validation on
         LoginRequest lr = new LoginRequest(username,password);
 
-        // Validate
+
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
 
         Set<ConstraintViolation<LoginRequest>> violations = validator.validate(lr);
 
         if (!violations.isEmpty()) {
-            // Show error
             ConstraintViolation<LoginRequest> firstViolation = violations.iterator().next();
             this.loginErrorText.setText(firstViolation.getMessage());
             this.loginErrorText.setVisible(true);
         } else {
-            // No errors
             this.loginErrorText.setVisible(false);
-            // Continue with login logic (e.g., checking credentials)
+            //Todo Continue with login logic (e.g., checking credentials)
         }
     }
 
