@@ -48,14 +48,16 @@ public class MainController implements Initializable {
     }
 
 
+    public void switchToVacation() {
+        this.switchView("/org/fabianandiel/gui/vacationsView.fxml",400,400,"Vacations");
+    }
+
     /*
     public void switchToTimeBooking() {
         this.switchView("/org/fabianandiel/gui/timeBookingView.fxml",400,400,"TimeBooking");
     }
 
-    public void switchToVacation() {
-        this.switchView("/org/fabianandiel/gui/vacationsView.fxml",400,400,"Vacations");
-    }
+
 
     public void switchToRequests() {
         this.switchView("/org/fabianandiel/gui/requestsView.fxml",400,400,"Pending Requests");

@@ -17,7 +17,7 @@
                         <Insets />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="mainVacation" mnemonicParsing="false" text="Vacation">
+                  <Button fx:id="mainVacation" mnemonicParsing="false" text="Vacation" onAction="#switchToVacation">
                      <HBox.margin>
                         <Insets left="14.0" />
                      </HBox.margin>
