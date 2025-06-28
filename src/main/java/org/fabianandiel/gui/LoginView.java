@@ -11,7 +11,7 @@ public class LoginView extends Application {
     public void start(Stage stage) throws IOException {
         try {
             SceneManager.setStage(stage);
-            SceneManager.switchScene("/org/fabianandiel/gui/loginMenue.fxml", 400, 400, "Login");
+            SceneManager.switchScene("/org/fabianandiel/gui/loginView.fxml", 400, 400, "Login");
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
             System.exit(0);

@@ -1,4 +1,4 @@
-package org.fabianandiel.dto;
+package org.fabianandiel.validation;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;

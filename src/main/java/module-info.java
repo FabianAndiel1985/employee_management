@@ -6,7 +6,7 @@ module org.fabianandiel {
     requires jakarta.validation;
     requires org.hibernate.validator;
 
-    opens org.fabianandiel.dto to org.hibernate.validator;
+    opens org.fabianandiel.validation to org.hibernate.validator;
     opens org.fabianandiel.gui to javafx.fxml;
 
     exports org.fabianandiel.gui;

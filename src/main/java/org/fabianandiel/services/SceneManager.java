@@ -6,7 +6,7 @@ import javafx.stage.Stage;
 import lombok.Setter;
 
 import java.io.IOException;
-import java.nio.channels.IllegalChannelGroupException;
+
 
 public class SceneManager {
 
@@ -49,6 +49,7 @@ public class SceneManager {
             stage.show();
 
         } catch (IOException e) {
+            e.printStackTrace();
             StringBuilder sb = new StringBuilder("Something went wrong loading the ").append(title).append(" view");
             throw new IOException(sb.toString());
         }

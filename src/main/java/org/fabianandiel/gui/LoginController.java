@@ -5,13 +5,12 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
+
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import org.fabianandiel.dto.LoginRequest;
+import org.fabianandiel.services.SceneManager;
+import org.fabianandiel.validation.LoginRequest;
 
 
 import java.io.IOException;
@@ -21,6 +20,8 @@ import java.util.Set;
 
 
 public class LoginController implements Initializable {
+
+    String USER_ERROR_MESSAGE = "Issue with loading next screen please contact support";
 
     @FXML
     private TextField loginUsername;
@@ -54,28 +55,35 @@ public class LoginController implements Initializable {
 
         if (!violations.isEmpty()) {
             ConstraintViolation<LoginRequest> firstViolation = violations.iterator().next();
-            this.loginErrorText.setText(firstViolation.getMessage());
-            this.loginErrorText.setVisible(true);
+            setLoginErrorText(firstViolation.getMessage());
         } else {
             if(this.loginErrorText.isVisible())
             this.loginErrorText.setVisible(false);
             //Todo check credentials with database
 
             //Go to main view
+            //Todo give the roles array to the scene view
+
             try {
-                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("mainView.fxml"));
-                Scene scene = new Scene(fxmlLoader.load(), 600, 400);
-
-                Stage stage = (Stage) loginUsername.getScene().getWindow();
-                stage.setScene(scene);
-                stage.setTitle("Main View");
-                stage.show();
-
+                SceneManager.switchScene("/org/fabianandiel/gui/mainView.fxml", 400, 400, "Main");
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+                setLoginErrorText(USER_ERROR_MESSAGE);
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("IO Exception: " + e.getMessage());
+                setLoginErrorText(USER_ERROR_MESSAGE);
             }
-
         }
+
+
+    }
+
+    /**
+     * Places the error message in the dedicated text field
+     */
+    private void setLoginErrorText(String errorMessage) {
+        this.loginErrorText.setText(errorMessage);
+        this.loginErrorText.setVisible(true);
     }
 
 
