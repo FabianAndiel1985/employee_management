@@ -42,7 +42,7 @@
             </HBox>
             <HBox alignment="TOP_CENTER" prefHeight="46.0" prefWidth="258.0">
                <children>
-                  <Button fx:id="mainLogout" mnemonicParsing="false" prefHeight="26.0" prefWidth="132.0" text="Logout" onAction="#switchToLoginView">
+                  <Button fx:id="mainLogout" mnemonicParsing="false" onAction="#switchToLoginView" prefHeight="26.0" prefWidth="132.0" text="Logout">
                      <HBox.margin>
                         <Insets left="14.0" />
                      </HBox.margin>
@@ -51,7 +51,7 @@
             </HBox>
          </children>
       </VBox>
-      <Text fx:id="mainErrorText" layoutX="127.0" layoutY="326.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" visible="false" wrappingWidth="146.56036376953125">
+      <Text fx:id="mainErrorText" fill="#f73a3a" layoutX="127.0" layoutY="326.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" visible="false" wrappingWidth="146.56036376953125">
          <font>
             <Font size="17.0" />
          </font>

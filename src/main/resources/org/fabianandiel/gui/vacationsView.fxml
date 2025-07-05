@@ -8,7 +8,7 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.fabianandiel.gui.VacationsController">
    <children>
       <Button fx:id="vacationsGoBack" layoutX="174.0" layoutY="307.0" mnemonicParsing="false" onAction="#goBackToMainView" text="go back" />
-      <Text fx:id="vacationsErrorText" layoutX="116.0" layoutY="280.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" visible="false" wrappingWidth="174.13671875">
+      <Text fx:id="vacationsErrorText" fill="#f73a3a" layoutX="116.0" layoutY="280.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" visible="false" wrappingWidth="174.13671875">
          <font>
             <Font size="17.0" />
          </font>
