@@ -10,4 +10,7 @@ module org.fabianandiel {
     opens org.fabianandiel.gui to javafx.fxml;
 
     exports org.fabianandiel.gui;
+    exports org.fabianandiel.services;
+    exports org.fabianandiel.validation;
+
 }
