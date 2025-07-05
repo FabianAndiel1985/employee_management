@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
+import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
 import org.fabianandiel.validation.LoginRequest;
 
@@ -55,35 +56,26 @@ public class LoginController implements Initializable {
 
         if (!violations.isEmpty()) {
             ConstraintViolation<LoginRequest> firstViolation = violations.iterator().next();
-            setLoginErrorText(firstViolation.getMessage());
+            GUIService.setErrorText(firstViolation.getMessage(),loginErrorText);
         } else {
             if(this.loginErrorText.isVisible())
             this.loginErrorText.setVisible(false);
             //Todo check credentials with database
 
-            //Go to main view
+
             //Todo give the roles array to the scene view
 
+            //Go to main view
             try {
                 SceneManager.switchScene("/org/fabianandiel/gui/mainView.fxml", 400, 400, "Main");
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
-                setLoginErrorText(USER_ERROR_MESSAGE);
+                GUIService.setErrorText(USER_ERROR_MESSAGE,loginErrorText);
             } catch (IOException e) {
                 System.out.println("IO Exception: " + e.getMessage());
-                setLoginErrorText(USER_ERROR_MESSAGE);
+                GUIService.setErrorText(USER_ERROR_MESSAGE,loginErrorText);
             }
         }
-
-
-    }
-
-    /**
-     * Places the error message in the dedicated text field
-     */
-    private void setLoginErrorText(String errorMessage) {
-        this.loginErrorText.setText(errorMessage);
-        this.loginErrorText.setVisible(true);
     }
 
 

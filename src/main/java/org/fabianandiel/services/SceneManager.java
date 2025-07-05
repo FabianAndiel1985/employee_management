@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lombok.Setter;
+import org.fabianandiel.constants.Constants;
 
 import java.io.IOException;
 
@@ -12,6 +13,10 @@ public class SceneManager {
 
     @Setter
     private static Stage stage;
+
+    private SceneManager() {
+        throw new UnsupportedOperationException(Constants.WARNING_UTILITY_CLASS);
+    }
 
     /**
      * Central method to switch the scene dynamically
@@ -55,5 +60,15 @@ public class SceneManager {
         }
 
     }
+
+    /**
+     * Goes back to the main scene
+     * @throws IOException
+     * @throws IllegalArgumentException
+     */
+    public static void goBackToMain() throws IOException, IllegalArgumentException {
+            switchScene("/org/fabianandiel/gui/mainView.fxml", 400, 400, "Main");
+    }
+
 
 }

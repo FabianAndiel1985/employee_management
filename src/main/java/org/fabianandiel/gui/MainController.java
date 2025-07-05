@@ -4,6 +4,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
+import org.fabianandiel.constants.Constants;
+import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
 
 import java.io.IOException;
@@ -33,31 +36,31 @@ public class MainController implements Initializable {
     private HBox mainManagerAdminRow;
 
 
+    @FXML
+    private Text mainErrorText;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        //Todo remove this trial code
+        //TODO remove this trial code
         List<String> roles = new ArrayList<>();
-       // roles.add("employee");
 
         if(roles.contains("employee") && roles.size() ==1 ) {
             this.mainManagerAdminRow.setVisible(false);
             this.mainManagerAdminRow.setManaged(false);
         }
-
     }
 
 
+    //TODO Make it a switch statement
     public void switchToVacation() {
         this.switchView("/org/fabianandiel/gui/vacationsView.fxml",400,400,"Vacations");
     }
 
-    /*
+
     public void switchToTimeBooking() {
-        this.switchView("/org/fabianandiel/gui/timeBookingView.fxml",400,400,"TimeBooking");
+        this.switchView("/org/fabianandiel/gui/timeBookingView.fxml",400,400,"Time Booking");
     }
-
-
 
     public void switchToRequests() {
         this.switchView("/org/fabianandiel/gui/requestsView.fxml",400,400,"Pending Requests");
@@ -68,37 +71,21 @@ public class MainController implements Initializable {
     }
 
 
-    private void backToMainScreen(){
-        this.switchView("/org/fabianandiel/gui/mainView.fxml",400,400,"Main");
+    public void switchToLoginView() {
+        //TODO set the User login object to null
+        this.switchView("/org/fabianandiel/gui/loginView.fxml",400,400,"Login");
     }
-
-     */
-
 
     private void switchView(String view, int width, int height, String title){
         try {
             SceneManager.switchScene(view, width, height, title);
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
-            //Todo set error message in UI for end user
+            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE,mainErrorText);
         } catch (IOException e) {
             System.out.println("IO Exception: " + e.getMessage());
-            //Todo set error message in UI for end user
+            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE,mainErrorText);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
