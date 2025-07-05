@@ -63,7 +63,7 @@ public class MainController implements Initializable {
     }
 
     public void switchToRequests() {
-        this.switchView("/org/fabianandiel/gui/requestsView.fxml",400,450,"Pending Requests");
+        this.switchView("/org/fabianandiel/gui/requestsView.fxml",400,400,"Pending Requests");
     }
 
     public void switchToEmployeeOverview() {
