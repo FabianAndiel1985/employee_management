@@ -12,17 +12,17 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class VacationsController implements Initializable {
+public class TimeBookingController implements Initializable {
 
     @FXML
-    private Button vacationsGoBack;
+    private Button timeBookingGoBack;
 
     @FXML
-    private Text vacationsErrorText;
-
+    private Text timeBookingErrorText;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
     }
 
     public void goBackToMainView() {
@@ -30,14 +30,10 @@ public class VacationsController implements Initializable {
             SceneManager.goBackToMain();
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE,vacationsErrorText);
+            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE,timeBookingErrorText);
         } catch (IOException e) {
             System.out.println("IO Exception: " + e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE,vacationsErrorText);
+            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE,timeBookingErrorText);
         }
     }
-
-
-
-
 }

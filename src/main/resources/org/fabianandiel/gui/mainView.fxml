@@ -12,7 +12,7 @@
          <children>
             <HBox alignment="TOP_CENTER" prefHeight="46.0" prefWidth="302.0">
                <children>
-                  <Button fx:id="mainTime" mnemonicParsing="false" text="Time ">
+                  <Button fx:id="mainTime" mnemonicParsing="false" text="Time" onAction="#switchToTimeBooking">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
@@ -26,12 +26,12 @@
             </HBox>
             <HBox fx:id="mainManagerAdminRow" alignment="TOP_CENTER" prefHeight="46.0" prefWidth="258.0">
                <children>
-                  <Button fx:id="mainRequests" mnemonicParsing="false"  text="Requests">
+                  <Button fx:id="mainRequests" mnemonicParsing="false"  text="Requests"  onAction="#switchToRequests">
                      <HBox.margin>
                         <Insets left="14.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="mainEmployees" mnemonicParsing="false" prefHeight="26.0" prefWidth="132.0" text="Employee Overview">
+                  <Button fx:id="mainEmployees" mnemonicParsing="false" prefHeight="26.0" prefWidth="132.0" text="Employee Overview" onAction="#switchToEmployeeOverview">
                      <HBox.margin>
                         <Insets left="14.0" />
                      </HBox.margin>

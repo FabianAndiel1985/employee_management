@@ -7,18 +7,18 @@ import javafx.scene.text.Text;
 import org.fabianandiel.constants.Constants;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class VacationsController implements Initializable {
+public class EmployeeOverviewController implements Initializable {
 
     @FXML
-    private Button vacationsGoBack;
+    private Button employeesGoBack;
 
     @FXML
-    private Text vacationsErrorText;
+    private Text employeeOverviewErrorText;
+
 
 
     @Override
@@ -30,14 +30,10 @@ public class VacationsController implements Initializable {
             SceneManager.goBackToMain();
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE,vacationsErrorText);
+            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE,employeeOverviewErrorText);
         } catch (IOException e) {
             System.out.println("IO Exception: " + e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE,vacationsErrorText);
+            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE,employeeOverviewErrorText);
         }
     }
-
-
-
-
 }

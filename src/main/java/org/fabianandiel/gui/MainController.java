@@ -38,26 +38,23 @@ public class MainController implements Initializable {
 
         //Todo remove this trial code
         List<String> roles = new ArrayList<>();
-       // roles.add("employee");
 
         if(roles.contains("employee") && roles.size() ==1 ) {
             this.mainManagerAdminRow.setVisible(false);
             this.mainManagerAdminRow.setManaged(false);
         }
-
     }
 
 
+    //Todo Make it a switch statement
     public void switchToVacation() {
         this.switchView("/org/fabianandiel/gui/vacationsView.fxml",400,400,"Vacations");
     }
 
-    /*
+
     public void switchToTimeBooking() {
-        this.switchView("/org/fabianandiel/gui/timeBookingView.fxml",400,400,"TimeBooking");
+        this.switchView("/org/fabianandiel/gui/timeBookingView.fxml",400,400,"Time Booking");
     }
-
-
 
     public void switchToRequests() {
         this.switchView("/org/fabianandiel/gui/requestsView.fxml",400,400,"Pending Requests");
@@ -68,11 +65,6 @@ public class MainController implements Initializable {
     }
 
 
-    private void backToMainScreen(){
-        this.switchView("/org/fabianandiel/gui/mainView.fxml",400,400,"Main");
-    }
-
-     */
 
 
     private void switchView(String view, int width, int height, String title){
