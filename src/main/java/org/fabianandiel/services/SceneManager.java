@@ -44,7 +44,7 @@ public class SceneManager {
             }
 
 
-            //Todo Check if the title file exists in resource directory - usage of file system classes
+            //TODO Check if the title file exists in resource directory - usage of file system classes
 
             FXMLLoader fxmlLoader = new FXMLLoader(SceneManager.class.getResource(view));
             Scene scene = new Scene(fxmlLoader.load(), width, height);

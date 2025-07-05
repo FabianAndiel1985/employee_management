@@ -60,10 +60,10 @@ public class LoginController implements Initializable {
         } else {
             if(this.loginErrorText.isVisible())
             this.loginErrorText.setVisible(false);
-            //Todo check credentials with database
+            //TODO check credentials with database
 
 
-            //Todo give the roles array to the scene view
+            //TODO give the roles array to the scene view
 
             //Go to main view
             try {
