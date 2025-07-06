@@ -9,5 +9,10 @@ module org.fabianandiel {
     opens org.fabianandiel.validation to org.hibernate.validator;
     opens org.fabianandiel.gui to javafx.fxml;
 
+
     exports org.fabianandiel.gui;
+    exports org.fabianandiel.services;
+    exports org.fabianandiel.validation;
+    exports org.fabianandiel.entities;
+    exports org.fabianandiel.constants;
 }
