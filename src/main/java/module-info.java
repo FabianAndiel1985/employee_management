@@ -14,5 +14,5 @@ module org.fabianandiel {
     exports org.fabianandiel.services;
     exports org.fabianandiel.validation;
     exports org.fabianandiel.entities;
-
+    exports org.fabianandiel.constants;
 }

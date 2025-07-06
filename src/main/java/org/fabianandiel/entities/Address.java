@@ -1,7 +1,4 @@
 package org.fabianandiel.entities;
-
-
-
 import lombok.Data;
 
 import java.util.UUID;
@@ -10,7 +7,6 @@ import java.util.UUID;
 //TODO add rest
 public class Address {
 
-    //which package to take UUID from?
     private UUID id;
     private String street;
     private String housenumber;
