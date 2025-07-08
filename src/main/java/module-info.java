@@ -5,9 +5,12 @@ module org.fabianandiel {
     requires static lombok;
     requires jakarta.validation;
     requires org.hibernate.validator;
+    requires jakarta.persistence;
+    requires org.hibernate.orm.core;
 
     opens org.fabianandiel.validation to org.hibernate.validator;
     opens org.fabianandiel.gui to javafx.fxml;
+    opens org.fabianandiel.entities to org.hibernate.orm.core, jakarta.persistence;
 
 
     exports org.fabianandiel.gui;
