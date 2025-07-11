@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
+import org.fabianandiel.services.EntityManagerProvider;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
 import org.fabianandiel.validation.LoginRequest;
@@ -83,6 +84,7 @@ public class LoginController implements Initializable {
      * End the programm if the user wants to
      */
     public void endProgramm(){
+        EntityManagerProvider.shutdown();
         System.exit(0);
     }
 

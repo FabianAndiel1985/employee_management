@@ -2,6 +2,7 @@ package org.fabianandiel.gui;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import org.fabianandiel.services.EntityManagerProvider;
 import org.fabianandiel.services.SceneManager;
 
 import java.io.IOException;
@@ -20,5 +21,10 @@ public class LoginView extends Application {
             System.exit(0);
         }
 
+    }
+
+    @Override
+    public void stop() throws Exception {
+        EntityManagerProvider.shutdown();
     }
 }
