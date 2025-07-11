@@ -6,10 +6,7 @@ import lombok.Data;
 import org.fabianandiel.constants.Role;
 import org.fabianandiel.constants.Status;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Data
 @Entity
@@ -23,8 +20,9 @@ public class Person {
     private String firstname;
     @Column(name="lastname",nullable = false)
     private String lastname;
-    //TODO Annotate connection here
-    private UUID address;
+    @ManyToOne
+    @JoinColumn(name = "address_id")
+    private Address address;
     @Column(name="telephone",nullable = false)
     private int telephone;
     @Column(name="email",nullable = false,unique = true)
@@ -34,13 +32,21 @@ public class Person {
     @ManyToOne
     @JoinColumn(name = "superior_id")
     private Person superior;
-    //TODO try the subordinates with a set
+
     @OneToMany(mappedBy = "superior", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Person> subordinates = new ArrayList<>();
+    private Set<Person> subordinates = new HashSet<>();
+
+    @ElementCollection(targetClass = Role.class)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(
+            name = "roles",
+            joinColumns = @JoinColumn(name = "person_id")
+    )
+    @Column(name = "role")
+    private Set<Role> roles;
 
     @Enumerated(EnumType.STRING)
-    private Set<Role> roles;
+    @Column(name = "status")
     private Status status;
-
 }
 
