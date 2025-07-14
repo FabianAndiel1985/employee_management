@@ -1,0 +1,35 @@
+package org.fabianandiel.services;
+
+import jakarta.persistence.EntityManager;
+import org.fabianandiel.constants.Constants;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class DAOService {
+
+    public DAOService() {
+        throw new UnsupportedOperationException(Constants.WARNING_UTILITY_CLASS);
+    }
+
+    public static <T, K> List<T> findItemsWithPropertyOrProperties(String jpql, Class<T> resultClass, EntityManager em, K... params) throws IllegalArgumentException {
+        List<T> items = new ArrayList<>();
+        try {
+            if (params.length == 1) {
+                System.out.println(params);
+                items = em.createQuery(jpql, resultClass)
+                        .setParameter("param", params[0]).getResultList();
+            } else if (params.length == 2) {
+                items = em.createQuery(jpql, resultClass)
+                        .setParameter("param", params[0]).setParameter("param1", params[1]).getResultList();
+            } else {
+                throw new IllegalArgumentException("Only 2 parameters are allowed");
+            }
+        } finally {
+            em.close();
+            return items;
+        }
+
+    }
+
+}

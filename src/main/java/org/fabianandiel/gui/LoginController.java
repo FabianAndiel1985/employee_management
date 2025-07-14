@@ -9,6 +9,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
+import org.fabianandiel.controller.PersonController;
+import org.fabianandiel.dao.PersonDAO;
+import org.fabianandiel.entities.Person;
+import org.fabianandiel.services.DAOService;
 import org.fabianandiel.services.EntityManagerProvider;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
@@ -17,8 +21,10 @@ import org.fabianandiel.validation.LoginRequest;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.UUID;
 
 
 public class LoginController implements Initializable {
@@ -61,10 +67,44 @@ public class LoginController implements Initializable {
         } else {
             if(this.loginErrorText.isVisible())
             this.loginErrorText.setVisible(false);
+
             //TODO check credentials with database
+
+            PersonDAO<Person, UUID> dao = new PersonDAO<>();
+            PersonController<Person,UUID> personController= new PersonController<>(dao);
+            Person person = personController.getPersonByUsername("charlie");
+            System.out.println(person);
+
+
+
+
+
+
+
+           // List<Person> subordinates= DAOService.findItemsWithPropertyOrProperties(   "SELECT p FROM Person p WHERE p.superior.id = :param", Person.class,EntityManagerProvider.getEntityManager(),UUID.fromString("22222222-aaaa-4bbb-bccc-333333333333"));
+
+            System.out.println("SUBORDINATES: ");
+
+            UUID charlieId = UUID.fromString("bbbb2222-cccc-4ddd-eeee-aaaa00000003");
+
+            List<Person> subordinates = DAOService.findItemsWithPropertyOrProperties(
+                    "SELECT p FROM Person p WHERE p.superior.id = :param",
+                    Person.class,
+                    EntityManagerProvider.getEntityManager(),
+                    charlieId
+            );
+
+
+            System.out.println(subordinates);
+
+
+
+
 
 
             //TODO give the roles array to the scene view
+
+            //TODO make the dummy data so that each person has the previous role
 
             //Go to main view
             try {

@@ -27,6 +27,8 @@ public class Person {
     private int telephone;
     @Column(name="email",nullable = false,unique = true)
     private String email;
+    @Column(name="username",nullable = false,unique = true)
+    private String username;
     @Column(name="password",nullable = false)
     private String password;
     @ManyToOne
@@ -36,7 +38,7 @@ public class Person {
     @OneToMany(mappedBy = "superior", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Person> subordinates = new HashSet<>();
 
-    @ElementCollection(targetClass = Role.class)
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(
             name = "roles",
@@ -48,5 +50,22 @@ public class Person {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private Status status;
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("=========== Person ===========\n");
+        sb.append("ID: ").append(id).append("\n");
+        sb.append("Firstname: ").append(firstname).append("\n");
+        sb.append("Lastname: ").append(lastname).append("\n");
+        sb.append("Address: ").append(address).append("\n");
+        sb.append("Telephone: ").append(telephone).append("\n");
+        sb.append("Email: ").append(email).append("\n");
+        sb.append("Roles: ").append(roles != null ? roles.stream().map(Role::name).toList() : "[]").append("\n");
+       // sb.append("Subordinates: ").append(subordinates != null ? subordinates.stream().map(Person::getId).toList() : "[]").append("\n");
+        sb.append("Status: ").append(status).append("\n");
+        sb.append("================================");
+        return sb.toString();
+    }
 }
 
