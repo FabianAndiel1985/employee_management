@@ -1,20 +1,24 @@
 package org.fabianandiel.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import org.fabianandiel.constants.Role;
 import org.fabianandiel.constants.Status;
 
 import java.util.*;
 
-@Data
+
 @Entity
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table (name="person")
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name="person_id",nullable = false,updatable = false)
+    @EqualsAndHashCode.Include
     private UUID id;
     @Column(name="firstname",nullable = false)
     private String firstname;
@@ -26,8 +30,10 @@ public class Person {
     @Column(name="telephone",nullable = false)
     private int telephone;
     @Column(name="email",nullable = false,unique = true)
+    @EqualsAndHashCode.Include
     private String email;
     @Column(name="username",nullable = false,unique = true)
+    @EqualsAndHashCode.Include
     private String username;
     @Column(name="password",nullable = false)
     private String password;
@@ -62,7 +68,7 @@ public class Person {
         sb.append("Telephone: ").append(telephone).append("\n");
         sb.append("Email: ").append(email).append("\n");
         sb.append("Roles: ").append(roles != null ? roles.stream().map(Role::name).toList() : "[]").append("\n");
-       // sb.append("Subordinates: ").append(subordinates != null ? subordinates.stream().map(Person::getId).toList() : "[]").append("\n");
+        sb.append("Subordinates: ").append(subordinates != null ? subordinates.stream().map(Person::getId).toList() : "[]").append("\n");
         sb.append("Status: ").append(status).append("\n");
         sb.append("================================");
         return sb.toString();

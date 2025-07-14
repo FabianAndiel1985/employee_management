@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import org.fabianandiel.constants.Constants;
+import org.fabianandiel.context.UserContext;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
 
@@ -72,7 +73,7 @@ public class MainController implements Initializable {
 
 
     public void switchToLoginView() {
-        //TODO set the User login object to null
+        UserContext.getInstance().clearSession();
         this.switchView("/org/fabianandiel/gui/loginView.fxml",400,400,"Login");
     }
 

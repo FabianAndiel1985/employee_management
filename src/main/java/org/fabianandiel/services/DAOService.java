@@ -16,7 +16,7 @@ public class DAOService {
         List<T> items = new ArrayList<>();
         try {
             if (params.length == 1) {
-                System.out.println(params);
+
                 items = em.createQuery(jpql, resultClass)
                         .setParameter("param", params[0]).getResultList();
             } else if (params.length == 2) {
