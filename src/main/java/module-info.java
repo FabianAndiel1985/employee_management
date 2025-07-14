@@ -18,4 +18,5 @@ module org.fabianandiel {
     exports org.fabianandiel.validation;
     exports org.fabianandiel.entities;
     exports org.fabianandiel.constants;
+    exports org.fabianandiel.context;
 }

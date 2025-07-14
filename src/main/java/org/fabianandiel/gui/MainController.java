@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import org.fabianandiel.constants.Constants;
+import org.fabianandiel.constants.Role;
 import org.fabianandiel.context.UserContext;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
@@ -40,20 +41,17 @@ public class MainController implements Initializable {
     @FXML
     private Text mainErrorText;
 
+    private UserContext userContext = UserContext.getInstance();
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
-        //TODO remove this trial code
-        List<String> roles = new ArrayList<>();
-
-        if(roles.contains("employee") && roles.size() ==1 ) {
+        if(userContext.hasRole(Role.EMPLOYEE) && userContext.getRoles().size() == 1 ) {
             this.mainManagerAdminRow.setVisible(false);
             this.mainManagerAdminRow.setManaged(false);
         }
     }
 
 
-    //TODO Make it a switch statement
     public void switchToVacation() {
         this.switchView("/org/fabianandiel/gui/vacationsView.fxml",400,400,"Vacations");
     }

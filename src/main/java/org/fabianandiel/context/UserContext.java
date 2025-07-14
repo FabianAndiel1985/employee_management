@@ -32,7 +32,7 @@ public class UserContext {
         return roles;
     }
 
-    public boolean hasRole(String role) {
+    public boolean hasRole(Role role) {
         return roles != null && roles.contains(role);
     }
 
