@@ -97,11 +97,6 @@ public class LoginController implements Initializable {
 
             System.out.println(subordinates);
 
-
-
-
-
-
             //TODO give the roles array to the scene view
 
             //TODO make the dummy data so that each person has the previous role
