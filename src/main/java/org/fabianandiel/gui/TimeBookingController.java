@@ -11,6 +11,7 @@ import org.fabianandiel.services.SceneManager;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
 public class TimeBookingController implements Initializable {
@@ -52,14 +53,24 @@ public class TimeBookingController implements Initializable {
     }
 
     public void clockIn() {
+        if(timeBookingStartTime.getText().isEmpty()) {
+            timeBookingStartTime.setText(LocalDateTime.now().toString());
+        }
 
 
+        //ToDo change person state to attending
     }
 
     public void clockOut() {
 
-        //Validate Clock in must have happened
-        //calculate working hours
+        if(!timeBookingStartTime.getText().isEmpty()) {
+            timeBookingStartTime.setText(LocalDateTime.now().toString());
+        }
+
+        //TODO Validate Clock in must have happened
+        //TODO calculate working hours
+
+        //ToDo change person state to absent
     }
 
 
