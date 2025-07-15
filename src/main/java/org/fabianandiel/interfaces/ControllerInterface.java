@@ -1,24 +1,30 @@
 package org.fabianandiel.interfaces;
 
-public interface ControllerInterface<T> {
+import java.util.UUID;
+
+public interface ControllerInterface<T,ID> {
 
     /**
-     * Speichert ein neues Entity-Objekt in der Datenbank.
+     * Saves a new entity object in the database.
      *
-     * @param entity Das zu speichernde Entity-Objekt
-     * @return Das gespeicherte Entity-Objekt mit generierter ID
+     * @param entity The entity object to be saved
+     * @return The saved entity object with generated ID
      */
     T create(T entity);
 
-
+    /**
+     * Updates an existing entity object in the database.
+     *
+     * @param entity The entity object to be updated
+     * @return The updated entity object
+     */
+    T update(T entity);
 
     /**
-     * Aktualisiert ein bestehendes Entity-Objekt in der Datenbank.
+     * Finds an entity object by its ID.
      *
-     * @param entity Das zu aktualisierende Entity-Objekt
-     * @return Das aktualisierte Entity-Objekt
+     * @param id The ID of the entity to find
+     * @return The found entity object, or null if not found
      */
-    T update (T entity);
-
-
+    T getById(ID id,Class<T> entityClass);
 }

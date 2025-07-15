@@ -86,8 +86,8 @@ public class LoginController implements Initializable {
                 return;
             }
 
-            //TODO really save whole person here?
-            UserContext.getInstance().initSession(username,person.getRoles(),person);
+
+            UserContext.getInstance().initSession(username,person.getRoles(),person.getId(), person);
 
             //Go to main view
             try {

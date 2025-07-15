@@ -14,8 +14,11 @@ import org.fabianandiel.entities.TimeStamp;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
 
+
 import java.io.IOException;
 import java.net.URL;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 import java.util.UUID;
@@ -42,14 +45,26 @@ public class TimeBookingController implements Initializable {
 
     private TimeStampController timeStampController = new TimeStampController(new TimeStampDAO());
 
-    private TimeStamp timeStamp = new TimeStamp();
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.timeBookingStartTime.clear();
-        this.timeBookingEndTime.clear();
-        //TODO search for timestamp with todays date if there is none start it. If there is one fill everything up.
-        this.timeStampController.create(timeStamp);
+
+        TimeStamp existingStamp = timeStampController.findTimeStampByDate(LocalDate.now(), UserContext.getInstance().getId());
+        if (existingStamp != null) {
+            if(existingStamp.getTimeBookingStartTime() != null)
+                this.timeBookingStartTime.setText(existingStamp.getTimeBookingStartTime().toString());
+
+            if(existingStamp.getTimeBookingEndTime() != null)
+            this.timeBookingEndTime.setText(existingStamp.getTimeBookingEndTime().toString());
+        }
+        else  {
+            TimeStamp timeStamp = new TimeStamp();
+            timeStamp.setTimeBookingDate(LocalDate.now());
+            timeStamp.setPerson(UserContext.getInstance().getPerson());
+            this.timeStampController.create(timeStamp);
+        }
     }
 
     public void goBackToMainView() {
@@ -67,18 +82,13 @@ public class TimeBookingController implements Initializable {
     public void clockIn() {
         if(timeBookingStartTime.getText().isEmpty()) {
             timeBookingStartTime.setText(LocalDateTime.now().toString());
+            TimeStamp existingStamp = timeStampController.findTimeStampByDate(LocalDate.now(), UserContext.getInstance().getId());
         }
 
-        UUID id = UserContext.getInstance().getPerson().getId();
-
-        TimeStamp startTime = new TimeStamp();
 
 
-
-
-        System.out.println(UserContext.getInstance().getPerson());
-
-
+        //Todo get timestamp by id
+        //Todo write timestamp in the database
         //ToDo change person state to attending
     }
 
@@ -86,7 +96,7 @@ public class TimeBookingController implements Initializable {
 
         if(!timeBookingStartTime.getText().isEmpty()) {
             timeBookingStartTime.setText(LocalDateTime.now().toString());
-            UserContext.getInstance().getPerson().setStatus(Status.ABSENT);
+            //TODO update status
         }
 
         //TODO Validate Clock in must have happened

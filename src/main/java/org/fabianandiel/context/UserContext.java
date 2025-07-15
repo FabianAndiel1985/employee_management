@@ -4,12 +4,15 @@ import org.fabianandiel.constants.Role;
 import org.fabianandiel.entities.Person;
 
 import java.util.Set;
+import java.util.UUID;
 
 public class UserContext {
     private static UserContext instance;
+
     private String username;
     private Set<Role> roles;
     private Person person;
+    private UUID id;
 
     private UserContext() {
     }
@@ -21,9 +24,10 @@ public class UserContext {
         return instance;
     }
 
-    public void initSession(String username, Set<Role> roles, Person person) {
+    public void initSession(String username, Set<Role> roles, UUID id, Person person) {
         this.username = username;
         this.roles = roles;
+        this.id = id;
         this.person = person;
     }
 
@@ -31,12 +35,16 @@ public class UserContext {
         return this.username;
     }
 
-    public Person getPerson() {
-        return person;
+    public UUID getId() {
+        return id;
     }
 
     public Set<Role> getRoles() {
         return this.roles;
+    }
+
+    public Person getPerson() {
+        return person;
     }
 
     public boolean hasRole(Role role) {
@@ -45,7 +53,9 @@ public class UserContext {
 
     public void clearSession() {
         this.username = null;
+        this.id= null;
         this.roles = null;
+        this.person = null;
     }
 
 }

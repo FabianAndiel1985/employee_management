@@ -22,14 +22,19 @@ public class DAOService {
             } else if (params.length == 2) {
                 items = em.createQuery(jpql, resultClass)
                         .setParameter("param", params[0]).setParameter("param1", params[1]).getResultList();
-            } else {
-                throw new IllegalArgumentException("Only 2 parameters are allowed");
+            }
+            else if (params.length == 3) {
+                System.out.println("Goes into query");
+                items = em.createQuery(jpql, resultClass)
+                        .setParameter("param", params[0]).setParameter("param1", params[1]).setParameter("param2", params[2]).getResultList();
+            }
+            else {
+                throw new IllegalArgumentException("Max 3 parameters are allowed");
             }
         } finally {
             em.close();
             return items;
         }
-
     }
 
 }

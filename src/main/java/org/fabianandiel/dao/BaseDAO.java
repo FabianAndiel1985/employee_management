@@ -46,6 +46,7 @@ public abstract class BaseDAO<T,ID> implements DAOInterface<T,ID> {
         }
     }
 
+
     @Override
     public T findById(ID id, Class<T> entityClass) {
         EntityManager em = EntityManagerProvider.getEntityManager();
@@ -55,7 +56,6 @@ public abstract class BaseDAO<T,ID> implements DAOInterface<T,ID> {
             em.close();
         }
     }
-
 
 
     @Override
