@@ -16,8 +16,8 @@
       </Text>
       <Button fx:id="timeBookingClockIn" layoutX="80.0" layoutY="236.0" mnemonicParsing="false" text="Clock in" onAction="#clockIn" />
       <Button fx:id="timeBookingClockOut" layoutX="230.0" layoutY="236.0" mnemonicParsing="false" text="Clock out"  onAction="#clockOut"/>
-      <TextField fx:id="timeBookingStartTime" layoutX="34.0" layoutY="174.0" />
-      <TextField fx:id="timeBookingEndTime" layoutX="204.0" layoutY="174.0" />
+      <TextField fx:id="timeBookingStartTime" layoutX="34.0" layoutY="174.0" editable="false"/>
+      <TextField fx:id="timeBookingEndTime" layoutX="204.0" layoutY="174.0" editable="false"/>
       <Text layoutX="34.0" layoutY="164.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Start Time" />
       <Text layoutX="203.0" layoutY="164.0" strokeType="OUTSIDE" strokeWidth="0.0" text="End Time" />
    </children>

@@ -6,9 +6,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import org.fabianandiel.constants.Constants;
+
 import org.fabianandiel.constants.Status;
 import org.fabianandiel.context.UserContext;
+import org.fabianandiel.controller.PersonController;
 import org.fabianandiel.controller.TimeStampController;
+
+import org.fabianandiel.dao.PersonDAO;
 import org.fabianandiel.dao.TimeStampDAO;
 import org.fabianandiel.entities.TimeStamp;
 import org.fabianandiel.services.GUIService;
@@ -19,7 +23,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
@@ -45,27 +49,44 @@ public class TimeBookingController implements Initializable {
 
     private TimeStampController timeStampController = new TimeStampController(new TimeStampDAO());
 
+    private TimeStamp currentTimeStamp;
 
+    private PersonController personController;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.timeBookingStartTime.clear();
+        this.timeBookingEndTime.clear();
+
+        this.personController = new PersonController<>(new PersonDAO());
 
         TimeStamp existingStamp = timeStampController.findTimeStampByDate(LocalDate.now(), UserContext.getInstance().getId());
         if (existingStamp != null) {
+            this.currentTimeStamp = existingStamp;
             if(existingStamp.getTimeBookingStartTime() != null)
                 this.timeBookingStartTime.setText(existingStamp.getTimeBookingStartTime().toString());
 
             if(existingStamp.getTimeBookingEndTime() != null)
             this.timeBookingEndTime.setText(existingStamp.getTimeBookingEndTime().toString());
+
+            if(!this.timeBookingStartTime.getText().isEmpty()) {
+                this.timeBookingClockIn.setDisable(true);
+            }
+
+            if(!this.timeBookingEndTime.getText().isEmpty()) {
+                this.timeBookingClockOut.setDisable(true);
+            }
+
         }
         else  {
             TimeStamp timeStamp = new TimeStamp();
             timeStamp.setTimeBookingDate(LocalDate.now());
             timeStamp.setPerson(UserContext.getInstance().getPerson());
+            this.currentTimeStamp = timeStamp;
             this.timeStampController.create(timeStamp);
         }
     }
+
 
     public void goBackToMainView() {
         try {
@@ -80,29 +101,35 @@ public class TimeBookingController implements Initializable {
     }
 
     public void clockIn() {
-        if(timeBookingStartTime.getText().isEmpty()) {
-            timeBookingStartTime.setText(LocalDateTime.now().toString());
-            TimeStamp existingStamp = timeStampController.findTimeStampByDate(LocalDate.now(), UserContext.getInstance().getId());
+        if(timeBookingStartTime.getText().isEmpty() && this.currentTimeStamp.getTimeBookingStartTime() == null) {
+            LocalTime time = LocalTime.now();
+            this.currentTimeStamp.setTimeBookingStartTime(time);
+            timeBookingStartTime.setText(time.toString());
+            //TODO error handling here
+            timeStampController.update(currentTimeStamp);
+            timeBookingClockIn.setDisable(true);
+            UserContext.getInstance().getPerson().setStatus(Status.PRESENT);
+            personController.update(UserContext.getInstance().getPerson());
         }
-
-
-
-        //Todo get timestamp by id
-        //Todo write timestamp in the database
-        //ToDo change person state to attending
     }
 
     public void clockOut() {
 
-        if(!timeBookingStartTime.getText().isEmpty()) {
-            timeBookingStartTime.setText(LocalDateTime.now().toString());
-            //TODO update status
+        if(!timeBookingStartTime.getText().isEmpty() && timeBookingEndTime.getText().isEmpty() && this.currentTimeStamp.getTimeBookingEndTime() == null ) {
+            LocalTime time = LocalTime.now();
+            this.currentTimeStamp.setTimeBookingEndTime(time);
+            timeBookingEndTime.setText(time.toString());
+            //TODO error handling here
+            timeStampController.update(currentTimeStamp);
+            timeBookingClockOut.setDisable(true);
+            UserContext.getInstance().getPerson().setStatus(Status.ABSENT);
+            personController.update(UserContext.getInstance().getPerson());
         }
 
-        //TODO Validate Clock in must have happened
+
         //TODO calculate working hours
 
-        //ToDo change person state to absent
+
     }
 
 
