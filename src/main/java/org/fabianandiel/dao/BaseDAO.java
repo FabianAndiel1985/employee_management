@@ -90,7 +90,4 @@ public abstract class BaseDAO<T,ID> implements DAOInterface<T,ID> {
             em.close();
         }
     }
-
-
-
 }

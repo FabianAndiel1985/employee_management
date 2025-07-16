@@ -13,7 +13,7 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.fabianandiel.gui.VacationsController">
    <children>
       <Button fx:id="vacationsGoBack" layoutX="269.0" layoutY="544.0" mnemonicParsing="false" onAction="#goBackToMainView" text="go back" />
-      <Separator layoutX="3.0" layoutY="308.0" prefHeight="2.0" prefWidth="610.0" />
+      <Separator layoutX="3.0" layoutY="312.0" prefHeight="3.0" prefWidth="594.0" />
       <Text layoutX="240.0" layoutY="340.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Request vacation" wrappingWidth="137.3366241455078">
          <font>
             <Font size="17.0" />
@@ -36,12 +36,12 @@
             <Font size="17.0" />
          </font>
       </Text>
-      <TableView layoutX="140.0" layoutY="72.0" prefHeight="200.0" prefWidth="301.0">
+      <TableView fx:id="vacationsRequestTable" layoutX="140.0" layoutY="72.0" prefHeight="200.0" prefWidth="301.0">
         <columns>
-          <TableColumn prefWidth="75.0" text="Start Date" />
-          <TableColumn prefWidth="75.0" text="End Date" />
-            <TableColumn prefWidth="75.0" text="Notes" />
-            <TableColumn prefWidth="75.0" text="Status" />
+          <TableColumn fx:id="vacationsStartDateColumn" prefWidth="75.0" text="Start Date" />
+          <TableColumn fx:id="vacationsEndDateColumn" prefWidth="75.0" text="End Date" />
+            <TableColumn fx:id="vacationsNotesColumn" prefWidth="75.0" text="Notes" />
+            <TableColumn fx:id="vacationsStatusColumn" prefWidth="75.0" text="Status" />
         </columns>
       </TableView>
    </children>

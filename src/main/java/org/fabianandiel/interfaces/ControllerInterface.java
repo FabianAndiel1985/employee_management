@@ -1,6 +1,6 @@
 package org.fabianandiel.interfaces;
 
-import java.util.UUID;
+import java.util.List;
 
 public interface ControllerInterface<T,ID> {
 
@@ -27,4 +27,13 @@ public interface ControllerInterface<T,ID> {
      * @return The found entity object, or null if not found
      */
     T getById(ID id,Class<T> entityClass);
+
+    /**
+     * returns all entites of the provided class
+     * @param entityClass the provided class
+     * @return all entities of the provided type
+     */
+    List<T> getAll(Class<T> entityClass);
+
+
 }

@@ -3,6 +3,8 @@ package org.fabianandiel.controller;
 import org.fabianandiel.interfaces.ControllerInterface;
 import org.fabianandiel.interfaces.DAOInterface;
 
+import java.util.List;
+
 
 public abstract class BaseController<T,ID> implements ControllerInterface<T,ID> {
 
@@ -41,7 +43,16 @@ public abstract class BaseController<T,ID> implements ControllerInterface<T,ID> 
             System.out.println(e.getMessage());
         }
         return null;
+    }
 
+    @Override
+    public List<T> getAll(Class<T> entityClass) {
+        try {
+            return dao.findAll(entityClass);
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 
 

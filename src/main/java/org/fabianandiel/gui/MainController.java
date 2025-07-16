@@ -51,7 +51,7 @@ public class MainController implements Initializable {
 
 
     public void switchToVacation() {
-        this.switchView("/org/fabianandiel/gui/vacationsView.fxml",600,500,"Vacations");
+        this.switchView("/org/fabianandiel/gui/vacationsView.fxml",600,600,"Vacations");
     }
 
 

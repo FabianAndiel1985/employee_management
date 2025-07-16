@@ -61,7 +61,7 @@ public class Person {
     private Status status;
 
 
-    @OneToMany(mappedBy = "creator")
+    @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER)
     List<Request> requests;
 
     @Override
