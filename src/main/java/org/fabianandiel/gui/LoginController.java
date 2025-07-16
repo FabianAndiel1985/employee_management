@@ -86,7 +86,8 @@ public class LoginController implements Initializable {
                 return;
             }
 
-            UserContext.getInstance().initSession(username,person.getRoles());
+
+            UserContext.getInstance().initSession(username,person.getRoles(),person.getId(), person);
 
             //Go to main view
             try {

@@ -1,17 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.fabianandiel.gui.VacationsController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.fabianandiel.gui.TimeBookingController">
    <children>
-      <Button fx:id="timeBookingGoBack" layoutX="174.0" layoutY="291.0" mnemonicParsing="false" onAction="#goBackToMainView" text="Go back" />
+      <Button fx:id="timeBookingGoBack" layoutX="159.0" layoutY="279.0" mnemonicParsing="false" onAction="#goBackToMainView" text="Go back" />
       <Text fx:id="timeBookingErrorText" fill="#f73a3a" layoutX="117.0" layoutY="267.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" visible="false" wrappingWidth="174.13671875">
          <font>
             <Font size="17.0" />
          </font>
       </Text>
+      <Button fx:id="timeBookingClockIn" layoutX="80.0" layoutY="236.0" mnemonicParsing="false" text="Clock in" onAction="#clockIn" />
+      <Button fx:id="timeBookingClockOut" layoutX="230.0" layoutY="236.0" mnemonicParsing="false" text="Clock out"  onAction="#clockOut"/>
+      <TextField fx:id="timeBookingStartTime" layoutX="34.0" layoutY="174.0" editable="false"/>
+      <TextField fx:id="timeBookingEndTime" layoutX="204.0" layoutY="174.0" editable="false"/>
+      <Text layoutX="34.0" layoutY="164.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Start Time" />
+      <Text layoutX="203.0" layoutY="164.0" strokeType="OUTSIDE" strokeWidth="0.0" text="End Time" />
    </children>
 </AnchorPane>

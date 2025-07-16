@@ -41,6 +41,9 @@ public class Person {
     @JoinColumn(name = "superior_id")
     private Person superior;
 
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL)
+    private List<TimeStamp> timeStamps = new ArrayList<>();
+
     @OneToMany(mappedBy = "superior", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<Person> subordinates = new HashSet<>();
 

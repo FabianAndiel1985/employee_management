@@ -17,6 +17,6 @@ public class LoginRequest {
     private String username;
 
     @NotBlank(message="The password can not be empty")
-    @Size(min = 8, max = 50,message="Your password`s length is incorrect.")
+    @Size(min = 4, max = 50,message="Your password`s length is incorrect.")
     private String password;
 }
