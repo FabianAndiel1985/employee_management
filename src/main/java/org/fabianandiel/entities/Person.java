@@ -60,6 +60,10 @@ public class Person {
     @Column(name = "status")
     private Status status;
 
+
+    @OneToMany(mappedBy = "creator")
+    List<Request> requests;
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

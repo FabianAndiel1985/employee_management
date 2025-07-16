@@ -23,17 +23,27 @@ public class Request {
     @EqualsAndHashCode.Include
     private UUID id;
 
-    @Column(name="startDate",nullable = false)
+    @Column(name="start_date",nullable = false)
     private LocalDate startDate;
-    @Column(name="endDate",nullable = false)
+    @Column(name="end_date",nullable = false)
     private LocalDate endDate;
     @Column(name="notes")
     private String notes;
     @Column(name="status",nullable = false)
+    @Enumerated(EnumType.STRING)
     private RequestStatus status;
-    @Column(name="creationDate",nullable = false)
+    @Column(name="creation_date",nullable = false)
     private LocalDateTime creationDate;
     @ManyToOne
     @JoinColumn(name = "person_id")
     private Person creator;
+
+    @Override
+    public String toString() {
+        return "Request{" +
+                "status=" + status +
+                ", creationDate=" + creationDate +
+                ", creator=" + creator +
+                '}';
+    }
 }
