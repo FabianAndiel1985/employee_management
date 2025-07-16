@@ -10,7 +10,7 @@ module org.fabianandiel {
 
     opens org.fabianandiel.validation to org.hibernate.validator;
     opens org.fabianandiel.gui to javafx.fxml;
-    opens org.fabianandiel.entities to org.hibernate.orm.core, jakarta.persistence;
+    opens org.fabianandiel.entities to org.hibernate.orm.core, jakarta.persistence,org.hibernate.validator;
 
 
     exports org.fabianandiel.gui;

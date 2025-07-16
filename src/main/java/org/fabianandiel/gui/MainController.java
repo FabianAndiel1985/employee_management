@@ -13,8 +13,6 @@ import org.fabianandiel.services.SceneManager;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
@@ -53,7 +51,7 @@ public class MainController implements Initializable {
 
 
     public void switchToVacation() {
-        this.switchView("/org/fabianandiel/gui/vacationsView.fxml",400,400,"Vacations");
+        this.switchView("/org/fabianandiel/gui/vacationsView.fxml",600,500,"Vacations");
     }
 
 

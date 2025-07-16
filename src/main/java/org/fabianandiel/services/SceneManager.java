@@ -32,8 +32,6 @@ public class SceneManager {
             if(width >= 601 || width <= 199)
                 throw new IllegalArgumentException("Width has to be mimum 200 and maximum 600");
 
-            if( height != width)
-                throw new IllegalArgumentException("Height has to be equal to width");
 
             if(title.trim().isEmpty() || title == null) {
                 throw new IllegalArgumentException("Title has to be valid text");

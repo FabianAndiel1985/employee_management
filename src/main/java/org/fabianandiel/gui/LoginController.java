@@ -1,9 +1,6 @@
 package org.fabianandiel.gui;
 
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
 import javafx.fxml.FXML;
 
 import javafx.fxml.Initializable;
@@ -17,6 +14,7 @@ import org.fabianandiel.entities.Person;
 import org.fabianandiel.services.EntityManagerProvider;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
+import org.fabianandiel.services.ValidatorProvider;
 import org.fabianandiel.validation.LoginRequest;
 
 
@@ -26,7 +24,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.UUID;
-
 
 
 public class LoginController implements Initializable {
@@ -57,49 +54,46 @@ public class LoginController implements Initializable {
         //Helper object to run bean validation on
         LoginRequest lr = new LoginRequest(username, password);
 
-
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        Validator validator = factory.getValidator();
-
-        Set<ConstraintViolation<LoginRequest>> violations = validator.validate(lr);
+        Set<ConstraintViolation<LoginRequest>> violations = ValidatorProvider.getValidator().validate(lr);
 
         if (!violations.isEmpty()) {
             ConstraintViolation<LoginRequest> firstViolation = violations.iterator().next();
             GUIService.setErrorText(firstViolation.getMessage(), loginErrorText);
-        } else {
-            if (this.loginErrorText.isVisible())
-                this.loginErrorText.setVisible(false);
-
-            PersonDAO<Person, UUID> dao = new PersonDAO<>();
-            PersonController<Person, UUID> personController = new PersonController<>(dao);
-            Person person = personController.getPersonByUsername(username);
-
-            System.out.println(person);
-
-            if (person == null) {
-                GUIService.setErrorText(Constants.LOGIN_ERROR_MESSAGE, loginErrorText);
-                return;
-            }
-
-            if (!person.getPassword().equals(password)) {
-                GUIService.setErrorText(Constants.LOGIN_ERROR_MESSAGE, loginErrorText);
-                return;
-            }
-
-
-            UserContext.getInstance().initSession(username,person.getRoles(),person.getId(), person);
-
-            //Go to main view
-            try {
-                SceneManager.switchScene("/org/fabianandiel/gui/mainView.fxml", 400, 400, "Main");
-            } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage());
-                GUIService.setErrorText(USER_ERROR_MESSAGE, loginErrorText);
-            } catch (IOException e) {
-                System.out.println("IO Exception: " + e.getMessage());
-                GUIService.setErrorText(USER_ERROR_MESSAGE, loginErrorText);
-            }
+            return;
         }
+        if (this.loginErrorText.isVisible())
+            this.loginErrorText.setVisible(false);
+
+        PersonDAO<Person, UUID> dao = new PersonDAO<>();
+        PersonController<Person, UUID> personController = new PersonController<>(dao);
+        Person person = personController.getPersonByUsername(username);
+
+        System.out.println(person);
+
+        if (person == null) {
+            GUIService.setErrorText(Constants.LOGIN_ERROR_MESSAGE, loginErrorText);
+            return;
+        }
+
+        if (!person.getPassword().equals(password)) {
+            GUIService.setErrorText(Constants.LOGIN_ERROR_MESSAGE, loginErrorText);
+            return;
+        }
+
+
+        UserContext.getInstance().initSession(username, person.getRoles(), person.getId(), person);
+
+        //Go to main view
+        try {
+            SceneManager.switchScene("/org/fabianandiel/gui/mainView.fxml", 400, 400, "Main");
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            GUIService.setErrorText(USER_ERROR_MESSAGE, loginErrorText);
+        } catch (IOException e) {
+            System.out.println("IO Exception: " + e.getMessage());
+            GUIService.setErrorText(USER_ERROR_MESSAGE, loginErrorText);
+        }
+
     }
 
 
