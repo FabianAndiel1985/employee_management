@@ -3,11 +3,12 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.fabianandiel.gui.VacationsController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.fabianandiel.gui.VacationsController">
    <children>
       <Button fx:id="vacationsGoBack" layoutX="171.0" layoutY="346.0" mnemonicParsing="false" onAction="#goBackToMainView" text="go back" />
       <Text fx:id="vacationsErrorText" fill="#f73a3a" layoutX="116.0" layoutY="280.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" visible="false" wrappingWidth="174.13671875">
@@ -15,21 +16,23 @@
             <Font size="17.0" />
          </font>
       </Text>
-      <Separator layoutX="3.0" layoutY="183.0" prefHeight="0.0" prefWidth="400.0" />
-      <Text layoutX="134.0" layoutY="211.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Request vacation" wrappingWidth="137.3366241455078">
+      <Separator layoutX="-7.0" layoutY="186.0" prefHeight="2.0" prefWidth="610.0" />
+      <Text layoutX="214.0" layoutY="206.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Request vacation" wrappingWidth="137.3366241455078">
          <font>
             <Font size="17.0" />
          </font>
       </Text>
       <Text layoutX="25.0" layoutY="238.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Start Date" />
-      <Text layoutX="259.0" layoutY="241.0" strokeType="OUTSIDE" strokeWidth="0.0" text="End Date" />
-      <Button fx:id="vacationsGoBack1" layoutX="63.0" layoutY="302.0" mnemonicParsing="false" onAction="#goBackToMainView" text="Submit" />
-      <Text layoutX="148.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Vacations">
+      <Text layoutX="235.0" layoutY="238.0" strokeType="OUTSIDE" strokeWidth="0.0" text="End Date" />
+      <Button fx:id="vacationsSubmit" layoutX="63.0" layoutY="302.0" mnemonicParsing="false" text="Submit" onAction="#submit"/>
+      <Text layoutX="228.0" layoutY="49.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Vacations">
          <font>
             <Font size="26.0" />
          </font>
       </Text>
-      <DatePicker layoutX="25.0" layoutY="248.0" prefHeight="26.0" prefWidth="130.0" />
-      <DatePicker layoutX="259.0" layoutY="248.0" prefHeight="26.0" prefWidth="130.0" />
+      <DatePicker fx:id="vacationsStartDate" layoutX="25.0" layoutY="248.0" prefHeight="26.0" prefWidth="130.0" />
+      <DatePicker fx:id="vacationsEndDate" layoutX="235.0" layoutY="248.0" prefHeight="26.0" prefWidth="130.0" />
+      <TextField fx:id="vacationsNotes" layoutX="404.0" layoutY="249.0" prefHeight="114.0" prefWidth="161.0" />
+      <Text layoutX="404.0" layoutY="238.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Notes" />
    </children>
 </AnchorPane>
