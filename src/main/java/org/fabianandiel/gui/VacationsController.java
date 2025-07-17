@@ -18,13 +18,10 @@ import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
 import org.fabianandiel.services.ValidatorProvider;
 import javafx.application.Platform;
-
-
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -73,20 +70,23 @@ public class VacationsController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-            executorService = Executors.newFixedThreadPool(2);
-            executorService.submit(()->{
-            try{
-                initalizeTableColumn();
+        initalizeTableColumn();
+        executorService = Executors.newFixedThreadPool(2);
+        executorService.submit(() -> {
+            try {
+                //set pending requests, with start date in the past tp expired status
+                this.requestController.changeRequestStatusBeforeDate(LocalDate.now(), RequestStatus.PENDING, RequestStatus.EXPIRED);
+
                 Platform.runLater(() -> {
-                    this.requestList.addAll(requestController.getRequestsByCreator(UserContext.getInstance().getId()));
+                    this.requestList.addAll(this.requestController.getRequestsByCreator(UserContext.getInstance().getId()));
                     this.vacationsRequestTable.setItems(this.requestList);
                 });
             } catch (Exception e) {
+                //TODO Error handling mit Fehlermeldung für User
                 throw new RuntimeException(e);
             }
         });
     }
-
 
 
     public void goBackToMainView() {
@@ -94,17 +94,17 @@ public class VacationsController implements Initializable {
             SceneManager.goBackToMain();
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE,this.vacationsErrorText);
+            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, this.vacationsErrorText);
         } catch (IOException e) {
             System.out.println("IO Exception: " + e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE,this.vacationsErrorText);
+            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, this.vacationsErrorText);
         }
     }
 
     /**
      * Validates and submits the request to be written into the DB
      */
-    public void submit(){
+    public void submit() {
         Request request = new Request();
 
         fillRequestObject(request);
@@ -118,15 +118,15 @@ public class VacationsController implements Initializable {
         }
         this.vacationsErrorText.setVisible(false);
 
-        LocalDate startDate= request.getStartDate();
+        LocalDate startDate = request.getStartDate();
         LocalDate endDate = request.getEndDate();
 
-        if(!endDate.isAfter(startDate) && !startDate.equals(endDate) ) {
+        if (!endDate.isAfter(startDate) && !startDate.equals(endDate)) {
             GUIService.setErrorText("End date has to be after start date", this.vacationsErrorText);
             return;
         }
         UserContext.getInstance().getPerson().getRequests().add(request);
-        executorService.submit(()->{
+        executorService.submit(() -> {
             try {
                 this.requestController.create(request);
                 Platform.runLater(() -> {

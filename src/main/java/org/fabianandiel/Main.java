@@ -8,7 +8,6 @@ import org.fabianandiel.services.EntityManagerProvider;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-
         EntityManagerProvider.launch();
         LoginView.launch(LoginView.class, args);
     }

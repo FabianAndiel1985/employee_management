@@ -29,11 +29,13 @@ public class Request {
     @NotNull(message = "start date can not be empty")
     @FutureOrPresent(message = "Invalid start date")
     @Column(name="start_date",nullable = false)
+    @EqualsAndHashCode.Include
     private LocalDate startDate;
 
     @NotNull(message = "end date can not be empty")
     @FutureOrPresent(message = "Invalid end date")
     @Column(name="end_date",nullable = false)
+    @EqualsAndHashCode.Include
     private LocalDate endDate;
 
     @Size(max = 255, message = "Notes can be at most 255 characters long")
@@ -51,6 +53,7 @@ public class Request {
     @JoinColumn(name = "person_id")
     private Person creator;
 
+    //TODO rework or leave to string
     @Override
     public String toString() {
         return "Request{" +

@@ -7,6 +7,7 @@ import org.fabianandiel.entities.Person;
 import org.fabianandiel.entities.Request;
 import org.fabianandiel.interfaces.DAOInterface;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -56,8 +57,23 @@ public class RequestController<T, ID> extends BaseController<T, ID> {
         return this.requestDAO.findRequestsByCreatorAndStatus(id, requestStatus);
     }
 
+    /**
+     * get all the requests from a specific employee
+     * @param id the id of the employee
+     * @return a List of all the vacation requests of an employee
+     */
     public List<Request> getRequestsByCreator(UUID id) {
         return this.requestDAO.findRequestsByCreator(id);
+    }
+
+    /**
+     * changes the status of request before certain date
+     * @param date request statuses before this date get updated
+     * @param originalStatus update requests with this status
+     * @param statusToSetTo set requests to this status
+     */
+    public void changeRequestStatusBeforeDate(LocalDate date, RequestStatus originalStatus, RequestStatus statusToSetTo) {
+        this.requestDAO.changeRequestStatusBeforeDate(date,originalStatus,statusToSetTo);
     }
 
 

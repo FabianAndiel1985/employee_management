@@ -1,5 +1,6 @@
 package org.fabianandiel.gui;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -25,6 +26,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class RequestsController implements Initializable {
 
@@ -50,30 +53,79 @@ public class RequestsController implements Initializable {
     private TableColumn<Request, Person> pendingRequestsCreator;
 
     @FXML
-    private TableColumn<Request,Void> pendingRequestsConfirm;
+    private TableColumn<Request, Void> pendingRequestsConfirm;
 
     @FXML
-    private TableColumn<Request,Void> pendingRequestsDeny;
-
-
+    private TableColumn<Request, Void> pendingRequestsDeny;
 
     private final ObservableList<Request> pendingRequestsList = FXCollections.observableArrayList();
 
     private RequestController requestController = new RequestController<>(new RequestDAO());
 
+    private ExecutorService executorService;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
         Set<Person> subordinates = UserContext.getInstance().getPerson().getSubordinates();
-        if(subordinates.isEmpty()){
+        if (subordinates.isEmpty()) {
             //TODO show error text that no subordinates are found
             return;
         }
         initalizeTableColumn();
-        List<Request> pendingRequests = requestController.getRequestsOfSubordinatesByStatus(subordinates, RequestStatus.PENDING);
-        this.pendingRequestsList.addAll(pendingRequests);
-        this.pendingRequestsTableView.setItems(this.pendingRequestsList);
+
+        this.executorService = Executors.newFixedThreadPool(2);
+
+        this.executorService.submit(() -> {
+            //set pending requests, with start date in the past tp expired status
+            this.requestController.changeRequestStatusBeforeDate(LocalDate.now(), RequestStatus.PENDING, RequestStatus.EXPIRED);
+            try {
+                List<Request> pendingRequests = requestController.getRequestsOfSubordinatesByStatus(subordinates, RequestStatus.PENDING);
+                Platform.runLater(() -> {
+                    this.pendingRequestsList.addAll(pendingRequests);
+                    this.pendingRequestsTableView.setItems(this.pendingRequestsList);
+                });
+            } catch (Exception e) {
+                //TODO error handling loading requests to approve
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    private void handleApprove(Request request) {
+        request.setStatus(RequestStatus.ACCEPTED);
+        this.executorService.submit(() -> {
+                    try {
+                        this.requestController.update(request);
+                        Platform.runLater(() -> {
+                            this.pendingRequestsList.remove(request);
+                        });
+                    } catch (Exception e) {
+                        //TODO error message issues with approving request
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
+
+        //TODO make also time booking according to that
+    }
+
+    private void handleDisapprove(Request request) {
+        System.out.println("DISApprove Request id " + request.getId());
+        //TODO change the status of the request to declined in the DB
+        //TODO update the UI accordingly - remove request from ObservableList
+    }
+
+
+    public void goBackToMainView() {
+        try {
+            SceneManager.goBackToMain();
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, requestsErrorText);
+        } catch (IOException e) {
+            System.out.println("IO Exception: " + e.getMessage());
+            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, requestsErrorText);
+        }
     }
 
     private void initalizeTableColumn() {
@@ -92,7 +144,7 @@ public class RequestsController implements Initializable {
                 }
             }
         });
-        this.pendingRequestsConfirm.setCellFactory(column-> new TableCell<>(){
+        this.pendingRequestsConfirm.setCellFactory(column -> new TableCell<>() {
             private final Button btn = new Button("Approve");
 
             {
@@ -108,7 +160,7 @@ public class RequestsController implements Initializable {
                 setGraphic(empty ? null : btn);
             }
         });
-        this.pendingRequestsDeny.setCellFactory(column-> new TableCell<>(){
+        this.pendingRequestsDeny.setCellFactory(column -> new TableCell<>() {
             private final Button btn = new Button("Disapprove");
 
             {
@@ -124,31 +176,5 @@ public class RequestsController implements Initializable {
                 setGraphic(empty ? null : btn);
             }
         });
-
-        //TODO buttons addens
-
-    }
-
-    private void handleDisapprove(Request request) {
-        //TODO change the status of the request to declined in the DB
-        //TODO update the UI accordingly - remove request from ObservableList
-    }
-
-    private void handleApprove(Request request) {
-        //TODO change the status of the request to accepted in the DB
-        //TODO make also time booking according to that
-        //TODO update the UI accordingly - remove request from ObservableList
-    }
-
-    public void goBackToMainView() {
-        try {
-            SceneManager.goBackToMain();
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE,requestsErrorText);
-        } catch (IOException e) {
-            System.out.println("IO Exception: " + e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE,requestsErrorText);
-        }
     }
 }

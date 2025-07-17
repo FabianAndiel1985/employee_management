@@ -41,6 +41,7 @@ public abstract class BaseController<T,ID> implements ControllerInterface<T,ID> 
             return dao.update(entity);
         } catch (RuntimeException e) {
             System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }
