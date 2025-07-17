@@ -44,7 +44,7 @@ public class Person {
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL)
     private List<TimeStamp> timeStamps = new ArrayList<>();
 
-    @OneToMany(mappedBy = "superior", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "superior", cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.EAGER)
     private Set<Person> subordinates = new HashSet<>();
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)

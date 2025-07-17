@@ -9,13 +9,14 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.fabianandiel.gui.RequestsController">
    <children>
-      <Button fx:id="requestsGoBack" layoutX="270.0" layoutY="473.0" mnemonicParsing="false" onAction="#goBackToMainView" text="Go back" />
-      <TableView fx:id="pendingRequestsTableView" layoutX="111.0" layoutY="129.0" prefHeight="296.0" prefWidth="377.0">
+      <Button fx:id="requestsGoBack" layoutX="270.0" layoutY="485.0" mnemonicParsing="false" onAction="#goBackToMainView" text="Go back" />
+      <TableView fx:id="pendingRequestsTableView" layoutX="74.0" layoutY="152.0" prefHeight="296.0" prefWidth="452.0">
         <columns>
           <TableColumn fx:id="pendingRequestsStartDate" prefWidth="75.0" text="Start Date" />
           <TableColumn fx:id="pendingRequestsEndDate" prefWidth="75.0" text="End Date" />
             <TableColumn fx:id="pendingRequestsNotes" prefWidth="75.0" text="Notes" />
-            <TableColumn fx:id="pendingRequestsConfirmation" prefWidth="75.0" text="Confirm" />
+            <TableColumn fx:id="pendingRequestsCreator" prefWidth="75.0" text="Creator" />
+            <TableColumn fx:id="pendingRequestsConfirm" prefWidth="75.0" text="Confirm" />
             <TableColumn fx:id="pendingRequestsDeny" prefWidth="75.0" text="Deny" />
         </columns>
       </TableView>
