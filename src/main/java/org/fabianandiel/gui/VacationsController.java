@@ -74,11 +74,11 @@ public class VacationsController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
             executorService = Executors.newFixedThreadPool(2);
-            initalizeTableColumn();
             executorService.submit(()->{
             try{
+                initalizeTableColumn();
                 Platform.runLater(() -> {
-                    this.requestList.addAll(requestController.getAll(Request.class));
+                    this.requestList.addAll(requestController.getRequestsByCreator(UserContext.getInstance().getId()));
                     this.vacationsRequestTable.setItems(this.requestList);
                 });
             } catch (Exception e) {
