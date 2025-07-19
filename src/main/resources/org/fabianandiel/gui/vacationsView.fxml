@@ -31,7 +31,7 @@
       <DatePicker fx:id="vacationsEndDate" layoutX="191.0" layoutY="384.0" prefHeight="26.0" prefWidth="130.0" />
       <TextField fx:id="vacationsNotes" layoutX="389.0" layoutY="384.0" prefHeight="114.0" prefWidth="161.0" />
       <Text layoutX="389.0" layoutY="377.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Notes" />
-      <Text fx:id="vacationsErrorText" fill="#f73a3a" layoutX="90.0" layoutY="460.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Error Text" visible="false" wrappingWidth="137.3366241455078">
+      <Text fx:id="vacationsErrorText" fill="#f73a3a" layoutX="79.0" layoutY="460.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Error Text" visible="false" wrappingWidth="250.0">
          <font>
             <Font size="17.0" />
          </font>

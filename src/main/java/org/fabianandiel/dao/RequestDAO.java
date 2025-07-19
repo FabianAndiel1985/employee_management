@@ -27,7 +27,7 @@ public class RequestDAO<T,ID> extends BaseDAO<T,ID> {
      * @param id the id of the person who created the requests
      * @return requests of the creator with the id
      */
-    public List<Request> findRequestsByCreator(UUID id) {
+    public List<Request> getRequestsByCreator(UUID id) {
         List<Request> requests = DAOService.findItemsWithPropertyOrProperties("SELECT r FROM Request r WHERE r.creator.id = :param",Request.class,EntityManagerProvider.getEntityManager(),id);
         return requests;
     }
@@ -42,4 +42,16 @@ public class RequestDAO<T,ID> extends BaseDAO<T,ID> {
     public void changeRequestStatusBeforeDate(LocalDate date, RequestStatus originalStatus, RequestStatus statusToSetTo) {
     DAOService.changeRequestStatusBeforeDate(date,originalStatus,statusToSetTo);
     }
+
+    /**
+     * returns requests by StartDate
+     * @param startDate date where the request starts
+     * @return a list of requests with the same start date
+     */
+    public List<Request> getRequestsByStartDate(LocalDate startDate) {
+        List<Request> requests = DAOService.findItemsWithPropertyOrProperties("SELECT r FROM Request r WHERE r.startDate = :param",Request.class,EntityManagerProvider.getEntityManager(),startDate);
+        return requests;
+    }
+
+
 }

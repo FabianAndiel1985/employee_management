@@ -125,6 +125,16 @@ public class VacationsController implements Initializable {
             GUIService.setErrorText("End date has to be after start date", this.vacationsErrorText);
             return;
         }
+
+        if(this.requestController.getRequestsByStartDate(startDate).size()>0) {
+            GUIService.setErrorText("You can not submit two requests with the same start date", this.vacationsErrorText);
+            return;
+        }
+
+
+
+
+
         UserContext.getInstance().getPerson().getRequests().add(request);
         executorService.submit(() -> {
             try {

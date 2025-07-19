@@ -91,8 +91,14 @@ public class RequestsController implements Initializable {
         });
     }
 
-    private void handleApprove(Request request) {
-        request.setStatus(RequestStatus.ACCEPTED);
+
+    /**
+     * Sets the vacation request to approved or disapproved
+     * @param request vacation request of employee
+     * @param status request status that shall be set
+     */
+    public void handleApproveOrDisapprove(Request request, RequestStatus status) {
+        request.setStatus(status);
         this.executorService.submit(() -> {
                     try {
                         this.requestController.update(request);
@@ -105,14 +111,6 @@ public class RequestsController implements Initializable {
                     }
                 }
         );
-
-        //TODO make also time booking according to that
-    }
-
-    private void handleDisapprove(Request request) {
-        System.out.println("DISApprove Request id " + request.getId());
-        //TODO change the status of the request to declined in the DB
-        //TODO update the UI accordingly - remove request from ObservableList
     }
 
 
@@ -128,6 +126,9 @@ public class RequestsController implements Initializable {
         }
     }
 
+    /**
+     * Initializes the table columns
+     */
     private void initalizeTableColumn() {
         this.pendingRequestsStartDate.setCellValueFactory(new PropertyValueFactory<>("startDate"));
         this.pendingRequestsEndDate.setCellValueFactory(new PropertyValueFactory<>("endDate"));
@@ -150,7 +151,7 @@ public class RequestsController implements Initializable {
             {
                 btn.setOnAction(event -> {
                     Request request = getTableView().getItems().get(getIndex());
-                    handleApprove(request);
+                    handleApproveOrDisapprove(request,RequestStatus.ACCEPTED);
                 });
             }
 
@@ -166,7 +167,7 @@ public class RequestsController implements Initializable {
             {
                 btn.setOnAction(event -> {
                     Request request = getTableView().getItems().get(getIndex());
-                    handleDisapprove(request);
+                    handleApproveOrDisapprove(request,RequestStatus.DENIED);
                 });
             }
 
