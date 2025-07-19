@@ -14,7 +14,7 @@
    <children>
       <Button fx:id="vacationsGoBack" layoutX="269.0" layoutY="544.0" mnemonicParsing="false" onAction="#goBackToMainView" text="go back" />
       <Separator layoutX="3.0" layoutY="312.0" prefHeight="3.0" prefWidth="594.0" />
-      <Text layoutX="240.0" layoutY="340.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Request vacation" wrappingWidth="137.3366241455078">
+      <Text fx:id="vacationsText" layoutX="240.0" layoutY="340.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Request vacation" wrappingWidth="150.0">
          <font>
             <Font size="17.0" />
          </font>

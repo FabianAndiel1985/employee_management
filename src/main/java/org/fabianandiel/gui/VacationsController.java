@@ -10,6 +10,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import org.fabianandiel.constants.Constants;
 import org.fabianandiel.constants.RequestStatus;
+import org.fabianandiel.constants.Role;
 import org.fabianandiel.context.UserContext;
 import org.fabianandiel.controller.RequestController;
 import org.fabianandiel.dao.RequestDAO;
@@ -18,6 +19,7 @@ import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
 import org.fabianandiel.services.ValidatorProvider;
 import javafx.application.Platform;
+
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -62,6 +64,10 @@ public class VacationsController implements Initializable {
     @FXML
     private TableColumn<Request, RequestStatus> vacationsStatusColumn;
 
+    @FXML
+    private Text vacationsText;
+
+
     private RequestController requestController = new RequestController<>(new RequestDAO());
 
     private final ObservableList<Request> requestList = FXCollections.observableArrayList();
@@ -71,10 +77,15 @@ public class VacationsController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initalizeTableColumn();
+
+        //TODO change UI for empolyee and manager plus auto booking
+        if (isManagerOrAdmin()) {
+            this.vacationsText.setText("Book your vacation");
+        }
         executorService = Executors.newFixedThreadPool(2);
         executorService.submit(() -> {
             try {
-                //set pending requests, with start date in the past tp expired status
+                //set pending requests, with start date in the past to expired status
                 this.requestController.changeRequestStatusBeforeDate(LocalDate.now(), RequestStatus.PENDING, RequestStatus.EXPIRED);
 
                 Platform.runLater(() -> {
@@ -106,36 +117,12 @@ public class VacationsController implements Initializable {
      */
     public void submit() {
         Request request = new Request();
-
         fillRequestObject(request);
 
-        Set<ConstraintViolation<Request>> violations = ValidatorProvider.getValidator().validate(request);
-
-        if (!violations.isEmpty()) {
-            ConstraintViolation<Request> firstViolation = violations.iterator().next();
-            GUIService.setErrorText(firstViolation.getMessage(), this.vacationsErrorText);
-            return;
-        }
-        this.vacationsErrorText.setVisible(false);
-
-        LocalDate startDate = request.getStartDate();
-        LocalDate endDate = request.getEndDate();
-
-        if (!endDate.isAfter(startDate) && !startDate.equals(endDate)) {
-            GUIService.setErrorText("End date has to be after start date", this.vacationsErrorText);
-            return;
-        }
-
-        if(this.requestController.getRequestsByStartDate(startDate).size()>0) {
-            GUIService.setErrorText("You can not submit two requests with the same start date", this.vacationsErrorText);
-            return;
-        }
-
-
-
-
+        if (!validateRequest(request)) return;
 
         UserContext.getInstance().getPerson().getRequests().add(request);
+
         executorService.submit(() -> {
             try {
                 this.requestController.create(request);
@@ -147,19 +134,53 @@ public class VacationsController implements Initializable {
                 throw new RuntimeException(e);
             }
         });
-
-
-        //TODO check if there has been already a booking for the wanted dates
-
         //TODO error handling
+    }
 
-        System.out.println(request);
+    /**
+     * Checks if the current user is a manager
+     *
+     * @return true if user is at least a manager, false if not
+     */
+    private boolean isManagerOrAdmin() {
+        return UserContext.getInstance().hasRole(Role.EMPLOYEE) && UserContext.getInstance().hasRole(Role.MANAGER);
+    }
 
+
+    /**
+     * checks if the request is valid
+     *
+     * @param request the request to be checked
+     * @return if the request is valid
+     */
+    private boolean validateRequest(Request request) {
+        Set<ConstraintViolation<Request>> violations = ValidatorProvider.getValidator().validate(request);
+
+        if (!violations.isEmpty()) {
+            ConstraintViolation<Request> firstViolation = violations.iterator().next();
+            GUIService.setErrorText(firstViolation.getMessage(), this.vacationsErrorText);
+            return false;
+        }
+        this.vacationsErrorText.setVisible(false);
+
+        LocalDate startDate = request.getStartDate();
+        LocalDate endDate = request.getEndDate();
+
+        if (!endDate.isAfter(startDate) && !startDate.equals(endDate)) {
+            GUIService.setErrorText("End date has to be after start date", this.vacationsErrorText);
+            return false;
+        }
+
+        if (this.requestController.getRequestsByStartDate(startDate).size() > 0) {
+            GUIService.setErrorText("You can not submit two requests with the same start date", this.vacationsErrorText);
+            return false;
+        }
+        return true;
     }
 
 
     private void fillRequestObject(Request request) {
-        request.setStatus(RequestStatus.PENDING);
+        request.setStatus(isManagerOrAdmin() ? RequestStatus.ACCEPTED :RequestStatus.PENDING);
         request.setCreationDate(LocalDateTime.now());
         request.setCreator(UserContext.getInstance().getPerson());
         request.setStartDate(this.vacationsStartDate.getValue());
