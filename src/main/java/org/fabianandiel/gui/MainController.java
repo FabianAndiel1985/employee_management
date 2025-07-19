@@ -64,7 +64,7 @@ public class MainController implements Initializable {
     }
 
     public void switchToEmployeeOverview() {
-        this.switchView("/org/fabianandiel/gui/employeeOverviewView.fxml",400,400,"Employee Overview");
+        this.switchView("/org/fabianandiel/gui/employeeOverviewView.fxml",530,671,"Employee Overview");
     }
 
 
