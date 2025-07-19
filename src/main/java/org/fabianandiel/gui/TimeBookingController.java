@@ -6,26 +6,20 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import org.fabianandiel.constants.Constants;
-
 import org.fabianandiel.constants.Status;
 import org.fabianandiel.context.UserContext;
 import org.fabianandiel.controller.PersonController;
 import org.fabianandiel.controller.TimeStampController;
-
 import org.fabianandiel.dao.PersonDAO;
 import org.fabianandiel.dao.TimeStampDAO;
 import org.fabianandiel.entities.TimeStamp;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
-
-
 import java.io.IOException;
 import java.net.URL;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ResourceBundle;
-import java.util.UUID;
 
 public class TimeBookingController implements Initializable {
 
@@ -100,21 +94,26 @@ public class TimeBookingController implements Initializable {
         }
     }
 
+    /**
+     * writes the clock in time in the DB and disables button
+     */
     public void clockIn() {
         if(timeBookingStartTime.getText().isEmpty() && this.currentTimeStamp.getTimeBookingStartTime() == null) {
             LocalTime time = LocalTime.now();
             this.currentTimeStamp.setTimeBookingStartTime(time);
-            timeBookingStartTime.setText(time.toString());
+            this.timeBookingStartTime.setText(time.toString());
             //TODO error handling here
-            timeStampController.update(currentTimeStamp);
-            timeBookingClockIn.setDisable(true);
+            this.timeStampController.update(currentTimeStamp);
+            this.timeBookingClockIn.setDisable(true);
             UserContext.getInstance().getPerson().setStatus(Status.PRESENT);
-            personController.update(UserContext.getInstance().getPerson());
+            this.personController.update(UserContext.getInstance().getPerson());
         }
     }
 
+    /**
+     * writes the clock out time in the DB and disables button
+     */
     public void clockOut() {
-
         if(!timeBookingStartTime.getText().isEmpty() && timeBookingEndTime.getText().isEmpty() && this.currentTimeStamp.getTimeBookingEndTime() == null ) {
             LocalTime time = LocalTime.now();
             this.currentTimeStamp.setTimeBookingEndTime(time);
