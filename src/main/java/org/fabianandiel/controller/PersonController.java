@@ -1,5 +1,6 @@
 package org.fabianandiel.controller;
 
+import org.fabianandiel.constants.Role;
 import org.fabianandiel.dao.PersonDAO;
 import org.fabianandiel.entities.Person;
 import org.fabianandiel.interfaces.DAOInterface;
@@ -30,6 +31,15 @@ public class PersonController<T, ID> extends BaseController<T, ID> {
         }
         Person person = personList.getFirst();
         return person;
+    }
+
+    /**
+     * Get persons by role.
+     *
+     * @param role of the persons you are searching for
+     */
+    public List<Person> getPersonsByRole(Role role) {
+        return this.personDAO.getPersonsByRole(role);
     }
 
 }

@@ -26,4 +26,8 @@ public class Address {
     @Column(name="country",nullable = false, length = 100)
     private String country;
 
+    @Override
+    public String toString() {
+        return street + " " + housenumber + "/" + doornumber + ", " + zip + " " + city + ", " + country;
+    }
 }
