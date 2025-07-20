@@ -1,6 +1,7 @@
 package org.fabianandiel.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import org.fabianandiel.constants.Role;
@@ -20,23 +21,46 @@ public class Person {
     @Column(name="person_id",nullable = false,updatable = false)
     @EqualsAndHashCode.Include
     private UUID id;
-    @Column(name="firstname",nullable = false)
+
+    @NotBlank(message = "Firstname can’t be blank") //Jakarta Valdiation
+    @Size(max = 50, message = "Firstname can be at most 50 characters") //Jakarta Valdiation
+    @Column(name="firstname",nullable = false,length = 50)
     private String firstname;
-    @Column(name="lastname",nullable = false)
+
+
+    @NotBlank(message = "Lastname can’t be blank") //Jakarta Valdiation
+    @Size(max = 50, message = "Lastname can be at most 50 characters") //Jakarta Valdiation
+    @Column(name="lastname",nullable = false,length = 50)
     private String lastname;
+
+    @NotNull(message = "Address can`t be empty") //Jakarta Valdiation
     @ManyToOne
     @JoinColumn(name = "address_id")
     private Address address;
+
+    @NotNull(message = "Telephone can`t be empty") //Jakarta Valdiation
+    @Min(value = 100, message = "Telephone must be a valid number") //Jakarta Valdiation
     @Column(name="telephone",nullable = false)
     private int telephone;
+
+
+    @NotBlank(message = "Email can’t be empty") //Jakarta Valdiation
+    @Email(message = "Email must be valid") //Jakarta Valdiation
     @Column(name="email",nullable = false,unique = true)
     @EqualsAndHashCode.Include
     private String email;
-    @Column(name="username",nullable = false,unique = true)
+
+    @NotBlank(message = "Username can’t be empty") //Jakarta Valdiation
+    @Size(max = 50, message = "Username can be at most 50 characters") //Jakarta Valdiation
+    @Column(name="username",nullable = false,unique = true, length=50)
     @EqualsAndHashCode.Include
     private String username;
-    @Column(name="password",nullable = false)
+
+    @NotBlank(message = "Password can`t be empty") //Jakarta Valdiation
+    @Size(max = 50, message = "Password can be at most 50 characters") //Jakarta Valdiation
+    @Column(name="password",nullable = false,length=50)
     private String password;
+
     @ManyToOne
     @JoinColumn(name = "superior_id")
     private Person superior;
@@ -47,6 +71,7 @@ public class Person {
     @OneToMany(mappedBy = "superior", cascade = {CascadeType.PERSIST, CascadeType.MERGE},fetch = FetchType.EAGER)
     private Set<Person> subordinates = new HashSet<>();
 
+    @Size(min = 1, message = "Employee must have at least role employee")
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(
@@ -59,7 +84,6 @@ public class Person {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private Status status;
-
 
     @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER)
     List<Request> requests;

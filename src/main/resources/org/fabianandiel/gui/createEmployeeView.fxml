@@ -27,12 +27,12 @@
          <Text layoutX="58.0" layoutY="194.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Address" wrappingWidth="82.00347900390625" />
          <ComboBox fx:id="createEmployeeAddress" layoutX="56.0" layoutY="202.0" prefHeight="26.0" prefWidth="218.0" />
          <Text layoutX="59.0" layoutY="290.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Telephone" wrappingWidth="82.00347900390625" />
-         <TextField fx:id="createEmployeeTelephone" layoutX="58.0" layoutY="304.0" />
-         <Text layoutX="58.0" layoutY="355.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Email" wrappingWidth="82.00347900390625" />
-         <TextField fx:id="createEmployeeEmail" layoutX="58.0" layoutY="364.0" />
-         <Text layoutX="343.0" layoutY="82.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Superior" wrappingWidth="82.00347900390625" />
-         <ComboBox fx:id="createEmployeeSuperior" layoutX="340.0" layoutY="92.0" prefWidth="150.0" />
-         <VBox fx:id="createEmployeeRolesBox" layoutX="58.0" layoutY="436.0" prefHeight="58.0" prefWidth="82.0">
+         <TextField fx:id="createEmployeeTelephone" layoutX="58.0" layoutY="297.0" />
+         <Text layoutX="58.0" layoutY="344.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Email" wrappingWidth="82.00347900390625" />
+         <TextField fx:id="createEmployeeEmail" layoutX="58.0" layoutY="350.0" />
+         <Text layoutX="340.0" layoutY="184.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Superior" wrappingWidth="82.00347900390625" />
+         <ComboBox fx:id="createEmployeeSuperior" layoutX="340.0" layoutY="191.0" prefWidth="150.0" />
+         <VBox fx:id="createEmployeeRolesBox" layoutX="343.0" layoutY="86.0" prefHeight="58.0" prefWidth="82.0">
             <children>
                <CheckBox fx:id="createEmployeeRolesBoxEmployee" mnemonicParsing="false" text="Employee">
                   <VBox.margin>
@@ -47,9 +47,9 @@
                <CheckBox fx:id="createEmployeeRolesBoxAdmin" mnemonicParsing="false" text="Admin" />
             </children>
          </VBox>
-         <Text layoutX="58.0" layoutY="424.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Roles" />
-         <Text layoutX="341.0" layoutY="145.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select subordinates" wrappingWidth="120.40350341796875" />
-         <TableView fx:id="createEmployeeSubordinates" layoutX="341.0" layoutY="161.0" prefHeight="200.0" prefWidth="150.0">
+         <Text layoutX="339.0" layoutY="77.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Roles" />
+         <Text layoutX="341.0" layoutY="244.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select subordinates" wrappingWidth="120.40350341796875" />
+         <TableView fx:id="createEmployeeSubordinates" layoutX="341.0" layoutY="260.0" prefHeight="200.0" prefWidth="150.0">
            <columns>
              <TableColumn prefWidth="75.0" text="Firstname" />
              <TableColumn prefWidth="75.0" text="Lastname" />
@@ -61,12 +61,16 @@
                <Font size="20.0" />
             </font>
          </Text>
-         <Button fx:id="createEmployeeSubmit" layoutX="337.0" layoutY="490.0" mnemonicParsing="false" text="Submit" />
-         <Button fx:id="createEmployeeResetForm" layoutX="419.0" layoutY="490.0" mnemonicParsing="false" text="Reset" />
+         <Button fx:id="createEmployeeSubmit" layoutX="340.0" layoutY="507.0" mnemonicParsing="false" onAction="#createEmployeeSubmit" text="Submit" />
+         <Button fx:id="createEmployeeResetForm" layoutX="422.0" layoutY="507.0" mnemonicParsing="false" text="Reset" />
          <Text fx:id="createEmployeeErrorText" fill="#f73a3a" layoutX="288.0" layoutY="403.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Error Text" visible="false" wrappingWidth="149.5999999999999">
             <font>
                <Font size="17.0" />
             </font>
          </Text>
+      <Text layoutX="58.0" layoutY="400.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username" wrappingWidth="82.00347900390625" />
+      <TextField fx:id="createEmployeeUsername" layoutX="57.0" layoutY="407.0" />
+      <Text layoutX="58.0" layoutY="456.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password" />
+      <TextField fx:id="createEmployeePassword" layoutX="57.0" layoutY="461.0" />
       </children>
    </AnchorPane>

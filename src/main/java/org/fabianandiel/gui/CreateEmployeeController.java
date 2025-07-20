@@ -1,5 +1,6 @@
 package org.fabianandiel.gui;
 
+import jakarta.validation.ConstraintViolation;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -17,6 +18,7 @@ import org.fabianandiel.entities.Address;
 import org.fabianandiel.entities.Person;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
+import org.fabianandiel.services.ValidatorProvider;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashSet;
@@ -65,6 +67,13 @@ public class CreateEmployeeController implements Initializable {
     @FXML
     private TableView createEmployeeSubordinates;
 
+    @FXML
+    private TextField createEmployeeUsername;
+
+    @FXML
+    private TextField createEmployeePassword;
+
+
     private PersonController personController = new PersonController<>(new PersonDAO<>());
 
     private AddressController addressController = new AddressController<>(new AddressDAO<>());
@@ -83,7 +92,7 @@ public class CreateEmployeeController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         this.hasManagerRole = UserContext.getInstance().hasRole(Role.EMPLOYEE) && UserContext.getInstance().hasRole(Role.MANAGER) && !UserContext.getInstance().hasRole(Role.ADMIN);
-        this.hasManagerAndAdminRole= UserContext.getInstance().hasRole(Role.ADMIN);
+        this.hasManagerAndAdminRole = UserContext.getInstance().hasRole(Role.ADMIN);
         initializeAddressDropDown();
         initalizeSuperiorDropdown();
         displayCheckBoxesAccordingToAuthorization();
@@ -94,12 +103,29 @@ public class CreateEmployeeController implements Initializable {
     /**
      * submits and validates the person object
      */
-    private void createEmployeeSubmit() {
+    public void createEmployeeSubmit() {
         Person createdPerson = createPersonFromFields();
+        if(createdPerson == null) {
+            return;
+        }
+
+        Set<ConstraintViolation<Person>> violations = ValidatorProvider.getValidator().validate(createdPerson);
+
+        if (!violations.isEmpty()) {
+            ConstraintViolation<Person> firstViolation = violations.iterator().next();
+            GUIService.setErrorText(firstViolation.getMessage(), createEmployeeErrorText);
+            return;
+        }
+        if (this.createEmployeeErrorText.isVisible())
+            this.createEmployeeErrorText.setVisible(false);
+
+        //TODO VALIDATION OF PERSON
+        //TODO CREATE ADDRESS SCREEN
+        //TODO ADDRESS MODAL
     }
 
 
-
+    //=======================================================================================
     //=========================HELPER METHODS ===============================================
 
 
@@ -108,18 +134,19 @@ public class CreateEmployeeController implements Initializable {
      */
     public void goBackEmployeeOverview() {
         try {
-            SceneManager.switchScene("/org/fabianandiel/gui/employeeOverviewView.fxml",530,671,"Employee Overview");
+            SceneManager.switchScene("/org/fabianandiel/gui/employeeOverviewView.fxml", 530, 671, "Employee Overview");
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE,this.createEmployeeErrorText);
+            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, this.createEmployeeErrorText);
         } catch (IOException e) {
             e.printStackTrace();
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE,this.createEmployeeErrorText);
+            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, this.createEmployeeErrorText);
         }
     }
 
     /**
      * creates person from the form fields
+     *
      * @return person newly created
      */
     private Person createPersonFromFields() {
@@ -129,58 +156,47 @@ public class CreateEmployeeController implements Initializable {
         personToCreate.setLastname(this.createEmployeeLastname.getText());
         personToCreate.setAddress(this.createEmployeeAddress.getValue());
         String telephoneNumber = this.createEmployeeTelephone.getText();
-        //TODO handle error here
+        if (telephoneNumber.trim().isEmpty()) {
+            GUIService.setErrorText("Telephone can not be empty", this.createEmployeeErrorText);
+            return null;
+        }
         personToCreate.setTelephone(Integer.parseInt(telephoneNumber));
         personToCreate.setEmail(createEmployeeEmail.getText());
         Set<Role> roles = new HashSet<>();
-        if(this.createEmployeeRolesBoxEmployee.isSelected()){
+        if (this.createEmployeeRolesBoxEmployee.isSelected()) {
             roles.add(Role.EMPLOYEE);
         }
-        if(this.createEmployeeRolesBoxManager.isSelected()){
+        if (this.createEmployeeRolesBoxManager.isSelected()) {
             roles.add(Role.MANAGER);
         }
-        if(this.createEmployeeRolesBoxAdmin.isSelected()) {
+        if (this.createEmployeeRolesBoxAdmin.isSelected()) {
             roles.add(Role.ADMIN);
         }
+        personToCreate.setUsername(this.createEmployeeUsername.getText());
+        personToCreate.setPassword(this.createEmployeePassword.getText());
 
-
-
-      /*
-        @FXML
-        private ComboBox createEmployeeSuperior;
-
-        @FXML
-        private TableView createEmployeeSubordinates;*/
-
-
-
-    return null;
+        return personToCreate;
     }
-
 
 
     /**
      * Initializes the Subordinates Table View
      */
     private void initializeEmployeeTableViewAccordingToAuthorization() {
-        if(hasManagerAndAdminRole) {
+        if (hasManagerAndAdminRole) {
             //TODO initialize the employees to choose
-        }
-        else  {
+        } else {
             this.createEmployeeSubordinates.setDisable(true);
         }
     }
-
-
-
-
 
 
     /*
         Displays the role checkboxes according to authorization
      */
     private void displayCheckBoxesAccordingToAuthorization() {
-        if(this.hasManagerRole) {
+        if (this.hasManagerRole) {
+            this.createEmployeeRolesBoxEmployee.setSelected(true);
             this.createEmployeeRolesBoxManager.setDisable(true);
             this.createEmployeeRolesBoxAdmin.setDisable(true);
         }
@@ -228,6 +244,4 @@ public class CreateEmployeeController implements Initializable {
             }
         });
     }
-
-
 }
