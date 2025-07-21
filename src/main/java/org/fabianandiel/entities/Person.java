@@ -9,7 +9,6 @@ import org.fabianandiel.constants.Status;
 
 import java.util.*;
 
-
 @Entity
 @Getter
 @Setter
@@ -79,15 +78,17 @@ public class Person {
             joinColumns = @JoinColumn(name = "person_id")
     )
     @Column(name = "role")
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private Status status;
 
     @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER)
-    List<Request> requests;
+    List<Request> requests = new ArrayList<>();
 
+
+    //TODO rework toString();
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
