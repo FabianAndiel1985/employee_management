@@ -19,6 +19,8 @@ import org.fabianandiel.entities.Person;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
 import org.fabianandiel.services.ValidatorProvider;
+import org.fabianandiel.validation.CreateEmployeeValidationService;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashSet;
@@ -95,9 +97,12 @@ public class CreateEmployeeController implements Initializable {
         this.hasManagerAndAdminRole = UserContext.getInstance().hasRole(Role.ADMIN);
         initializeAddressDropDown();
         initalizeSuperiorDropdown();
-        displayCheckBoxesAccordingToAuthorization();
+        initializeCheckBoxesAccordingToAuthorization();
         initializeEmployeeTableViewAccordingToAuthorization();
     }
+
+
+
 
 
     /**
@@ -116,10 +121,25 @@ public class CreateEmployeeController implements Initializable {
             GUIService.setErrorText(firstViolation.getMessage(), createEmployeeErrorText);
             return;
         }
+
+        if(!CreateEmployeeValidationService.validateRoles(createdPerson,this.createEmployeeErrorText))
+            return;
+
         if (this.createEmployeeErrorText.isVisible())
             this.createEmployeeErrorText.setVisible(false);
 
-        //TODO VALIDATION OF PERSON
+
+
+        //TODO Test and write person into DB
+
+
+
+
+
+
+
+
+
         //TODO CREATE ADDRESS SCREEN
         //TODO ADDRESS MODAL
     }
@@ -172,8 +192,13 @@ public class CreateEmployeeController implements Initializable {
         if (this.createEmployeeRolesBoxAdmin.isSelected()) {
             roles.add(Role.ADMIN);
         }
+        //TODO also create subordinates
+        personToCreate.setRoles(roles);
         personToCreate.setUsername(this.createEmployeeUsername.getText());
         personToCreate.setPassword(this.createEmployeePassword.getText());
+
+        System.out.println(personToCreate);
+
 
         return personToCreate;
     }
@@ -194,7 +219,7 @@ public class CreateEmployeeController implements Initializable {
     /*
         Displays the role checkboxes according to authorization
      */
-    private void displayCheckBoxesAccordingToAuthorization() {
+    private void initializeCheckBoxesAccordingToAuthorization() {
         if (this.hasManagerRole) {
             this.createEmployeeRolesBoxEmployee.setSelected(true);
             this.createEmployeeRolesBoxManager.setDisable(true);
