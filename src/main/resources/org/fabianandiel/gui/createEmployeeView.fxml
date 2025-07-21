@@ -12,16 +12,16 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="607.0" prefWidth="530.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.fabianandiel.gui.CreateEmployeeController">
+<AnchorPane layoutY="-20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="607.0" prefWidth="530.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.fabianandiel.gui.CreateEmployeeController">
       <children>
-         <Button fx:id="createEmployeeGoBack" layoutX="235.0" layoutY="548.0" mnemonicParsing="false" onAction="#goBackEmployeeOverview" text="Go Back" />
+         <Button fx:id="createEmployeeGoBack" layoutX="235.0" layoutY="566.0" mnemonicParsing="false" onAction="#goBackEmployeeOverview" text="Go Back" />
          <Text fx:id="employeeOverviewErrorText" fill="#f73a3a" layoutX="112.0" layoutY="249.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" visible="false" wrappingWidth="174.13671875">
             <font>
                <Font size="17.0" />
             </font>
          </Text>
          <Text layoutX="59.0" layoutY="78.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Firstname" />
-         <TextField fx:id="createEmployeeFirstname" layoutX="59.0" layoutY="90.0" />
+         <TextField fx:id="createEmployeeFirstname" layoutX="56.0" layoutY="86.0" />
          <Text layoutX="59.0" layoutY="131.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lastname" wrappingWidth="82.00347900390625" />
          <TextField fx:id="createEmployeeLastname" layoutX="56.0" layoutY="142.0" />
          <Text layoutX="58.0" layoutY="194.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Address" wrappingWidth="82.00347900390625" />
@@ -51,8 +51,8 @@
          <Text layoutX="341.0" layoutY="244.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Select subordinates" wrappingWidth="120.40350341796875" />
          <TableView fx:id="createEmployeeSubordinates" layoutX="341.0" layoutY="260.0" prefHeight="200.0" prefWidth="150.0">
            <columns>
-             <TableColumn prefWidth="75.0" text="Firstname" />
-             <TableColumn prefWidth="75.0" text="Lastname" />
+             <TableColumn fx:id="createEmployeeSubordinateFirstName" prefWidth="75.0" text="Firstname" />
+             <TableColumn fx:id="createEmployeeSubordinateLastName" prefWidth="75.0" text="Lastname" />
            </columns>
          </TableView>
          <Button fx:id="createEmployeeNewAddress" layoutX="56.0" layoutY="241.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="120.0" text="Create new address" />
@@ -61,9 +61,9 @@
                <Font size="20.0" />
             </font>
          </Text>
-         <Button fx:id="createEmployeeSubmit" layoutX="340.0" layoutY="507.0" mnemonicParsing="false" onAction="#createEmployeeSubmit" text="Submit" />
-         <Button fx:id="createEmployeeResetForm" layoutX="422.0" layoutY="507.0" mnemonicParsing="false" text="Reset" />
-         <Text fx:id="createEmployeeErrorText" fill="#f73a3a" layoutX="288.0" layoutY="403.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Error Text" visible="false" wrappingWidth="149.5999999999999">
+         <Button fx:id="createEmployeeSubmit" layoutX="340.0" layoutY="540.0" mnemonicParsing="false" onAction="#createEmployeeSubmit" text="Submit" />
+         <Button fx:id="createEmployeeResetForm" layoutX="422.0" layoutY="538.0" mnemonicParsing="false" text="Reset" />
+         <Text fx:id="createEmployeeErrorText" fill="#f73a3a" layoutX="340.0" layoutY="500.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Error Text" visible="false" wrappingWidth="149.5999999999999">
             <font>
                <Font size="17.0" />
             </font>
@@ -72,5 +72,10 @@
       <TextField fx:id="createEmployeeUsername" layoutX="57.0" layoutY="407.0" />
       <Text layoutX="58.0" layoutY="456.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password" />
       <TextField fx:id="createEmployeePassword" layoutX="57.0" layoutY="461.0" />
+      <Text layoutX="340.0" layoutY="475.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Leftclick and CTRL to deselect" wrappingWidth="170.0">
+         <font>
+            <Font size="9.0" />
+         </font>
+      </Text>
       </children>
    </AnchorPane>
