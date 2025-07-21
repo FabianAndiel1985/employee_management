@@ -1,5 +1,6 @@
 package org.fabianandiel.controller;
 
+import jakarta.persistence.EntityManager;
 import org.fabianandiel.constants.Role;
 import org.fabianandiel.dao.PersonDAO;
 import org.fabianandiel.entities.Person;
@@ -18,6 +19,17 @@ public class PersonController<T, ID> extends BaseController<T, ID> {
             throw new IllegalArgumentException("Ungültiges DAO übergeben.");
         }
     }
+
+//TODO build it that it is all the same entity manager instance
+/* public Person create(Person person, EntityManager em) {
+        try {
+            return this.personDAO.save(person, em);
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+*/
 
     /**
      * Get person object by username.
@@ -40,6 +52,16 @@ public class PersonController<T, ID> extends BaseController<T, ID> {
      */
     public List<Person> getPersonsByRole(Role role) {
         return this.personDAO.getPersonsByRole(role);
+    }
+
+
+    /**
+     * gets all persons that have only one role
+     * @param role role that persons exactly have to have
+     * @return a list of persons that at least have only that role
+     */
+    public List<Person> getPersonsByExactRole(Role role) {
+        return this.personDAO.getPersonsByExactRole(role);
     }
 
 }

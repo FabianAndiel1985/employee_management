@@ -1,11 +1,14 @@
 package org.fabianandiel.gui;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import jakarta.validation.ConstraintViolation;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import org.fabianandiel.constants.Constants;
 import org.fabianandiel.constants.Role;
@@ -16,6 +19,7 @@ import org.fabianandiel.dao.AddressDAO;
 import org.fabianandiel.dao.PersonDAO;
 import org.fabianandiel.entities.Address;
 import org.fabianandiel.entities.Person;
+import org.fabianandiel.services.EntityManagerProvider;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
 import org.fabianandiel.services.ValidatorProvider;
@@ -23,10 +27,7 @@ import org.fabianandiel.validation.CreateEmployeeValidationService;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 
 public class CreateEmployeeController implements Initializable {
 
@@ -75,6 +76,12 @@ public class CreateEmployeeController implements Initializable {
     @FXML
     private TextField createEmployeePassword;
 
+    @FXML
+    private TableColumn<Person, String> createEmployeeSubordinateFirstName;
+
+    @FXML
+    private TableColumn<Person, String> createEmployeeSubordinateLastName;
+
 
     private PersonController personController = new PersonController<>(new PersonDAO<>());
 
@@ -82,6 +89,9 @@ public class CreateEmployeeController implements Initializable {
 
     //TODO when I add a person with role Manager also add to superiors list
     private final ObservableList<Person> superiors = FXCollections.observableArrayList();
+
+    //TODO when I add a person with role employee also add to subordinates list
+    private final ObservableList<Person> subordinates = FXCollections.observableArrayList();
 
     //TODO when I create a address add it here
     private final ObservableList<Address> addresses = FXCollections.observableArrayList();
@@ -102,9 +112,6 @@ public class CreateEmployeeController implements Initializable {
     }
 
 
-
-
-
     /**
      * submits and validates the person object
      */
@@ -114,32 +121,40 @@ public class CreateEmployeeController implements Initializable {
             return;
         }
 
-        Set<ConstraintViolation<Person>> violations = ValidatorProvider.getValidator().validate(createdPerson);
-
-        if (!violations.isEmpty()) {
-            ConstraintViolation<Person> firstViolation = violations.iterator().next();
-            GUIService.setErrorText(firstViolation.getMessage(), createEmployeeErrorText);
-            return;
-        }
-
-        if(!CreateEmployeeValidationService.validateRoles(createdPerson,this.createEmployeeErrorText))
+        if(!CreateEmployeeValidationService.validateCreatedPerson(createdPerson,this.createEmployeeErrorText))
             return;
 
         if (this.createEmployeeErrorText.isVisible())
             this.createEmployeeErrorText.setVisible(false);
 
 
+        EntityManager em = EntityManagerProvider.getEntityManager();
+        EntityTransaction tx = em.getTransaction();
 
-        //TODO Test and write person into DB
-
-
-
-
-
-
-
-
-
+    try {
+        tx.begin();
+        Person newPerson = (Person) this.personController.create(createdPerson,em);
+        int batchSize = 30;
+        int i = 0;
+        for (Person p : newPerson.getSubordinates()) {
+            this.subordinates.remove(p);
+            p.setSuperior(newPerson);
+            em.merge(p);
+            if (++i % batchSize == 0) {
+                em.flush();
+                em.clear();
+            }
+        }
+        em.flush();
+        em.clear();
+        tx.commit();
+    }
+    catch (Exception e) {
+        tx.rollback();
+        e.printStackTrace();
+    } finally {
+        em.close();
+    }
         //TODO CREATE ADDRESS SCREEN
         //TODO ADDRESS MODAL
     }
@@ -192,13 +207,11 @@ public class CreateEmployeeController implements Initializable {
         if (this.createEmployeeRolesBoxAdmin.isSelected()) {
             roles.add(Role.ADMIN);
         }
-        //TODO also create subordinates
         personToCreate.setRoles(roles);
+        ObservableList<Person> selectedPersons = createEmployeeSubordinates.getSelectionModel().getSelectedItems();
+        personToCreate.setSubordinates(new HashSet<>(selectedPersons));
         personToCreate.setUsername(this.createEmployeeUsername.getText());
         personToCreate.setPassword(this.createEmployeePassword.getText());
-
-        System.out.println(personToCreate);
-
 
         return personToCreate;
     }
@@ -208,8 +221,13 @@ public class CreateEmployeeController implements Initializable {
      * Initializes the Subordinates Table View
      */
     private void initializeEmployeeTableViewAccordingToAuthorization() {
+        this.createEmployeeSubordinates.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         if (hasManagerAndAdminRole) {
-            //TODO initialize the employees to choose
+            this.createEmployeeSubordinateFirstName.setCellValueFactory(new PropertyValueFactory<Person,String>("firstname"));
+            this.createEmployeeSubordinateLastName.setCellValueFactory(new PropertyValueFactory<Person,String>("lastname"));
+            List<Person> subordinates = this.personController.getPersonsByExactRole(Role.EMPLOYEE);
+            this.subordinates.addAll(subordinates);
+            this.createEmployeeSubordinates.setItems(this.subordinates);
         } else {
             this.createEmployeeSubordinates.setDisable(true);
         }
