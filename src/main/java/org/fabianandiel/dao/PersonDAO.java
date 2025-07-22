@@ -11,31 +11,22 @@ import java.util.List;
 public class PersonDAO<T, ID> extends BaseDAO<T, ID> {
 
 
-
-//TODO build it that it is all the same entity manager instance
-/*
-    public Person save(Person person, EntityManager em) {
+    /**
+     * save a person with a particular entity manager instance
+     * @param person that is supposed to be saved
+     * @param em instance I want to use
+     * @return the successfully saved person
+     * @throws RuntimeException when there is an issue saving the person
+     */
+    public Person save(Person person, EntityManager em) throws RuntimeException {
         try {
-            em.getTransaction().begin();
             em.persist(person);
-            em.getTransaction().commit();
+            //em.getTransaction().commit();
             return person;
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            System.err.println("Error when saving: " + e.getMessage());
-            throw new RuntimeException("Error when saving ", e);
-        } finally {
-            em.close();
+            throw e;
         }
     }
-    */
-
-
-
-
-
 
 
     /**
@@ -68,14 +59,17 @@ public class PersonDAO<T, ID> extends BaseDAO<T, ID> {
         return DAOService.findItemsWithPropertyOrProperties(jpql,Person.class,EntityManagerProvider.getEntityManager(),role);
     }
 
+
+
     /**
      * gets all persons that have only one role
      * @param role role that persons exactly have to have
      * @return a list of persons that at least have only that role
      */
-    public List<Person> getPersonsByExactRole(Role role) {
-        String jpql = "SELECT p FROM Person p WHERE :param MEMBER OF p.roles AND SIZE(p.roles) = 1 AND p.superior IS NULL";
-        return DAOService.findItemsWithPropertyOrProperties(jpql,Person.class,EntityManagerProvider.getEntityManager(),role);
+    public List<Person> getEmployeesWithoutSuperior(Role role) {
+        String jpql = "SELECT p FROM Person p WHERE :param MEMBER OF p.roles AND p.superior IS NULL";
+        var result =  DAOService.findItemsWithPropertyOrProperties(jpql,Person.class,EntityManagerProvider.getEntityManager(),role);
+        return result;
     }
 
     //TODO when time and login is done -
@@ -84,3 +78,4 @@ public class PersonDAO<T, ID> extends BaseDAO<T, ID> {
     //find personByNameAndRole
 
 }
+

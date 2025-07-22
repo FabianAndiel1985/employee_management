@@ -1,8 +1,6 @@
 package org.fabianandiel.gui;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import jakarta.validation.ConstraintViolation;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -117,11 +115,11 @@ public class CreateEmployeeController implements Initializable {
      */
     public void createEmployeeSubmit() {
         Person createdPerson = createPersonFromFields();
-        if(createdPerson == null) {
+        if (createdPerson == null) {
             return;
         }
 
-        if(!CreateEmployeeValidationService.validateCreatedPerson(createdPerson,this.createEmployeeErrorText))
+        if (!CreateEmployeeValidationService.validateCreatedPerson(createdPerson, this.createEmployeeErrorText))
             return;
 
         if (this.createEmployeeErrorText.isVisible())
@@ -129,32 +127,73 @@ public class CreateEmployeeController implements Initializable {
 
 
         EntityManager em = EntityManagerProvider.getEntityManager();
-        EntityTransaction tx = em.getTransaction();
+        Set<Person> selectedSubordinates= new HashSet<>();
 
-    try {
-        tx.begin();
-        Person newPerson = (Person) this.personController.create(createdPerson,em);
-        int batchSize = 30;
-        int i = 0;
-        for (Person p : newPerson.getSubordinates()) {
-            this.subordinates.remove(p);
-            p.setSuperior(newPerson);
-            em.merge(p);
-            if (++i % batchSize == 0) {
-                em.flush();
-                em.clear();
+        try {
+            em.getTransaction().begin();
+            Address rawAddress = createdPerson.getAddress();
+            //manage the address in the persistence context
+            if (rawAddress != null) {
+                Address managedAddress = em.find(Address.class, rawAddress.getId());
+                createdPerson.setAddress(managedAddress);
             }
+
+            Person rawSuperior = createdPerson.getSuperior();
+            //manage the superior in the persistence context
+            if (rawSuperior != null) {
+                Person managedSuperior = em.find(Person.class, rawSuperior.getId());
+                createdPerson.setSuperior(managedSuperior);
+            }
+
+            //Don't need to set subordinates in the person to persist the new person
+            selectedSubordinates = createdPerson.getSubordinates();
+            createdPerson.setSubordinates(new HashSet<>());
+            //persist fully persistence context managed person
+            em.persist(createdPerson);
+            em.flush();
+
+            //makes subordinates managed and updates them with the new superior
+            if (selectedSubordinates != null) {
+                int batchSize = 30;
+                int i = 0;
+
+                for (Person sub : selectedSubordinates) {
+                    Person managedSub = em.find(Person.class, sub.getId());
+                    managedSub.setSuperior(createdPerson);
+                    em.merge(managedSub);
+
+                    if (++i % batchSize == 0) {
+                        em.flush();
+                        em.clear();
+                        createdPerson = em.find(Person.class, createdPerson.getId());
+                    }
+                }
+
+                if (++i % batchSize != 0) {
+                    em.flush();
+                    em.clear();
+                }
+                em.getTransaction().commit();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+                //TODO error handling mti Fehlermeldung
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            return;
         }
-        em.flush();
-        em.clear();
-        tx.commit();
-    }
-    catch (Exception e) {
-        tx.rollback();
-        e.printStackTrace();
-    } finally {
-        em.close();
-    }
+
+        for(Person p:selectedSubordinates) {
+            this.subordinates.remove(p);
+        }
+
+        EntityManagerProvider.shutdown();
+
+
+
+
+        //TODO Update subordinates table
         //TODO CREATE ADDRESS SCREEN
         //TODO ADDRESS MODAL
     }
@@ -223,9 +262,13 @@ public class CreateEmployeeController implements Initializable {
     private void initializeEmployeeTableViewAccordingToAuthorization() {
         this.createEmployeeSubordinates.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         if (hasManagerAndAdminRole) {
-            this.createEmployeeSubordinateFirstName.setCellValueFactory(new PropertyValueFactory<Person,String>("firstname"));
-            this.createEmployeeSubordinateLastName.setCellValueFactory(new PropertyValueFactory<Person,String>("lastname"));
-            List<Person> subordinates = this.personController.getPersonsByExactRole(Role.EMPLOYEE);
+            this.createEmployeeSubordinateFirstName.setCellValueFactory(new PropertyValueFactory<Person, String>("firstname"));
+            this.createEmployeeSubordinateLastName.setCellValueFactory(new PropertyValueFactory<Person, String>("lastname"));
+            List<Person> subordinates = this.personController.getEmployeesWithoutSuperior();
+            System.out.println(subordinates);
+            for(Person p:subordinates) {
+                System.out.println(p.getSuperior());
+            }
             this.subordinates.addAll(subordinates);
             this.createEmployeeSubordinates.setItems(this.subordinates);
         } else {
@@ -235,8 +278,8 @@ public class CreateEmployeeController implements Initializable {
 
 
     /*
-        Displays the role checkboxes according to authorization
-     */
+    Displays the role checkboxes according to authorization
+    */
     private void initializeCheckBoxesAccordingToAuthorization() {
         if (this.hasManagerRole) {
             this.createEmployeeRolesBoxEmployee.setSelected(true);

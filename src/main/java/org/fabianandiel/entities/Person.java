@@ -32,7 +32,7 @@ public class Person {
     @Column(name="lastname",nullable = false,length = 50)
     private String lastname;
 
-    @NotNull(message = "Address can`t be empty") //Jakarta Valdiation
+   // @NotNull(message = "Address can`t be empty") //Jakarta Valdiation
     @ManyToOne
     @JoinColumn(name = "address_id")
     private Address address;
@@ -60,7 +60,7 @@ public class Person {
     @Column(name="password",nullable = false,length=50)
     private String password;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "superior_id")
     private Person superior;
 

@@ -20,16 +20,20 @@ public class PersonController<T, ID> extends BaseController<T, ID> {
         }
     }
 
-//TODO build it that it is all the same entity manager instance
-/* public Person create(Person person, EntityManager em) {
+    /**
+     * save person to database using one specific entity manager instance
+     * @param person the person I want to save
+     * @param em specific entity manager instance
+     * @return the created person
+     */
+    public Person create(Person person, EntityManager em) throws RuntimeException {
         try {
             return this.personDAO.save(person, em);
         } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+            throw e;
         }
-        return null;
     }
-*/
+
 
     /**
      * Get person object by username.
@@ -54,14 +58,12 @@ public class PersonController<T, ID> extends BaseController<T, ID> {
         return this.personDAO.getPersonsByRole(role);
     }
 
-
     /**
-     * gets all persons that have only one role
-     * @param role role that persons exactly have to have
-     * @return a list of persons that at least have only that role
+     * gets all employees without a superior
+     * @return a list of employees with no other role and no superior
      */
-    public List<Person> getPersonsByExactRole(Role role) {
-        return this.personDAO.getPersonsByExactRole(role);
+    public List<Person> getEmployeesWithoutSuperior() {
+        return this.personDAO.getEmployeesWithoutSuperior(Role.EMPLOYEE);
     }
 
 }
