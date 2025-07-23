@@ -53,8 +53,8 @@ public class CreateEmployeeValidationService {
            GUIService.setErrorText("Employees can't have subordinates", createEmployeeErrorText);
            return false;
        }
-        if(roles.size() == 2 && superior != null ) {
-            GUIService.setErrorText("Employees can't have subordinates", createEmployeeErrorText);
+        if((roles.size() == 2 || roles.size() == 3 )  && superior != null ) {
+            GUIService.setErrorText("Managers can`t have superiors", createEmployeeErrorText);
             return false;
         }
         createEmployeeErrorText.setVisible(false);

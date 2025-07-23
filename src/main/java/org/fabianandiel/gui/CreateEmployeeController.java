@@ -20,7 +20,6 @@ import org.fabianandiel.entities.Person;
 import org.fabianandiel.services.EntityManagerProvider;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
-import org.fabianandiel.services.ValidatorProvider;
 import org.fabianandiel.validation.CreateEmployeeValidationService;
 
 import java.io.IOException;
@@ -63,7 +62,7 @@ public class CreateEmployeeController implements Initializable {
     private CheckBox createEmployeeRolesBoxAdmin;
 
     @FXML
-    private ComboBox createEmployeeSuperior;
+    private ComboBox<Person> createEmployeeSuperior;
 
     @FXML
     private TableView createEmployeeSubordinates;
@@ -188,14 +187,15 @@ public class CreateEmployeeController implements Initializable {
             this.subordinates.remove(p);
         }
 
-        EntityManagerProvider.shutdown();
+        em.close();
 
+        if(createdPerson.getRoles().size() == 1  && createdPerson.getRoles().contains(Role.EMPLOYEE)){
+            this.subordinates.add(createdPerson);
+        }
 
-
-
-        //TODO Update subordinates table
-        //TODO CREATE ADDRESS SCREEN
-        //TODO ADDRESS MODAL
+        if((createdPerson.getRoles().size() == 2 || createdPerson.getRoles().size() == 3) && (createdPerson.getRoles().contains(Role.MANAGER) || createdPerson.getRoles().contains(Role.ADMIN))) {
+            this.superiors.add(createdPerson);
+        }
     }
 
 
@@ -249,6 +249,7 @@ public class CreateEmployeeController implements Initializable {
         personToCreate.setRoles(roles);
         ObservableList<Person> selectedPersons = createEmployeeSubordinates.getSelectionModel().getSelectedItems();
         personToCreate.setSubordinates(new HashSet<>(selectedPersons));
+        personToCreate.setSuperior(this.createEmployeeSuperior.getValue());
         personToCreate.setUsername(this.createEmployeeUsername.getText());
         personToCreate.setPassword(this.createEmployeePassword.getText());
 
@@ -265,10 +266,6 @@ public class CreateEmployeeController implements Initializable {
             this.createEmployeeSubordinateFirstName.setCellValueFactory(new PropertyValueFactory<Person, String>("firstname"));
             this.createEmployeeSubordinateLastName.setCellValueFactory(new PropertyValueFactory<Person, String>("lastname"));
             List<Person> subordinates = this.personController.getEmployeesWithoutSuperior();
-            System.out.println(subordinates);
-            for(Person p:subordinates) {
-                System.out.println(p.getSuperior());
-            }
             this.subordinates.addAll(subordinates);
             this.createEmployeeSubordinates.setItems(this.subordinates);
         } else {

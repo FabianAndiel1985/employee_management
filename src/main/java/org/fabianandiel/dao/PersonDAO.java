@@ -67,9 +67,8 @@ public class PersonDAO<T, ID> extends BaseDAO<T, ID> {
      * @return a list of persons that at least have only that role
      */
     public List<Person> getEmployeesWithoutSuperior(Role role) {
-        String jpql = "SELECT p FROM Person p WHERE :param MEMBER OF p.roles AND p.superior IS NULL";
-        var result =  DAOService.findItemsWithPropertyOrProperties(jpql,Person.class,EntityManagerProvider.getEntityManager(),role);
-        return result;
+        String jpql = "SELECT p FROM Person p WHERE SIZE(p.roles) = 1 AND :param MEMBER OF p.roles AND p.superior IS NULL";
+        return DAOService.findItemsWithPropertyOrProperties(jpql,Person.class,EntityManagerProvider.getEntityManager(),role);
     }
 
     //TODO when time and login is done -

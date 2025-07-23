@@ -27,12 +27,12 @@
             <Font size="20.0" />
          </font>
       </Text>
-      <TableView fx:id="employeeOverviewAllEmployees" layoutX="87.0" layoutY="123.0" prefHeight="200.0" prefWidth="303.0">
+      <TableView fx:id="employeeOverviewAllEmployees" layoutX="87.0" layoutY="123.0" prefHeight="200.0" prefWidth="368.0">
         <columns>
-          <TableColumn prefWidth="75.0" text="Id" />
-          <TableColumn prefWidth="75.0" text="firstname" />
-            <TableColumn prefWidth="75.0" text="lastname" />
-            <TableColumn prefWidth="75.0" text="reporting to" />
+          <TableColumn fx:id="employeeOverviewId" prefWidth="75.0" text="Id" />
+          <TableColumn fx:id="employeeOverviewFirstname" prefWidth="75.0" text="firstname" />
+            <TableColumn fx:id="employeeOverviewLastname" prefWidth="75.0" text="lastname" />
+            <TableColumn fx:id="employeeOverviewSuperior" prefWidth="140.79998779296875" text="reporting to" />
         </columns>
       </TableView>
       <Text layoutX="14.0" layoutY="364.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Employees reporting to me" wrappingWidth="247.59996032714844">
@@ -42,11 +42,11 @@
       </Text>
       <TableView fx:id="employeeOverviewSubordinates" layoutX="87.0" layoutY="380.0" prefHeight="200.0" prefWidth="378.0">
          <columns>
-            <TableColumn prefWidth="75.0" text="Id" />
-            <TableColumn prefWidth="75.0" text="firstname" />
-            <TableColumn prefWidth="75.0" text="lastname" />
-            <TableColumn prefWidth="75.0" text="address" />
-            <TableColumn prefWidth="75.0" text="status" />
+            <TableColumn fx:id="employeeOverviewRTMid" prefWidth="75.0" text="Id" />
+            <TableColumn fx:id="employeeOverviewRTMfirstname" prefWidth="75.0" text="firstname" />
+            <TableColumn fx:id="employeeOverviewRTMlastname" prefWidth="75.0" text="lastname" />
+            <TableColumn fx:id="employeeOverviewRTMaddress" prefWidth="75.0" text="address" />
+            <TableColumn fx:id="employeeOverviewRTMstatus" prefWidth="75.0" text="status" />
          </columns>
       </TableView>
       <Button fx:id="employeeOverviewNewEmployee" layoutX="87.0" layoutY="595.0" mnemonicParsing="false" onAction="#goToCreateEmployee" text="Create new employee" />
