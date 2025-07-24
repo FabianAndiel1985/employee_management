@@ -35,12 +35,12 @@
             <TableColumn fx:id="employeeOverviewSuperior" prefWidth="140.79998779296875" text="reporting to" />
         </columns>
       </TableView>
-      <Text layoutX="14.0" layoutY="364.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Employees reporting to me" wrappingWidth="247.59996032714844">
+      <Text fx:id="employeeOverviewText" layoutX="14.0" layoutY="364.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Employees reporting to me" wrappingWidth="247.59996032714844">
          <font>
             <Font size="20.0" />
          </font>
       </Text>
-      <TableView fx:id="employeeOverviewSubordinates" layoutX="87.0" layoutY="380.0" prefHeight="200.0" prefWidth="378.0">
+      <TableView fx:id="employeeOverviewUpdateableEmployees" layoutX="87.0" layoutY="380.0" prefHeight="200.0" prefWidth="378.0">
          <columns>
             <TableColumn fx:id="employeeOverviewRTMid" prefWidth="75.0" text="Id" />
             <TableColumn fx:id="employeeOverviewRTMfirstname" prefWidth="75.0" text="firstname" />
@@ -51,6 +51,6 @@
       </TableView>
       <Button fx:id="employeeOverviewNewEmployee" layoutX="87.0" layoutY="595.0" mnemonicParsing="false" onAction="#goToCreateEmployee" text="Create new employee" />
       <Button fx:id="employeeOverviewDeleteEmployee" layoutX="233.0" layoutY="595.0" mnemonicParsing="false" text="Delete employee" />
-      <Button fx:id="employeeOverviewUpdateEmployee" layoutX="350.0" layoutY="595.0" mnemonicParsing="false" text="Update Employee" />
+      <Button fx:id="employeeOverviewUpdateEmployee" layoutX="350.0" layoutY="595.0" mnemonicParsing="false" onAction="#onUpdate" text="Update Employee" />
    </children>
 </AnchorPane>

@@ -6,6 +6,7 @@ import org.fabianandiel.entities.Person;
 import org.fabianandiel.services.DAOService;
 import org.fabianandiel.services.EntityManagerProvider;
 import java.util.List;
+import java.util.UUID;
 
 
 public class PersonDAO<T, ID> extends BaseDAO<T, ID> {
@@ -69,6 +70,11 @@ public class PersonDAO<T, ID> extends BaseDAO<T, ID> {
     public List<Person> getEmployeesWithoutSuperior(Role role) {
         String jpql = "SELECT p FROM Person p WHERE SIZE(p.roles) = 1 AND :param MEMBER OF p.roles AND p.superior IS NULL";
         return DAOService.findItemsWithPropertyOrProperties(jpql,Person.class,EntityManagerProvider.getEntityManager(),role);
+    }
+
+    public List<Person> getPersonBySuperiorID(UUID id) {
+        String jpql = "SELECT p FROM Person p WHERE p.superior.id = :param";
+        return DAOService.findItemsWithPropertyOrProperties(jpql,Person.class,EntityManagerProvider.getEntityManager(),id);
     }
 
     //TODO when time and login is done -

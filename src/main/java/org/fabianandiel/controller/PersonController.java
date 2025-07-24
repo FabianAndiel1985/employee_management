@@ -6,6 +6,7 @@ import org.fabianandiel.dao.PersonDAO;
 import org.fabianandiel.entities.Person;
 import org.fabianandiel.interfaces.DAOInterface;
 import java.util.List;
+import java.util.UUID;
 
 public class PersonController<T, ID> extends BaseController<T, ID> {
 
@@ -47,6 +48,19 @@ public class PersonController<T, ID> extends BaseController<T, ID> {
         }
         Person person = personList.getFirst();
         return person;
+    }
+
+    /**
+     * Get person object by superiorID.
+     *
+     * @param id of the superior
+     */
+    public List<Person> getPersonBySuperiorID(UUID id) {
+        List<Person> persons = this.personDAO.getPersonBySuperiorID(id);
+        if (persons.size() == 0) {
+            return null;
+        }
+        return persons;
     }
 
     /**

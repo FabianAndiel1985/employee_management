@@ -10,6 +10,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import org.fabianandiel.constants.Constants;
 import org.fabianandiel.constants.Role;
+import org.fabianandiel.context.UpdateContext;
 import org.fabianandiel.context.UserContext;
 import org.fabianandiel.controller.AddressController;
 import org.fabianandiel.controller.PersonController;
@@ -47,6 +48,9 @@ public class CreateEmployeeController implements Initializable {
     private Button createEmployeeNewAddress;
 
     @FXML
+    private Button createEmployeeSubmitEmployee;
+
+    @FXML
     private TextField createEmployeeTelephone;
 
     @FXML
@@ -79,6 +83,9 @@ public class CreateEmployeeController implements Initializable {
     @FXML
     private TableColumn<Person, String> createEmployeeSubordinateLastName;
 
+    @FXML
+    private Text employeeFormHeading;
+
 
     private PersonController personController = new PersonController<>(new PersonDAO<>());
 
@@ -100,14 +107,49 @@ public class CreateEmployeeController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        Person personToUpdate = UpdateContext.getPersonToUpdate();
+
         this.hasManagerRole = UserContext.getInstance().hasRole(Role.EMPLOYEE) && UserContext.getInstance().hasRole(Role.MANAGER) && !UserContext.getInstance().hasRole(Role.ADMIN);
         this.hasManagerAndAdminRole = UserContext.getInstance().hasRole(Role.ADMIN);
         initializeAddressDropDown();
         initalizeSuperiorDropdown();
         initializeCheckBoxesAccordingToAuthorization();
         initializeEmployeeTableViewAccordingToAuthorization();
+
+        if (personToUpdate != null) {
+            this.changeGUIintoUpdateMode();
+            if(UserContext.getInstance().hasRole(Role.ADMIN)) {
+                System.out.println("GOES HERE INTO ADMIN: ");
+                List<Person> persons = this.personController.getPersonBySuperiorID(personToUpdate.getId());
+                System.out.println(persons);
+                this.subordinates.addAll(persons);
+            }
+            this.fillTheFieldsWithPersonToUpdatesValue(personToUpdate);
+        }
     }
 
+    private void fillTheFieldsWithPersonToUpdatesValue(Person person) {
+
+        this.createEmployeeFirstname.setText(person.getFirstname());
+        this.createEmployeeLastname.setText(person.getLastname());
+        this.createEmployeeTelephone.setText(String.valueOf(person.getTelephone()));
+        this.createEmployeeEmail.setText(person.getEmail());
+        this.createEmployeeUsername.setText(person.getUsername());
+        this.createEmployeePassword.setText(person.getPassword());
+        this.createEmployeeAddress.getSelectionModel().select(person.getAddress());
+        if (person.getSuperior() != null) {
+            this.createEmployeeSuperior.getSelectionModel().select(person.getSuperior());
+        }
+        Set<Role> roles = person.getRoles();
+        this.createEmployeeRolesBoxEmployee.setSelected(roles.contains(Role.EMPLOYEE));
+        this.createEmployeeRolesBoxManager.setSelected(roles.contains(Role.MANAGER));
+        this.createEmployeeRolesBoxAdmin.setSelected(roles.contains(Role.ADMIN));
+        if (person.getSubordinates() != null && !person.getSubordinates().isEmpty()) {
+            for (Person subordinate : person.getSubordinates()) {
+                this.createEmployeeSubordinates.getSelectionModel().select(subordinate);
+            }
+        }
+    }
 
     /**
      * submits and validates the person object
@@ -124,9 +166,16 @@ public class CreateEmployeeController implements Initializable {
         if (this.createEmployeeErrorText.isVisible())
             this.createEmployeeErrorText.setVisible(false);
 
+        //If it is just an update - do it and return
+        if(UpdateContext.getPersonToUpdate() != null) {
+            //........
+
+            return;
+        }
+
 
         EntityManager em = EntityManagerProvider.getEntityManager();
-        Set<Person> selectedSubordinates= new HashSet<>();
+        Set<Person> selectedSubordinates = new HashSet<>();
 
         try {
             em.getTransaction().begin();
@@ -176,24 +225,24 @@ public class CreateEmployeeController implements Initializable {
             }
         } catch (Exception e) {
             e.printStackTrace();
-                //TODO error handling mti Fehlermeldung
+            //TODO error handling mti Fehlermeldung
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
             return;
         }
 
-        for(Person p:selectedSubordinates) {
+        for (Person p : selectedSubordinates) {
             this.subordinates.remove(p);
         }
 
         em.close();
 
-        if(createdPerson.getRoles().size() == 1  && createdPerson.getRoles().contains(Role.EMPLOYEE)){
+        if (createdPerson.getRoles().size() == 1 && createdPerson.getRoles().contains(Role.EMPLOYEE)) {
             this.subordinates.add(createdPerson);
         }
 
-        if((createdPerson.getRoles().size() == 2 || createdPerson.getRoles().size() == 3) && (createdPerson.getRoles().contains(Role.MANAGER) || createdPerson.getRoles().contains(Role.ADMIN))) {
+        if ((createdPerson.getRoles().size() == 2 || createdPerson.getRoles().size() == 3) && (createdPerson.getRoles().contains(Role.MANAGER) || createdPerson.getRoles().contains(Role.ADMIN))) {
             this.superiors.add(createdPerson);
         }
     }
@@ -201,6 +250,15 @@ public class CreateEmployeeController implements Initializable {
 
     //=======================================================================================
     //=========================HELPER METHODS ===============================================
+
+
+    /**
+     * Changes the create employee gui into an update gui
+     */
+    private void changeGUIintoUpdateMode() {
+        this.employeeFormHeading.setText("Update employee");
+        this.createEmployeeSubmitEmployee.setText("Update");
+    }
 
 
     /**
@@ -223,6 +281,7 @@ public class CreateEmployeeController implements Initializable {
      */
     public void goBackEmployeeOverview() {
         try {
+            UpdateContext.clearSession();
             SceneManager.switchScene("/org/fabianandiel/gui/employeeOverviewView.fxml", 530, 671, "Employee Overview");
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
@@ -289,9 +348,9 @@ public class CreateEmployeeController implements Initializable {
     }
 
 
-    /*
-    Displays the role checkboxes according to authorization
-    */
+    /**
+     * Displays the role checkboxes according to authorization
+     */
     private void initializeCheckBoxesAccordingToAuthorization() {
         if (this.hasManagerRole) {
             this.createEmployeeRolesBoxEmployee.setSelected(true);
@@ -307,6 +366,26 @@ public class CreateEmployeeController implements Initializable {
         List<Address> queriedAddresses = this.addressController.getAll(Address.class);
         this.addresses.addAll(queriedAddresses);
         this.createEmployeeAddress.setItems(this.addresses);
+    }
+
+
+    /**
+     * reset the form values
+     */
+    public void onReset() {
+        this.createEmployeeFirstname.clear();
+        this.createEmployeeLastname.clear();
+        this.createEmployeeTelephone.clear();
+        this.createEmployeeEmail.clear();
+        this.createEmployeeUsername.clear();
+        this.createEmployeePassword.clear();
+        this.createEmployeeAddress.getSelectionModel().clearSelection();
+        this.createEmployeeSuperior.getSelectionModel().clearSelection();
+        this.createEmployeeRolesBoxEmployee.setSelected(false);
+        this.createEmployeeRolesBoxManager.setSelected(false);
+        this.createEmployeeRolesBoxAdmin.setSelected(false);
+        this.createEmployeeSubordinates.getSelectionModel().clearSelection();
+        this.createEmployeeErrorText.setVisible(false);
     }
 
 

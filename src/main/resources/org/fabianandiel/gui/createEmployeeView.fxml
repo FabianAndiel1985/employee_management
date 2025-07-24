@@ -55,14 +55,14 @@
              <TableColumn fx:id="createEmployeeSubordinateLastName" prefWidth="75.0" text="Lastname" />
            </columns>
          </TableView>
-         <Button fx:id="createEmployeeNewAddress" layoutX="56.0" layoutY="241.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="120.0" text="Create new address" onAction="#goToAddressForm"/>
-         <Text layoutX="180.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Create a employee" wrappingWidth="170.0">
+         <Button fx:id="createEmployeeNewAddress" layoutX="56.0" layoutY="241.0" mnemonicParsing="false" onAction="#goToAddressForm" prefHeight="26.0" prefWidth="120.0" text="Create new address" />
+         <Text fx:id="employeeFormHeading" layoutX="180.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Create a employee" wrappingWidth="170.0">
             <font>
                <Font size="20.0" />
             </font>
          </Text>
-         <Button fx:id="createEmployeeSubmit" layoutX="340.0" layoutY="540.0" mnemonicParsing="false" onAction="#createEmployeeSubmit" text="Submit" />
-         <Button fx:id="createEmployeeResetForm" layoutX="422.0" layoutY="538.0" mnemonicParsing="false" text="Reset" />
+         <Button fx:id="createEmployeeSubmitEmployee" layoutX="340.0" layoutY="540.0" mnemonicParsing="false" onAction="#createEmployeeSubmit" text="Submit" />
+         <Button fx:id="createEmployeeResetForm" layoutX="422.0" layoutY="538.0" mnemonicParsing="false" onAction="#onReset" text="Reset" />
          <Text fx:id="createEmployeeErrorText" fill="#f73a3a" layoutX="340.0" layoutY="500.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Error Text" visible="false" wrappingWidth="149.5999999999999">
             <font>
                <Font size="17.0" />

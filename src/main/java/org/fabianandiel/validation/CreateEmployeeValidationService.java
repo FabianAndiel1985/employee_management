@@ -49,14 +49,20 @@ public class CreateEmployeeValidationService {
      * @return
      */
     private static boolean validateSubordinatesAndSuperior(Set<Person> subordinates, Person superior, Set<Role> roles, Text createEmployeeErrorText ) {
-       if(roles.contains(Role.EMPLOYEE) && roles.size() == 1 && subordinates.size()>= 1 ) {
+       if(roles.contains(Role.EMPLOYEE) && roles.size() == 1 && subordinates.size()> 0 ) {
            GUIService.setErrorText("Employees can't have subordinates", createEmployeeErrorText);
            return false;
        }
         if((roles.size() == 2 || roles.size() == 3 )  && superior != null ) {
-            GUIService.setErrorText("Managers can`t have superiors", createEmployeeErrorText);
+            GUIService.setErrorText("Managers and Admins can`t have superiors", createEmployeeErrorText);
             return false;
         }
+        if(roles.contains(Role.ADMIN) && (superior  != null || subordinates.size()>0))
+        {
+            GUIService.setErrorText("Admins can not have superiors and subordinates", createEmployeeErrorText);
+            return false;
+        }
+
         createEmployeeErrorText.setVisible(false);
         return true;
     }
