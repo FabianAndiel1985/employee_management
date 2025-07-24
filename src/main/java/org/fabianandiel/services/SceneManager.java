@@ -49,6 +49,7 @@ public class SceneManager {
 
             stage.setScene(scene);
             stage.setTitle(title);
+            stage.centerOnScreen();
             stage.show();
 
         } catch (IOException e) {
