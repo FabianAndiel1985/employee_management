@@ -8,16 +8,16 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="671.0" prefWidth="530.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.fabianandiel.gui.EmployeeOverviewController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" pickOnBounds="false" prefHeight="657.0" prefWidth="513.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.fabianandiel.gui.EmployeeOverviewController">
    <children>
-      <Button fx:id="employeeOverviewGoBack" layoutX="235.0" layoutY="634.0" mnemonicParsing="false" onAction="#goBackToMainView" text="Go Back" />
+      <Button fx:id="employeeOverviewGoBack" layoutX="233.0" layoutY="630.0" mnemonicParsing="false" onAction="#goBackToMainView" prefHeight="11.0" prefWidth="74.0" text="Go Back" />
       <Text fx:id="employeeOverviewErrorText" fill="#f73a3a" layoutX="112.0" layoutY="249.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" visible="false" wrappingWidth="174.13671875">
          <font>
             <Font size="17.0" />
          </font>
       </Text>
       <VBox layoutX="58.0" layoutY="436.0" prefHeight="58.0" prefWidth="82.0" />
-      <Text layoutX="180.0" layoutY="52.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Employee overview" wrappingWidth="170.0">
+      <Text layoutX="180.0" layoutY="53.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Employee overview" wrappingWidth="170.0">
          <font>
             <Font size="20.0" />
          </font>

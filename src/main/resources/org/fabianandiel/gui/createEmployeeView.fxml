@@ -55,7 +55,7 @@
              <TableColumn fx:id="createEmployeeSubordinateLastName" prefWidth="75.0" text="Lastname" />
            </columns>
          </TableView>
-         <Button fx:id="createEmployeeNewAddress" layoutX="56.0" layoutY="241.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="120.0" text="Create new address" />
+         <Button fx:id="createEmployeeNewAddress" layoutX="56.0" layoutY="241.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="120.0" text="Create new address" onAction="#goToAddressForm"/>
          <Text layoutX="180.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Create a employee" wrappingWidth="170.0">
             <font>
                <Font size="20.0" />

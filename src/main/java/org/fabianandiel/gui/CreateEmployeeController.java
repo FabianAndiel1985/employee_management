@@ -204,6 +204,21 @@ public class CreateEmployeeController implements Initializable {
 
 
     /**
+     * goes back to address form
+     */
+    public void goToAddressForm() {
+        try {
+            SceneManager.switchScene("/org/fabianandiel/gui/newAddress.fxml", 407, 471, "Create Address");
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, this.createEmployeeErrorText);
+        } catch (IOException e) {
+            e.printStackTrace();
+            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, this.createEmployeeErrorText);
+        }
+    }
+
+    /**
      * goes back to employee overview
      */
     public void goBackEmployeeOverview() {
