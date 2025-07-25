@@ -50,7 +50,7 @@
          </columns>
       </TableView>
       <Button fx:id="employeeOverviewNewEmployee" layoutX="87.0" layoutY="595.0" mnemonicParsing="false" onAction="#goToCreateEmployee" text="Create new employee" />
-      <Button fx:id="employeeOverviewDeleteEmployee" layoutX="233.0" layoutY="595.0" mnemonicParsing="false" text="Delete employee" />
+      <Button fx:id="employeeOverviewDeleteEmployee" layoutX="233.0" layoutY="595.0" mnemonicParsing="false" onAction="#setEmployeeToInactive" text="Delete employee" />
       <Button fx:id="employeeOverviewUpdateEmployee" layoutX="350.0" layoutY="595.0" mnemonicParsing="false" onAction="#onUpdate" text="Update Employee" />
    </children>
 </AnchorPane>

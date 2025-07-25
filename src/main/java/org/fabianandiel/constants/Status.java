@@ -4,5 +4,6 @@ public enum Status {
     PRESENT,
     ABSENT,
     MEDICAL_LEAVE,
-    VACATION
+    VACATION,
+    INACTIVE
 }

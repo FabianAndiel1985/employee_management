@@ -9,7 +9,7 @@ import org.fabianandiel.services.ValidatorProvider;
 
 import java.util.Set;
 
-public class CreateEmployeeValidationService {
+public class EmployeeFormValidationService {
 
     /**
      * validates the the roles of a person, if there is a combination, that is`t supposed to exist

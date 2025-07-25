@@ -87,7 +87,7 @@ public class CreateAddressController implements Initializable {
     public void goToCreateEmployee() {
         try {
             System.out.println("Goes here");
-            SceneManager.switchScene("/org/fabianandiel/gui/createEmployeeView.fxml", 530, 607, "Create Employee");
+            SceneManager.switchScene("/org/fabianandiel/gui/employeeFormView.fxml", 530, 607, "Create Employee");
         } catch (IOException e) {
             e.printStackTrace();
             GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, this.newAddressErrorText);

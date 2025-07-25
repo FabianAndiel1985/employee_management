@@ -18,16 +18,17 @@ import org.fabianandiel.dao.AddressDAO;
 import org.fabianandiel.dao.PersonDAO;
 import org.fabianandiel.entities.Address;
 import org.fabianandiel.entities.Person;
+import org.fabianandiel.services.EmployeeCRUDService;
 import org.fabianandiel.services.EntityManagerProvider;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
-import org.fabianandiel.validation.CreateEmployeeValidationService;
+import org.fabianandiel.validation.EmployeeFormValidationService;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-public class CreateEmployeeController implements Initializable {
+public class EmployeeFormController implements Initializable {
 
     @FXML
     private Button createEmployeeGoBack;
@@ -118,11 +119,11 @@ public class CreateEmployeeController implements Initializable {
 
         if (personToUpdate != null) {
             this.changeGUIintoUpdateMode();
-            if(UserContext.getInstance().hasRole(Role.ADMIN)) {
-                System.out.println("GOES HERE INTO ADMIN: ");
+            if (this.hasManagerAndAdminRole) {
                 List<Person> persons = this.personController.getPersonBySuperiorID(personToUpdate.getId());
-                System.out.println(persons);
-                this.subordinates.addAll(persons);
+                if (persons != null) {
+                    this.subordinates.addAll(persons);
+                }
             }
             this.fillTheFieldsWithPersonToUpdatesValue(personToUpdate);
         }
@@ -152,98 +153,28 @@ public class CreateEmployeeController implements Initializable {
     }
 
     /**
-     * submits and validates the person object
+     * submits and validates the new employee
      */
-    public void createEmployeeSubmit() {
-        Person createdPerson = createPersonFromFields();
+    public void employeeFormUpdateCreate() {
+        Person createdPerson = this.createPersonFromFields();
         if (createdPerson == null) {
             return;
         }
 
-        if (!CreateEmployeeValidationService.validateCreatedPerson(createdPerson, this.createEmployeeErrorText))
+        if (!EmployeeFormValidationService.validateCreatedPerson(createdPerson, this.createEmployeeErrorText))
             return;
 
         if (this.createEmployeeErrorText.isVisible())
             this.createEmployeeErrorText.setVisible(false);
 
-        //If it is just an update - do it and return
-        if(UpdateContext.getPersonToUpdate() != null) {
-            //........
-
-            return;
-        }
-
-
         EntityManager em = EntityManagerProvider.getEntityManager();
         Set<Person> selectedSubordinates = new HashSet<>();
 
-        try {
-            em.getTransaction().begin();
-            Address rawAddress = createdPerson.getAddress();
-            //manage the address in the persistence context
-            if (rawAddress != null) {
-                Address managedAddress = em.find(Address.class, rawAddress.getId());
-                createdPerson.setAddress(managedAddress);
-            }
 
-            Person rawSuperior = createdPerson.getSuperior();
-            //manage the superior in the persistence context
-            if (rawSuperior != null) {
-                Person managedSuperior = em.find(Person.class, rawSuperior.getId());
-                createdPerson.setSuperior(managedSuperior);
-            }
-
-            //Don't need to set subordinates in the person to persist the new person
-            selectedSubordinates = createdPerson.getSubordinates();
-            createdPerson.setSubordinates(new HashSet<>());
-            //persist fully persistence context managed person
-            em.persist(createdPerson);
-            em.flush();
-
-            //makes subordinates managed and updates them with the new superior
-            if (selectedSubordinates != null) {
-                int batchSize = 30;
-                int i = 0;
-
-                for (Person sub : selectedSubordinates) {
-                    Person managedSub = em.find(Person.class, sub.getId());
-                    managedSub.setSuperior(createdPerson);
-                    em.merge(managedSub);
-
-                    if (++i % batchSize == 0) {
-                        em.flush();
-                        em.clear();
-                        createdPerson = em.find(Person.class, createdPerson.getId());
-                    }
-                }
-
-                if (++i % batchSize != 0) {
-                    em.flush();
-                    em.clear();
-                }
-                em.getTransaction().commit();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            //TODO error handling mti Fehlermeldung
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            return;
-        }
-
-        for (Person p : selectedSubordinates) {
-            this.subordinates.remove(p);
-        }
-
-        em.close();
-
-        if (createdPerson.getRoles().size() == 1 && createdPerson.getRoles().contains(Role.EMPLOYEE)) {
-            this.subordinates.add(createdPerson);
-        }
-
-        if ((createdPerson.getRoles().size() == 2 || createdPerson.getRoles().size() == 3) && (createdPerson.getRoles().contains(Role.MANAGER) || createdPerson.getRoles().contains(Role.ADMIN))) {
-            this.superiors.add(createdPerson);
+        if (UpdateContext.getPersonToUpdate() == null) {
+            EmployeeCRUDService.createNewPerson(em, createdPerson, this.subordinates, this.superiors);
+        } else {
+            EmployeeCRUDService.updatePerson(em, createdPerson, this.subordinates, this.superiors);
         }
     }
 

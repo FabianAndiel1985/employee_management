@@ -12,7 +12,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane layoutY="-20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="607.0" prefWidth="530.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.fabianandiel.gui.CreateEmployeeController">
+<AnchorPane layoutY="-20.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="607.0" prefWidth="530.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.fabianandiel.gui.EmployeeFormController">
       <children>
          <Button fx:id="createEmployeeGoBack" layoutX="235.0" layoutY="566.0" mnemonicParsing="false" onAction="#goBackEmployeeOverview" text="Go Back" />
          <Text fx:id="employeeOverviewErrorText" fill="#f73a3a" layoutX="112.0" layoutY="249.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" visible="false" wrappingWidth="174.13671875">
@@ -61,7 +61,7 @@
                <Font size="20.0" />
             </font>
          </Text>
-         <Button fx:id="createEmployeeSubmitEmployee" layoutX="340.0" layoutY="540.0" mnemonicParsing="false" onAction="#createEmployeeSubmit" text="Submit" />
+         <Button fx:id="createEmployeeSubmitEmployee" layoutX="340.0" layoutY="540.0" mnemonicParsing="false" onAction="#employeeFormUpdateCreate" text="Submit" />
          <Button fx:id="createEmployeeResetForm" layoutX="422.0" layoutY="538.0" mnemonicParsing="false" onAction="#onReset" text="Reset" />
          <Text fx:id="createEmployeeErrorText" fill="#f73a3a" layoutX="340.0" layoutY="500.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Error Text" visible="false" wrappingWidth="149.5999999999999">
             <font>

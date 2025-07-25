@@ -14,8 +14,11 @@ import org.fabianandiel.context.UserContext;
 import org.fabianandiel.controller.PersonController;
 import org.fabianandiel.dao.PersonDAO;
 import org.fabianandiel.entities.Person;
+import org.fabianandiel.services.EmployeeCRUDService;
+import org.fabianandiel.services.EntityManagerProvider;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -77,18 +80,10 @@ public class EmployeeOverviewController implements Initializable {
 
     private ObservableList<Person> allEmployees = FXCollections.observableArrayList();
 
-/*
-    private ObservableList<Person> employeesReportingToMe= FXCollections.observableArrayList();
-
-    //Only used for Admin
-    private ObservableList<Person> employeesReportingToMeAndManagers= FXCollections.observableArrayList();
+    private ObservableList<Person> updateableEmployees = FXCollections.observableArrayList();
 
 
- */
-    private ObservableList<Person> updateableEmployees= FXCollections.observableArrayList();
-
-
-    private PersonController personController= new PersonController(new PersonDAO());
+    private PersonController personController = new PersonController(new PersonDAO());
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -115,25 +110,27 @@ public class EmployeeOverviewController implements Initializable {
         this.employeeOverviewRTMlastname.setCellValueFactory(new PropertyValueFactory<Person, String>("lastname"));
         this.employeeOverviewRTMaddress.setCellValueFactory(new PropertyValueFactory<Person, String>("address"));
         this.employeeOverviewRTMstatus.setCellValueFactory(new PropertyValueFactory<Person, String>("status"));
-        List<Person> personsWithUserAsSuperior = this.allEmployees.stream()
-                .filter((empl) -> {
-                    if (empl.getSuperior() != null) {
-                        return empl.getSuperior().getId().equals(UserContext.getInstance().getId());
-                    }
-                    return false;
-                })
-                .toList();
+        if (UserContext.getInstance().hasRole(Role.MANAGER) && UserContext.getInstance().getRoles().size() == 2 ) {
+            List<Person> personsWithUserAsSuperior = this.allEmployees.stream()
+                    .filter((empl) -> {
+                        if (empl.getSuperior() != null) {
+                            //TODO think if managers may assign unassigned employees to themselves
+                            return empl.getSuperior().getId().equals(UserContext.getInstance().getId());
+                        }
+                        return false;
+                    })
+                    .toList();
+
+            this.updateableEmployees.addAll(personsWithUserAsSuperior);
+        }
         //Includes the managers and other admins to table view that they can be updated by the logged in admin
-        if(UserContext.getInstance().hasRole(Role.ADMIN)) {
+        if (UserContext.getInstance().hasRole(Role.ADMIN)) {
             List<Person> managersAndAdmins = this.allEmployees.stream().filter((person) -> {
                 return (person.getRoles().contains(Role.MANAGER) || person.getRoles().contains(Role.ADMIN)) && !person.getId().equals(UserContext.getInstance().getId());
             }).toList();
             this.updateableEmployees.addAll(managersAndAdmins);
         }
-        //Includes only the persons reporting to loggedIn manager
-        else {
-            this.updateableEmployees.addAll(personsWithUserAsSuperior);
-        }
+
         this.employeeOverviewUpdateableEmployees.setItems(this.updateableEmployees);
 
         this.employeeOverviewUpdateableEmployees.getSelectionModel()
@@ -141,21 +138,23 @@ public class EmployeeOverviewController implements Initializable {
                 .addListener((observable, oldValue, newValue) -> {
                     if (newValue != null) {
                         handleRowSelection(newValue);
-                    }
-                    else {
+                    } else {
                         this.employeeOverviewUpdateEmployee.setDisable(true);
                     }
                 });
     }
 
 
-
+    /**
+     * saves the person to update to a context and continue
+     */
     public void onUpdate() {
-    ObservableList<Person> selectedPersons = this.employeeOverviewUpdateableEmployees.getSelectionModel().getSelectedItems();
-    if(selectedPersons.size() == 0 || selectedPersons.size() > 1) {
-        this.employeeOverviewUpdateEmployee.setDisable(true);
-        return;
-    }
+        ObservableList<Person> selectedPersons = this.employeeOverviewUpdateableEmployees.getSelectionModel().getSelectedItems();
+        if (selectedPersons.size() == 0 || selectedPersons.size() > 1) {
+            this.employeeOverviewUpdateEmployee.setDisable(true);
+            return;
+        }
+        UpdateContext.clearSession();
         this.employeeOverviewUpdateEmployee.setDisable(false);
         Person person = selectedPersons.getFirst();
         UpdateContext.initSession(person);
@@ -188,12 +187,26 @@ public class EmployeeOverviewController implements Initializable {
         this.employeeOverviewAllEmployees.setItems(this.allEmployees);
     }
 
+
+    /**
+     * Sets the employee to update to inactive and removes subordinates and superiors
+     */
+    public void setEmployeeToInactive() {
+        ObservableList<Person> selectedPersons = this.employeeOverviewUpdateableEmployees.getSelectionModel().getSelectedItems();
+
+        Person person = selectedPersons.getFirst();
+
+        EmployeeCRUDService.setPersonInactive(EntityManagerProvider.getEntityManager(),person,this.allEmployees,this.updateableEmployees);
+        this.initializeAllEmployees();
+    }
+
+
     /**
      * goes to create employee form
      */
     public void goToCreateEmployee() {
         try {
-            SceneManager.switchScene("/org/fabianandiel/gui/createEmployeeView.fxml", 530, 607, "Create Employee");
+            SceneManager.switchScene("/org/fabianandiel/gui/employeeFormView.fxml", 530, 607, "Create Employee");
         } catch (IOException e) {
             e.printStackTrace();
             GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, employeeOverviewErrorText);
