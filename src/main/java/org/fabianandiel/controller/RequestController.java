@@ -86,4 +86,16 @@ public class RequestController<T, ID> extends BaseController<T, ID> {
         return requests;
     }
 
+
+    /**
+     * get the requests that have either one status or another one
+     * @param status to start
+     * @param statusOne status to end
+     * @return gives a list of those requests
+     */
+    public List<Request> getRequestsByStatus(RequestStatus status, RequestStatus statusOne ) {
+        List<Request> requests = this.requestDAO.getRequestsByStatus(status,statusOne);
+        return requests;
+    }
+
 }

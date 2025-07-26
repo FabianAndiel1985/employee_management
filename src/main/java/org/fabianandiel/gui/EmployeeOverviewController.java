@@ -1,5 +1,6 @@
 package org.fabianandiel.gui;
 
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public class EmployeeOverviewController implements Initializable {
 
@@ -41,7 +43,6 @@ public class EmployeeOverviewController implements Initializable {
     @FXML
     private Button employeeOverviewUpdateEmployee;
 
-
     @FXML
     private TableView<Person> employeeOverviewAllEmployees;
 
@@ -56,6 +57,12 @@ public class EmployeeOverviewController implements Initializable {
 
     @FXML
     private TableColumn employeeOverviewSuperior;
+
+    @FXML
+    private TableColumn employeeOverviewStatus;
+
+    @FXML
+    private TableColumn<Person, String> employeeOverviewRole;
 
     @FXML
     private TableView<Person> employeeOverviewUpdateableEmployees;
@@ -74,6 +81,9 @@ public class EmployeeOverviewController implements Initializable {
 
     @FXML
     private TableColumn employeeOverviewRTMstatus;
+
+    @FXML
+    private TableColumn<Person, String>  employeeOverviewRTMrole;
 
     @FXML
     private Text employeeOverviewText;
@@ -109,7 +119,6 @@ public class EmployeeOverviewController implements Initializable {
         this.employeeOverviewRTMfirstname.setCellValueFactory(new PropertyValueFactory<Person, String>("firstname"));
         this.employeeOverviewRTMlastname.setCellValueFactory(new PropertyValueFactory<Person, String>("lastname"));
         this.employeeOverviewRTMaddress.setCellValueFactory(new PropertyValueFactory<Person, String>("address"));
-        this.employeeOverviewRTMstatus.setCellValueFactory(new PropertyValueFactory<Person, String>("status"));
         if (UserContext.getInstance().hasRole(Role.MANAGER) && UserContext.getInstance().getRoles().size() == 2 ) {
             List<Person> personsWithUserAsSuperior = this.allEmployees.stream()
                     .filter((empl) -> {
@@ -123,6 +132,10 @@ public class EmployeeOverviewController implements Initializable {
 
             this.updateableEmployees.addAll(personsWithUserAsSuperior);
         }
+        this.employeeOverviewRTMstatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+        this.employeeOverviewRTMrole.setCellValueFactory(param ->
+                new ReadOnlyStringWrapper(this.getHighestRoleAsString(param.getValue()))
+        );
         //Includes the managers and other admins to table view that they can be updated by the logged in admin
         if (UserContext.getInstance().hasRole(Role.ADMIN)) {
             List<Person> managersAndAdmins = this.allEmployees.stream().filter((person) -> {
@@ -182,9 +195,33 @@ public class EmployeeOverviewController implements Initializable {
                 }
             }
         });
+        this.employeeOverviewStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+        this.employeeOverviewRole.setCellValueFactory(param ->
+                new ReadOnlyStringWrapper(getHighestRoleAsString(param.getValue()))
+        );
         List<Person> allEmployees = personController.getAll(Person.class);
         this.allEmployees.addAll(allEmployees);
         this.employeeOverviewAllEmployees.setItems(this.allEmployees);
+    }
+
+    /**
+     * returns the highest role a person has
+     * @param person of which the highest role shall be returned
+     * @return a String representation of the highest role a person has
+     */
+    private String getHighestRoleAsString(Person person) {
+        Set<Role> roles = person.getRoles();
+        if(roles.contains(Role.EMPLOYEE) && roles.size() == 1) {
+            return "EMPLOYEE";
+        }
+        else if(roles.contains(Role.MANAGER) && roles.size() == 2) {
+            return "MANAGER";
+        }
+        else if(roles.contains(Role.ADMIN) && roles.size() == 3)
+        {
+            return "ADMIN";
+        }
+        return null;
     }
 
 

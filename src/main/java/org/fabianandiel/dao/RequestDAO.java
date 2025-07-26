@@ -1,6 +1,7 @@
 package org.fabianandiel.dao;
 
 import org.fabianandiel.constants.RequestStatus;
+import org.fabianandiel.context.UserContext;
 import org.fabianandiel.entities.Request;
 import org.fabianandiel.services.DAOService;
 import org.fabianandiel.services.EntityManagerProvider;
@@ -49,9 +50,22 @@ public class RequestDAO<T,ID> extends BaseDAO<T,ID> {
      * @return a list of requests with the same start date
      */
     public List<Request> getRequestsByStartDate(LocalDate startDate) {
-        List<Request> requests = DAOService.findItemsWithPropertyOrProperties("SELECT r FROM Request r WHERE r.startDate = :param",Request.class,EntityManagerProvider.getEntityManager(),startDate);
+        List<Request> requests = DAOService.findItemsWithPropertyOrProperties("SELECT r FROM Request r WHERE r.startDate = :param AND r.creator.id = :param1",Request.class,EntityManagerProvider.getEntityManager(),startDate,UserContext.getInstance().getId());
         return requests;
     }
 
-
+    /**
+     * get requests that have either one statur or another one
+     * @param status first status possibility
+     * @param statusOne second status possibility
+     * @return a list of possible statuses
+     */
+    public List<Request> getRequestsByStatus(RequestStatus status, RequestStatus statusOne) {
+        List<Request> requests = DAOService.findItemsWithPropertyOrProperties("SELECT r FROM Request r WHERE (r.status = :param OR r.status = :param1)  " +
+                "AND r.creator.id = :param2",Request.class,EntityManagerProvider.getEntityManager(),status, statusOne, UserContext.getInstance().getId());
+        if(requests.size() == 0) {
+            return null;
+        }
+        return requests;
+    }
 }

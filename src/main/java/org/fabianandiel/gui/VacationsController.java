@@ -19,11 +19,11 @@ import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
 import org.fabianandiel.services.ValidatorProvider;
 import javafx.application.Platform;
-
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -67,7 +67,6 @@ public class VacationsController implements Initializable {
     @FXML
     private Text vacationsText;
 
-
     private RequestController requestController = new RequestController<>(new RequestDAO());
 
     private final ObservableList<Request> requestList = FXCollections.observableArrayList();
@@ -77,8 +76,6 @@ public class VacationsController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initalizeTableColumn();
-
-        //TODO change UI for empolyee and manager plus auto booking
         if (isManagerOrAdmin()) {
             this.vacationsText.setText("Book your vacation");
         }
@@ -175,12 +172,31 @@ public class VacationsController implements Initializable {
             GUIService.setErrorText("You can not submit two requests with the same start date", this.vacationsErrorText);
             return false;
         }
+
+        long totalDaysOfCurrentRequest = endDate.toEpochDay() - startDate.toEpochDay() + 1;
+
+        List<Request> pastRequests = this.requestController.getRequestsByStatus(RequestStatus.ACCEPTED,RequestStatus.PENDING);
+
+        long totalDaysOfPastRequest= pastRequests == null || pastRequests.size() == 0 ? 0 : this.calculateDaysOfPastRequests(pastRequests);
+
+
+        if(UserContext.getInstance().getPerson().getVacation_entitlement()-totalDaysOfCurrentRequest-totalDaysOfPastRequest <= 0)  {
+            GUIService.setErrorText("You're asking fore more holiday than you're entitled to", this.vacationsErrorText);
+            return false;
+        }
+
         return true;
+    }
+
+    private long calculateDaysOfPastRequests(List<Request> pastRequests) {
+            return pastRequests.stream()
+                    .mapToLong(req -> req.getEndDate().toEpochDay() - req.getStartDate().toEpochDay() + 1)
+                    .sum();
     }
 
 
     private void fillRequestObject(Request request) {
-        request.setStatus(isManagerOrAdmin() ? RequestStatus.ACCEPTED :RequestStatus.PENDING);
+        request.setStatus(isManagerOrAdmin() ? RequestStatus.ACCEPTED : RequestStatus.PENDING);
         request.setCreationDate(LocalDateTime.now());
         request.setCreator(UserContext.getInstance().getPerson());
         request.setStartDate(this.vacationsStartDate.getValue());
