@@ -87,8 +87,16 @@ public class Person {
     @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER)
     List<Request> requests = new ArrayList<>();
 
-    @Column(name = "vacation_entitlement")
-    private int vacation_entitlement;
+    @Min(value = 0, message = "Vacation entitlement cannot be negative")
+    @Max(value = 35, message = "Vacation entitlement cannot exceed 35 days")
+    @Column(name = "vacation_entitlement",nullable = false, updatable = false)
+    private short vacation_entitlement;
+
+    @Min(value = 0, message = "Remaining vacation cannot be negative")
+    @Max(value = 35, message = "Remaining vacation cannot exceed 35 days")
+    @Column(name = "vacation_remaining")
+    private short vacation_remaining;
+
 
     //TODO rework toString();
     @Override

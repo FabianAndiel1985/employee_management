@@ -12,13 +12,17 @@ import org.fabianandiel.constants.Constants;
 import org.fabianandiel.constants.RequestStatus;
 import org.fabianandiel.constants.Role;
 import org.fabianandiel.context.UserContext;
+import org.fabianandiel.controller.PersonController;
 import org.fabianandiel.controller.RequestController;
+import org.fabianandiel.dao.PersonDAO;
 import org.fabianandiel.dao.RequestDAO;
 import org.fabianandiel.entities.Request;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
+import org.fabianandiel.services.VacationService;
 import org.fabianandiel.services.ValidatorProvider;
 import javafx.application.Platform;
+
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -30,6 +34,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class VacationsController implements Initializable {
+
+    @FXML
+    private Text vacationsRequestVacationEntitlement;
+
+    @FXML
+    private Text vacationsRequestRestVacation;
 
     @FXML
     private Button vacationsGoBack;
@@ -48,6 +58,7 @@ public class VacationsController implements Initializable {
 
     @FXML
     private TextField vacationsNotes;
+
 
     @FXML
     private TableView<Request> vacationsRequestTable;
@@ -69,6 +80,8 @@ public class VacationsController implements Initializable {
 
     private RequestController requestController = new RequestController<>(new RequestDAO());
 
+    private PersonController personController = new PersonController(new PersonDAO());
+
     private final ObservableList<Request> requestList = FXCollections.observableArrayList();
 
     private ExecutorService executorService;
@@ -84,7 +97,8 @@ public class VacationsController implements Initializable {
             try {
                 //set pending requests, with start date in the past to expired status
                 this.requestController.changeRequestStatusBeforeDate(LocalDate.now(), RequestStatus.PENDING, RequestStatus.EXPIRED);
-
+                this.vacationsRequestVacationEntitlement.setText(String.valueOf(UserContext.getInstance().getPerson().getVacation_entitlement()));
+                this.vacationsRequestRestVacation.setText(String.valueOf(UserContext.getInstance().getPerson().getVacation_remaining()));
                 Platform.runLater(() -> {
                     this.requestList.addAll(this.requestController.getRequestsByCreator(UserContext.getInstance().getId()));
                     this.vacationsRequestTable.setItems(this.requestList);
@@ -121,10 +135,22 @@ public class VacationsController implements Initializable {
         UserContext.getInstance().getPerson().getRequests().add(request);
 
         executorService.submit(() -> {
+            Short remainingDays=null;
+            String remainingDaysText=null;
+            if(isManagerOrAdmin()) {
+                remainingDays = VacationService.getRemainingDays(request);
+                remainingDaysText = String.valueOf(remainingDays);
+            }
+            final String remainingDaysTextFinal = remainingDaysText;
+
             try {
                 this.requestController.create(request);
+
                 Platform.runLater(() -> {
                     this.requestList.add(request);
+                    if(isManagerOrAdmin() && remainingDaysTextFinal  != null) {
+                        this.vacationsRequestRestVacation.setText(remainingDaysTextFinal);
+                    }
                 });
             } catch (Exception e) {
                 //TODO add an error text
@@ -168,18 +194,18 @@ public class VacationsController implements Initializable {
             return false;
         }
 
-        if(this.checkIfStartDateOrEndDateIsInPastRequestRange(startDate,endDate)) {
+        List<Request> pastRequests = this.requestController.getRequestsByStatus(RequestStatus.ACCEPTED, RequestStatus.PENDING);
+
+        if (pastRequests != null && this.checkIfStartDateOrEndDateIsInPastRequestRange(startDate, endDate, pastRequests)) {
             GUIService.setErrorText("The start date or end date can not lie in the range of a past request", this.vacationsErrorText);
             return false;
         }
 
-        long totalDaysOfCurrentRequest = endDate.toEpochDay() - startDate.toEpochDay() + 1;
+        short totalDaysOfCurrentRequest = (short) (endDate.toEpochDay() - startDate.toEpochDay() + 1);
 
-        List<Request> pastRequests = this.requestController.getRequestsByStatus(RequestStatus.ACCEPTED,RequestStatus.PENDING);
-
-        long totalDaysOfPastRequest= pastRequests == null || pastRequests.size() == 0 ? 0 : this.calculateDaysOfPastRequests(pastRequests);
-
-        if(UserContext.getInstance().getPerson().getVacation_entitlement()-totalDaysOfCurrentRequest-totalDaysOfPastRequest <= 0)  {
+        short totalDaysOfPastRequest = pastRequests == null || pastRequests.size() == 0 ? 0 : this.calculateDaysOfPastRequests(pastRequests);
+        //TODO take remaining days calculate from here and update admin and manager
+        if (UserContext.getInstance().getPerson().getVacation_remaining() - totalDaysOfCurrentRequest - totalDaysOfPastRequest <= 0) {
             GUIService.setErrorText("You're asking fore more holiday than you're entitled to", this.vacationsErrorText);
             return false;
         }
@@ -190,17 +216,16 @@ public class VacationsController implements Initializable {
 
     /**
      * check if the CURRENT request lies within past requests
+     *
      * @param startDate start date of current request
-     * @param endDate end date of current request
+     * @param endDate   end date of current request
      * @return returns true if the request lies in the past range and false if not
      */
-    private boolean checkIfStartDateOrEndDateIsInPastRequestRange(LocalDate startDate, LocalDate endDate) {
-        List<Request> pastRequests = this.requestController.getRequestsByStatus(RequestStatus.ACCEPTED,RequestStatus.PENDING);
-        boolean startAndEndDateValid;
-        for(Request request: pastRequests){
+    private boolean checkIfStartDateOrEndDateIsInPastRequestRange(LocalDate startDate, LocalDate endDate, List<Request> pastRequests) {
+        for (Request request : pastRequests) {
             LocalDate pastRequestStartDate = request.getStartDate();
             LocalDate pastRequestEndDate = request.getEndDate();
-            if((pastRequestStartDate.isBefore(startDate) && pastRequestEndDate.isAfter(startDate)) || (pastRequestStartDate.isBefore(endDate) && pastRequestEndDate.isAfter(endDate))) {
+            if ((pastRequestStartDate.isBefore(startDate) && pastRequestEndDate.isAfter(startDate)) || (pastRequestStartDate.isBefore(endDate) && pastRequestEndDate.isAfter(endDate))) {
                 return true;
             }
         }
@@ -210,13 +235,16 @@ public class VacationsController implements Initializable {
 
     /**
      * sums up the sum of days of the past requests that have either been accepted or rejected
+     *
      * @param pastRequests requests of the past that have either been accepted or rejected
      * @return the amount of days of the past requests
      */
-    private long calculateDaysOfPastRequests(List<Request> pastRequests) {
-            return pastRequests.stream()
-                    .mapToLong(req -> req.getEndDate().toEpochDay() - req.getStartDate().toEpochDay() + 1)
-                    .sum();
+    private short calculateDaysOfPastRequests(List<Request> pastRequests) {
+        long totalDays = pastRequests.stream()
+                .mapToLong(req -> req.getEndDate().toEpochDay() - req.getStartDate().toEpochDay() + 1)
+                .sum();
+
+        return (short) totalDays;
     }
 
 

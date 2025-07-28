@@ -14,12 +14,16 @@ import javafx.scene.text.Text;
 import org.fabianandiel.constants.Constants;
 import org.fabianandiel.constants.RequestStatus;
 import org.fabianandiel.context.UserContext;
+import org.fabianandiel.controller.PersonController;
 import org.fabianandiel.controller.RequestController;
+import org.fabianandiel.dao.PersonDAO;
 import org.fabianandiel.dao.RequestDAO;
 import org.fabianandiel.entities.Person;
 import org.fabianandiel.entities.Request;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
+import org.fabianandiel.services.VacationService;
+
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
@@ -62,6 +66,8 @@ public class RequestsController implements Initializable {
 
     private RequestController requestController = new RequestController<>(new RequestDAO());
 
+    private PersonController personController = new PersonController(new PersonDAO());
+
     private ExecutorService executorService;
 
     @Override
@@ -94,13 +100,24 @@ public class RequestsController implements Initializable {
 
     /**
      * Sets the vacation request to approved or disapproved
+     *
      * @param request vacation request of employee
-     * @param status request status that shall be set
+     * @param status  request status that shall be set
      */
     public void handleApproveOrDisapprove(Request request, RequestStatus status) {
+        short remainingDays = VacationService.getRemainingDays(request);
+
+        if (status == RequestStatus.ACCEPTED && remainingDays < 0) {
+            GUIService.setErrorText("Employee is requesting too much vacation", this.requestsErrorText);
+            return;
+        }
+
         request.setStatus(status);
         this.executorService.submit(() -> {
                     try {
+                        if (status.equals(RequestStatus.ACCEPTED)) {
+                            VacationService.updateRemainingVacation(request, remainingDays, this.personController);
+                        }
                         this.requestController.update(request);
                         Platform.runLater(() -> {
                             this.pendingRequestsList.remove(request);
@@ -112,6 +129,7 @@ public class RequestsController implements Initializable {
                 }
         );
     }
+
 
 
     public void goBackToMainView() {
@@ -151,7 +169,7 @@ public class RequestsController implements Initializable {
             {
                 btn.setOnAction(event -> {
                     Request request = getTableView().getItems().get(getIndex());
-                    handleApproveOrDisapprove(request,RequestStatus.ACCEPTED);
+                    handleApproveOrDisapprove(request, RequestStatus.ACCEPTED);
                 });
             }
 
@@ -167,7 +185,7 @@ public class RequestsController implements Initializable {
             {
                 btn.setOnAction(event -> {
                     Request request = getTableView().getItems().get(getIndex());
-                    handleApproveOrDisapprove(request,RequestStatus.DENIED);
+                    handleApproveOrDisapprove(request, RequestStatus.DENIED);
                 });
             }
 
