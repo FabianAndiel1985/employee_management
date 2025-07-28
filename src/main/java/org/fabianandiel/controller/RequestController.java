@@ -97,5 +97,4 @@ public class RequestController<T, ID> extends BaseController<T, ID> {
         List<Request> requests = this.requestDAO.getRequestsByStatus(status,statusOne);
         return requests;
     }
-
 }

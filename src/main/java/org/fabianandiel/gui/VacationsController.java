@@ -168,8 +168,8 @@ public class VacationsController implements Initializable {
             return false;
         }
 
-        if (this.requestController.getRequestsByStartDate(startDate).size() > 0) {
-            GUIService.setErrorText("You can not submit two requests with the same start date", this.vacationsErrorText);
+        if(this.checkIfStartDateOrEndDateIsInPastRequestRange(startDate,endDate)) {
+            GUIService.setErrorText("The start date or end date can not lie in the range of a past request", this.vacationsErrorText);
             return false;
         }
 
@@ -179,7 +179,6 @@ public class VacationsController implements Initializable {
 
         long totalDaysOfPastRequest= pastRequests == null || pastRequests.size() == 0 ? 0 : this.calculateDaysOfPastRequests(pastRequests);
 
-
         if(UserContext.getInstance().getPerson().getVacation_entitlement()-totalDaysOfCurrentRequest-totalDaysOfPastRequest <= 0)  {
             GUIService.setErrorText("You're asking fore more holiday than you're entitled to", this.vacationsErrorText);
             return false;
@@ -188,6 +187,32 @@ public class VacationsController implements Initializable {
         return true;
     }
 
+
+    /**
+     * check if the CURRENT request lies within past requests
+     * @param startDate start date of current request
+     * @param endDate end date of current request
+     * @return returns true if the request lies in the past range and false if not
+     */
+    private boolean checkIfStartDateOrEndDateIsInPastRequestRange(LocalDate startDate, LocalDate endDate) {
+        List<Request> pastRequests = this.requestController.getRequestsByStatus(RequestStatus.ACCEPTED,RequestStatus.PENDING);
+        boolean startAndEndDateValid;
+        for(Request request: pastRequests){
+            LocalDate pastRequestStartDate = request.getStartDate();
+            LocalDate pastRequestEndDate = request.getEndDate();
+            if((pastRequestStartDate.isBefore(startDate) && pastRequestEndDate.isAfter(startDate)) || (pastRequestStartDate.isBefore(endDate) && pastRequestEndDate.isAfter(endDate))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * sums up the sum of days of the past requests that have either been accepted or rejected
+     * @param pastRequests requests of the past that have either been accepted or rejected
+     * @return the amount of days of the past requests
+     */
     private long calculateDaysOfPastRequests(List<Request> pastRequests) {
             return pastRequests.stream()
                     .mapToLong(req -> req.getEndDate().toEpochDay() - req.getStartDate().toEpochDay() + 1)
