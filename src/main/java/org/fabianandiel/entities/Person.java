@@ -94,8 +94,13 @@ public class Person {
 
     @Min(value = 0, message = "Remaining vacation cannot be negative")
     @Max(value = 35, message = "Remaining vacation cannot exceed 35 days")
-    @Column(name = "vacation_remaining")
+    @Column(name = "vacation_remaining",nullable = false)
     private short vacation_remaining;
+
+    @Min(value = 0, message = "Working hours per week cannot be negative")
+    @Max(value = 60, message = "Working hours per week cannot exceed 60 hours")
+    @Column(name = "week_work_hours")
+    private short week_work_hours;
 
 
     //TODO rework toString();

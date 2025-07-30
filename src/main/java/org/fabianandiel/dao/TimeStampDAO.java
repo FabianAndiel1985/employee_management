@@ -9,17 +9,32 @@ import java.util.UUID;
 
 public class TimeStampDAO<T, ID> extends BaseDAO<T, ID> {
 
-    public TimeStamp findTimeStampByDate(LocalDate queryDate, UUID id){
 
-        List<TimeStamp> timeStamp= DAOService.findItemsWithPropertyOrProperties("SELECT e FROM TimeStamp e WHERE e.timeBookingDate = :param AND e.person.id = :param1 ", TimeStamp.class, EntityManagerProvider.getEntityManager(),queryDate, id);
-
-        System.out.println(timeStamp);
-        if(timeStamp.size() == 0)
+    /**
+     * get timestamp by a certain date and person
+     *
+     * @param queryDate date of the timestamp you want to have
+     * @param id        of the person you want to have the timestamp of
+     * @return timestamp of the certain date and person
+     */
+    public TimeStamp findTimeStampByDate(LocalDate queryDate, UUID id) {
+        List<TimeStamp> timeStamp = DAOService.findItemsWithPropertyOrProperties("SELECT e FROM TimeStamp e WHERE e.timeBookingDate = :param AND e.person.id = :param1 ", TimeStamp.class, EntityManagerProvider.getEntityManager(), queryDate, id);
+        if (timeStamp.size() == 0)
             return null;
-
         return timeStamp.getFirst();
     }
 
-
-
+    /**
+     * gets the timestamps of a certain person up to a certain date of the month
+     * @param id of the person you want to have the timestamps of
+     * @param upToDate date of the current month
+     * @return timestamps of a certain person up to a certain date of the month
+     */
+    public List<TimeStamp> getTimeStampsOfCurrentMonth(UUID id, LocalDate upToDate) {
+        LocalDate firstDayOfCurrentMonth=  upToDate.withDayOfMonth(1);
+        List<TimeStamp> timeStamps = DAOService.findItemsWithPropertyOrProperties("SELECT e FROM TimeStamp e WHERE e.timeBookingDate BETWEEN :param AND :param1 AND e.person.id = :param2", TimeStamp.class, EntityManagerProvider.getEntityManager(),firstDayOfCurrentMonth,upToDate,id);
+        if (timeStamps.size() == 0)
+            return null;
+        return timeStamps;
+    }
 }

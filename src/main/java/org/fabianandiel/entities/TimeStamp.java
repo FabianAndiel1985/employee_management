@@ -32,8 +32,10 @@ public class TimeStamp {
    @Column(name="date")
    private LocalDate timeBookingDate;
 
+   @Column(name="worked_hours")
+   private double workedHours;
+
    @ManyToOne
    @JoinColumn(name = "person_id")
    private Person person;
-
 }
