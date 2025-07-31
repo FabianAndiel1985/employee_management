@@ -28,9 +28,7 @@ public class SceneManager {
      */
     public static void switchScene(String view, int width,int height, String title) throws IllegalArgumentException,IOException {
         try {
-            //Validation
-            if(width >= 601 || width <= 199)
-                throw new IllegalArgumentException("Width has to be mimum 200 and maximum 600");
+
 
 
             if(title.trim().isEmpty() || title == null) {

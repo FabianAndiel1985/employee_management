@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import org.fabianandiel.constants.Constants;
+import org.fabianandiel.constants.Status;
 import org.fabianandiel.context.UserContext;
 import org.fabianandiel.controller.PersonController;
 import org.fabianandiel.dao.PersonDAO;
@@ -68,10 +69,15 @@ public class LoginController implements Initializable {
         PersonController<Person, UUID> personController = new PersonController<>(dao);
         Person person = personController.getPersonByUsername(username);
 
-        System.out.println(person);
+
 
         if (person == null) {
             GUIService.setErrorText(Constants.LOGIN_ERROR_MESSAGE, loginErrorText);
+            return;
+        }
+
+        if(person.getStatus().equals(Status.INACTIVE)) {
+            GUIService.setErrorText("Inactive employee can not login", loginErrorText);
             return;
         }
 

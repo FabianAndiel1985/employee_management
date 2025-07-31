@@ -97,7 +97,7 @@ public class TimeStampController implements Initializable {
      * Initializes the field between target and actual hours
      */
     private void initializeDifferenceBetweenActualAndTarget() {
-        if(!(this.timeBookingTargetHours.getText().isBlank() && this.timeBookingActualHours.getText().isBlank())){
+        if(!this.timeBookingTargetHours.getText().isBlank() && !this.timeBookingActualHours.getText().isBlank()){
             int targetHours = Integer.parseInt(this.timeBookingTargetHours.getText());
             double actualHours = Double.parseDouble(this.timeBookingActualHours.getText());
             double difference = Math.round((targetHours-actualHours) * 100.0) / 100.0;

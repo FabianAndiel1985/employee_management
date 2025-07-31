@@ -56,5 +56,7 @@
             <Font size="17.0" />
          </font>
       </Text>
+      <Text layoutX="50.0" layoutY="99.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Status: " wrappingWidth="42.40000000000009" />
+      <Text fx:id="mainStatus" layoutX="92.0" layoutY="100.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="106.39993896484384" />
    </children>
 </AnchorPane>

@@ -8,26 +8,26 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" pickOnBounds="false" prefHeight="657.0" prefWidth="550.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.fabianandiel.gui.EmployeeOverviewController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" pickOnBounds="false" prefHeight="730.0" prefWidth="632.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.fabianandiel.gui.EmployeeOverviewController">
    <children>
-      <Button fx:id="employeeOverviewGoBack" layoutX="233.0" layoutY="630.0" mnemonicParsing="false" onAction="#goBackToMainView" prefHeight="11.0" prefWidth="74.0" text="Go Back" />
-      <Text fx:id="employeeOverviewErrorText" fill="#f73a3a" layoutX="112.0" layoutY="249.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" visible="false" wrappingWidth="174.13671875">
+      <Button fx:id="employeeOverviewGoBack" layoutX="260.0" layoutY="673.0" mnemonicParsing="false" onAction="#goBackToMainView" prefHeight="11.0" prefWidth="74.0" text="Go Back" />
+      <Text fx:id="employeeOverviewErrorText" fill="#f73a3a" layoutX="95.0" layoutY="611.0" strokeType="OUTSIDE" strokeWidth="0.0" visible="false" wrappingWidth="424.5367431640625">
          <font>
             <Font size="17.0" />
          </font>
       </Text>
       <VBox layoutX="58.0" layoutY="436.0" prefHeight="58.0" prefWidth="82.0" />
-      <Text layoutX="180.0" layoutY="53.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Employee overview" wrappingWidth="170.0">
+      <Text layoutX="231.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Employee overview" wrappingWidth="170.0">
          <font>
             <Font size="20.0" />
          </font>
       </Text>
-      <Text layoutX="27.0" layoutY="109.0" strokeType="OUTSIDE" strokeWidth="0.0" text="All employees" wrappingWidth="170.0">
+      <Text layoutX="27.0" layoutY="84.0" strokeType="OUTSIDE" strokeWidth="0.0" text="All employees" wrappingWidth="170.0">
          <font>
             <Font size="20.0" />
          </font>
       </Text>
-      <TableView fx:id="employeeOverviewAllEmployees" layoutX="21.0" layoutY="123.0" prefHeight="200.0" prefWidth="516.0">
+      <TableView fx:id="employeeOverviewAllEmployees" layoutX="76.0" layoutY="100.0" prefHeight="200.0" prefWidth="516.0">
         <columns>
           <TableColumn fx:id="employeeOverviewId" prefWidth="75.0" text="Id" />
           <TableColumn fx:id="employeeOverviewFirstname" prefWidth="75.0" text="firstname" />
@@ -37,12 +37,12 @@
             <TableColumn fx:id="employeeOverviewRole" prefWidth="75.0" text="role" />
         </columns>
       </TableView>
-      <Text fx:id="employeeOverviewText" layoutX="14.0" layoutY="364.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Updateable Employees" wrappingWidth="247.59996032714844">
+      <Text fx:id="employeeOverviewText" layoutX="29.0" layoutY="359.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Updateable Employees" wrappingWidth="247.59996032714844">
          <font>
             <Font size="20.0" />
          </font>
       </Text>
-      <TableView fx:id="employeeOverviewUpdateableEmployees" layoutX="21.0" layoutY="383.0" prefHeight="200.0" prefWidth="450.0">
+      <TableView fx:id="employeeOverviewUpdateableEmployees" layoutX="82.0" layoutY="372.0" prefHeight="200.0" prefWidth="450.0">
          <columns>
             <TableColumn fx:id="employeeOverviewRTMid" prefWidth="75.0" text="Id" />
             <TableColumn fx:id="employeeOverviewRTMfirstname" prefWidth="75.0" text="firstname" />
@@ -52,8 +52,8 @@
             <TableColumn fx:id="employeeOverviewRTMrole" prefWidth="75.0" text="role" />
          </columns>
       </TableView>
-      <Button fx:id="employeeOverviewNewEmployee" layoutX="87.0" layoutY="595.0" mnemonicParsing="false" onAction="#goToCreateEmployee" text="Create new employee" />
-      <Button fx:id="employeeOverviewDeleteEmployee" layoutX="233.0" layoutY="595.0" mnemonicParsing="false" onAction="#setEmployeeToInactive" text="Delete employee" />
-      <Button fx:id="employeeOverviewUpdateEmployee" layoutX="350.0" layoutY="595.0" mnemonicParsing="false" onAction="#onUpdate" text="Update Employee" />
+      <Button fx:id="employeeOverviewNewEmployee" layoutX="99.0" layoutY="638.0" mnemonicParsing="false" onAction="#goToCreateEmployee" text="Create new employee" />
+      <Button fx:id="employeeOverviewDeleteEmployee" layoutX="245.0" layoutY="638.0" mnemonicParsing="false" onAction="#setEmployeeToInactive" text="Delete employee" />
+      <Button fx:id="employeeOverviewUpdateEmployee" layoutX="362.0" layoutY="638.0" mnemonicParsing="false" onAction="#onUpdate" text="Update Employee" />
    </children>
 </AnchorPane>

@@ -10,6 +10,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import org.fabianandiel.constants.Constants;
 import org.fabianandiel.constants.Role;
+import org.fabianandiel.constants.Status;
 import org.fabianandiel.context.UpdateContext;
 import org.fabianandiel.context.UserContext;
 import org.fabianandiel.controller.AddressController;
@@ -82,6 +83,9 @@ public class EmployeeFormController implements Initializable {
     private TextField createEmployeeVacationEntitlement;
 
     @FXML
+    private TextField createEmployeeHoursWeek;
+
+    @FXML
     private TableColumn<Person, String> createEmployeeSubordinateFirstName;
 
     @FXML
@@ -93,9 +97,10 @@ public class EmployeeFormController implements Initializable {
     @FXML
     private Text vacationsRequestVacationEntitlement;
 
+    //TODO continue the vaction fields
+
     @FXML
     private Text vacationsRequestRestVacation;
-
 
     private PersonController personController = new PersonController<>(new PersonDAO<>());
 
@@ -182,10 +187,12 @@ public class EmployeeFormController implements Initializable {
 
 
         if (UpdateContext.getPersonToUpdate() == null) {
+            createdPerson.setStatus(Status.JUST_CREATED);
             EmployeeCRUDService.createNewPerson(em, createdPerson, this.subordinates, this.superiors);
         } else {
             EmployeeCRUDService.updatePerson(em, createdPerson, this.subordinates, this.superiors);
         }
+        this.onReset();
     }
 
 
@@ -223,7 +230,7 @@ public class EmployeeFormController implements Initializable {
     public void goBackEmployeeOverview() {
         try {
             UpdateContext.clearSession();
-            SceneManager.switchScene("/org/fabianandiel/gui/employeeOverviewView.fxml", 530, 671, "Employee Overview");
+            SceneManager.switchScene("/org/fabianandiel/gui/employeeOverviewView.fxml", 630, 732, "Employee Overview");
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, this.createEmployeeErrorText);
@@ -258,7 +265,7 @@ public class EmployeeFormController implements Initializable {
         try {
             String vacationEntitlement = this.createEmployeeVacationEntitlement.getText();
             if (vacationEntitlement.trim().isEmpty()) {
-                GUIService.setErrorText("Telephone can not be empty", this.createEmployeeErrorText);
+                GUIService.setErrorText("Vacation entitlement can not be empty", this.createEmployeeErrorText);
                 return null;
             }
             personToCreate.setVacation_entitlement(Short.parseShort(vacationEntitlement));

@@ -7,6 +7,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import org.fabianandiel.constants.Constants;
 import org.fabianandiel.constants.Role;
+import org.fabianandiel.constants.Status;
 import org.fabianandiel.context.UserContext;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
@@ -35,6 +36,8 @@ public class MainController implements Initializable {
     @FXML
     private HBox mainManagerAdminRow;
 
+    @FXML
+    private Text mainStatus;
 
     @FXML
     private Text mainErrorText;
@@ -45,7 +48,13 @@ public class MainController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         if(userContext.hasRole(Role.EMPLOYEE) && userContext.getRoles().size() == 1 ) {
             this.mainManagerAdminRow.setVisible(false);
-            this.mainManagerAdminRow.setManaged(false);
+        }
+
+        Status status = UserContext.getInstance().getPerson().getStatus();
+        if(status != null)
+            this.mainStatus.setText(String.valueOf(status));
+        else {
+            this.mainStatus.setText("Status could not be found");
         }
     }
 
@@ -64,7 +73,7 @@ public class MainController implements Initializable {
     }
 
     public void switchToEmployeeOverview() {
-        this.switchView("/org/fabianandiel/gui/employeeOverviewView.fxml",530,671,"Employee Overview");
+        this.switchView("/org/fabianandiel/gui/employeeOverviewView.fxml",632,730,"Employee Overview");
     }
 
 

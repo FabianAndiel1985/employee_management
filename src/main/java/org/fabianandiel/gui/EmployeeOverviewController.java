@@ -10,6 +10,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 import org.fabianandiel.constants.Constants;
 import org.fabianandiel.constants.Role;
+import org.fabianandiel.constants.Status;
 import org.fabianandiel.context.UpdateContext;
 import org.fabianandiel.context.UserContext;
 import org.fabianandiel.controller.PersonController;
@@ -167,9 +168,15 @@ public class EmployeeOverviewController implements Initializable {
             this.employeeOverviewUpdateEmployee.setDisable(true);
             return;
         }
+        Person person = selectedPersons.getFirst();
+        if(person.getStatus().equals(Status.INACTIVE)) {
+            GUIService.setErrorText("You can not update an inactive employee", employeeOverviewErrorText);
+            return;
+        }
+
         UpdateContext.clearSession();
         this.employeeOverviewUpdateEmployee.setDisable(false);
-        Person person = selectedPersons.getFirst();
+
         UpdateContext.initSession(person);
         this.goToCreateEmployee();
     }
