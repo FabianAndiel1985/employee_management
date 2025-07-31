@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="471.0" prefWidth="407.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.fabianandiel.gui.CreateAddressController">
+   <children>
+      <Text layoutX="100.0" layoutY="75.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Create a new Address" wrappingWidth="192.13319396972656">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Text>
+      <Text layoutX="90.0" layoutY="113.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Street" wrappingWidth="45.600000000000136">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <TextField fx:id="newAddressStreet" layoutX="91.0" layoutY="122.0" />
+      <Text layoutX="88.0" layoutY="180.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Housenumber" wrappingWidth="88.5367431640625">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <TextField fx:id="newAddressHousenumber" layoutX="87.0" layoutY="187.0" prefHeight="26.0" prefWidth="45.0" />
+      <Text layoutX="195.0" layoutY="181.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Doornumber" wrappingWidth="88.5367431640625">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <TextField fx:id="newAddressDoornumber" layoutX="196.0" layoutY="187.0" prefHeight="26.0" prefWidth="45.0" />
+      <Text layoutX="89.0" layoutY="246.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Zip" wrappingWidth="88.5367431640625">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <TextField fx:id="newAddressZIP" layoutX="86.0" layoutY="254.0" prefHeight="26.0" prefWidth="69.0" />
+      <Text layoutX="192.0" layoutY="248.0" strokeType="OUTSIDE" strokeWidth="0.0" text="City" wrappingWidth="88.5367431640625">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <TextField fx:id="newAddressCity" layoutX="187.0" layoutY="254.0" prefHeight="26.0" prefWidth="102.0" />
+      <Text layoutX="88.0" layoutY="319.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Country" wrappingWidth="88.5367431640625">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Text>
+      <TextField fx:id="newAddressCountry" layoutX="87.0" layoutY="324.0" prefHeight="26.0" prefWidth="219.0" />
+      <Button fx:id="newAddressSubmit" layoutX="85.0" layoutY="395.0" mnemonicParsing="false" onAction="#submit" prefHeight="26.0" prefWidth="102.0" text="Submit" />
+      <Button fx:id="newAddressReset" layoutX="220.0" layoutY="395.0" mnemonicParsing="false" onAction="#clearFields" prefHeight="26.0" prefWidth="102.0" text="Reset" />
+      <Button fx:id="newAddressGoBack" layoutX="165.0" layoutY="437.0" mnemonicParsing="false" onAction="#goToCreateEmployee" prefHeight="26.0" prefWidth="102.0" text="Go Back" />
+      <Text fx:id="newAddressErrorText" fill="#f73a3a" layoutX="85.0" layoutY="380.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" visible="false" wrappingWidth="203.7367706298828">
+         <font>
+            <Font size="17.0" />
+         </font>
+      </Text>
+   </children>
+</AnchorPane>

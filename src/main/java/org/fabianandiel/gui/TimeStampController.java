@@ -116,8 +116,6 @@ public class TimeStampController implements Initializable {
         }
         double workedHoursThisMonth = timeStamps.stream().mapToDouble(TimeStamp::getWorkedHours).sum();
         this.timeBookingActualHours.setText(String.valueOf(workedHoursThisMonth));
-        //TODO change in docu, also make that everybody works only 40 hours
-        //TODO check maybe with onClockOut load every thing new
     }
 
     /**

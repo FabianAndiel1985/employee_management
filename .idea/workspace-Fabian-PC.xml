@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="9a248489-ac08-4f74-9f9d-d52d2b4e2b89" name="Changes" comment="updates docu">
+      <change beforePath="$PROJECT_DIR$/documentation/ToDo/ToDos.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/ToDo/ToDos.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/org/fabianandiel/gui/emoployeeOverviewView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/org/fabianandiel/gui/emoployeeOverviewView.fxml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="module-info" />
+        <option value="Interface" />
+        <option value="Enum" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {}
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/FabianAndiel1985/employee_management.git&quot;,
+    &quot;accountId&quot;: &quot;75c00c00-e8ad-499c-a59e-d8cb81c882db&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2ySKieyL01ZK1PGfgC70H7RjiZ7" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+    <option name="sortKey" value="BY_TIME_DESCENDING" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "create-employees",
+    "kotlin-language-version-configured": "true",
+    "onboarding.tips.debug.path": "C:/Users/fabia/OneDrive/Desktop/ProgrammierAnleitung/Java/2025 WIFI/EmployeeAdministration/src/main/java/org/example/Main.java",
+    "project.structure.last.edited": "Problems",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "reference.projectsettings.compiler.annotationProcessors"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="Main" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="org.fabianandiel.Main" />
+      <module name="EmployeeAdministration" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.fabianandiel.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9a248489-ac08-4f74-9f9d-d52d2b4e2b89" name="Changes" comment="" />
+      <created>1749822666585</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1749822666585</updated>
+    </task>
+    <task id="LOCAL-00008" summary="reads login request">
+      <option name="closed" value="true" />
+      <created>1751098863423</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1751098863423</updated>
+    </task>
+    <task id="LOCAL-00009" summary="updates documentation">
+      <option name="closed" value="true" />
+      <created>1751114267567</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1751114267567</updated>
+    </task>
+    <task id="LOCAL-00010" summary="updates documentation">
+      <option name="closed" value="true" />
+      <created>1751114292822</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1751114292822</updated>
+    </task>
+    <task id="LOCAL-00011" summary="sets up main view">
+      <option name="closed" value="true" />
+      <created>1751117495566</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1751117495566</updated>
+    </task>
+    <task id="LOCAL-00012" summary="adds switching to subview vacations">
+      <option name="closed" value="true" />
+      <created>1751118451780</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1751118451780</updated>
+    </task>
+    <task id="LOCAL-00013" summary="adds returning to main view">
+      <option name="closed" value="true" />
+      <created>1751726168341</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1751726168341</updated>
+    </task>
+    <task id="LOCAL-00014" summary="adds returning to main view">
+      <option name="closed" value="true" />
+      <created>1751728778628</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1751728778628</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Changes color of error texts">
+      <option name="closed" value="true" />
+      <created>1751729333828</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1751729333828</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Renames Todos">
+      <option name="closed" value="true" />
+      <created>1751740582948</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1751740582948</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Updates database planningv">
+      <option name="closed" value="true" />
+      <created>1751740888586</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1751740888586</updated>
+    </task>
+    <task id="LOCAL-00018" summary="updates main controller">
+      <option name="closed" value="true" />
+      <created>1751741234094</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1751741234094</updated>
+    </task>
+    <task id="LOCAL-00019" summary="updates modul info">
+      <option name="closed" value="true" />
+      <created>1751741799133</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1751741799133</updated>
+    </task>
+    <task id="LOCAL-00020" summary="adds address bean">
+      <option name="closed" value="true" />
+      <created>1751743981901</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1751743981901</updated>
+    </task>
+    <task id="LOCAL-00021" summary="adds person bean">
+      <option name="closed" value="true" />
+      <created>1751811429906</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1751811429906</updated>
+    </task>
+    <task id="LOCAL-00022" summary="updated documentation">
+      <option name="closed" value="true" />
+      <created>1751811497285</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1751811497285</updated>
+    </task>
+    <task id="LOCAL-00023" summary="annotates the address and updates the docu">
+      <option name="closed" value="true" />
+      <created>1751988317199</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1751988317199</updated>
+    </task>
+    <task id="LOCAL-00024" summary="adds entity manager factory">
+      <option name="closed" value="true" />
+      <created>1751988405043</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1751988405043</updated>
+    </task>
+    <task id="LOCAL-00025" summary="adds self-reference in Person entity">
+      <option name="closed" value="true" />
+      <created>1752223953209</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1752223953209</updated>
+    </task>
+    <task id="LOCAL-00026" summary="adds entity manager provider and closes the factory in the shutdown process">
+      <option name="closed" value="true" />
+      <created>1752230313316</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1752230313316</updated>
+    </task>
+    <task id="LOCAL-00027" summary="adds the possibility to query for persons">
+      <option name="closed" value="true" />
+      <created>1752476497194</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1752476497194</updated>
+    </task>
+    <task id="LOCAL-00028" summary="adds less whitespace">
+      <option name="closed" value="true" />
+      <created>1752476612330</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1752476612330</updated>
+    </task>
+    <task id="LOCAL-00029" summary="adds login mechanism">
+      <option name="closed" value="true" />
+      <created>1752494156059</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1752494156059</updated>
+    </task>
+    <task id="LOCAL-00030" summary="adds login mechanism">
+      <option name="closed" value="true" />
+      <created>1752495117776</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1752495117776</updated>
+    </task>
+    <task id="LOCAL-00031" summary="adds basics for time booking">
+      <option name="closed" value="true" />
+      <created>1752498933377</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1752498933377</updated>
+    </task>
+    <task id="LOCAL-00032" summary="adds basic menu for time booking">
+      <option name="closed" value="true" />
+      <created>1752502565557</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1752502565557</updated>
+    </task>
+    <task id="LOCAL-00033" summary="updates Base Controller and Interface">
+      <option name="closed" value="true" />
+      <created>1752508331942</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1752508331942</updated>
+    </task>
+    <task id="LOCAL-00034" summary="sets up Timestamp Controller and DAO">
+      <option name="closed" value="true" />
+      <created>1752508416547</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1752508416547</updated>
+    </task>
+    <task id="LOCAL-00035" summary="saving loggedin person in context">
+      <option name="closed" value="true" />
+      <created>1752508565414</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1752508565414</updated>
+    </task>
+    <task id="LOCAL-00036" summary="preloads login data">
+      <option name="closed" value="true" />
+      <created>1752582497346</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1752582497346</updated>
+    </task>
+    <task id="LOCAL-00037" summary="updates the login">
+      <option name="closed" value="true" />
+      <created>1752588134272</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1752588134272</updated>
+    </task>
+    <task id="LOCAL-00038" summary="updates the documentation">
+      <option name="closed" value="true" />
+      <created>1752648320000</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1752648320000</updated>
+    </task>
+    <task id="LOCAL-00039" summary="updates the documentation">
+      <option name="closed" value="true" />
+      <created>1752648639457</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1752648639457</updated>
+    </task>
+    <task id="LOCAL-00040" summary="builds basics vacation view">
+      <option name="closed" value="true" />
+      <created>1752653522616</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1752653522616</updated>
+    </task>
+    <task id="LOCAL-00041" summary="builds basics vacation view">
+      <option name="closed" value="true" />
+      <created>1752653682561</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1752653682561</updated>
+    </task>
+    <task id="LOCAL-00042" summary="builds and maps vacation controller">
+      <option name="closed" value="true" />
+      <created>1752658394111</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1752658394111</updated>
+    </task>
+    <task id="LOCAL-00043" summary="Builds request and maps it to person">
+      <option name="closed" value="true" />
+      <created>1752658524135</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1752658524135</updated>
+    </task>
+    <task id="LOCAL-00044" summary="adds validation,adds dao, adds table view">
+      <option name="closed" value="true" />
+      <created>1752670097869</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1752670097869</updated>
+    </task>
+    <task id="LOCAL-00045" summary="updates docs, shows the requests,....">
+      <option name="closed" value="true" />
+      <created>1752682529947</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1752682529947</updated>
+    </task>
+    <task id="LOCAL-00046" summary="starts setting up pending requests view for managers">
+      <option name="closed" value="true" />
+      <created>1752739450739</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1752739450739</updated>
+    </task>
+    <task id="LOCAL-00047" summary="refactors vacation controller">
+      <option name="closed" value="true" />
+      <created>1752750204267</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1752750204267</updated>
+    </task>
+    <task id="LOCAL-00048" summary="updates documentation">
+      <option name="closed" value="true" />
+      <created>1752750292572</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1752750292572</updated>
+    </task>
+    <task id="LOCAL-00049" summary="adds basic of manager allow and rejection">
+      <option name="closed" value="true" />
+      <created>1752750371402</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1752750371402</updated>
+    </task>
+    <task id="LOCAL-00050" summary="adds updating of old requests, comments">
+      <option name="closed" value="true" />
+      <created>1752764616245</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1752764616245</updated>
+    </task>
+    <task id="LOCAL-00051" summary="adds comments,adds this, updates docu">
+      <option name="closed" value="true" />
+      <created>1752921187399</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1752921187399</updated>
+    </task>
+    <task id="LOCAL-00052" summary="adds validation for request with same start time">
+      <option name="closed" value="true" />
+      <created>1752924822580</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1752924822580</updated>
+    </task>
+    <task id="LOCAL-00053" summary="updates documentation">
+      <option name="closed" value="true" />
+      <created>1752924961124</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1752924961124</updated>
+    </task>
+    <task id="LOCAL-00054" summary="makes sure that no accepted requests get set to expired">
+      <option name="closed" value="true" />
+      <created>1752925593427</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1752925593427</updated>
+    </task>
+    <task id="LOCAL-00055" summary="changes the GUI in the vacation for managers and books the vacation automatically">
+      <option name="closed" value="true" />
+      <created>1752928216901</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1752928216901</updated>
+    </task>
+    <task id="LOCAL-00056" summary="updates docu">
+      <option name="closed" value="true" />
+      <created>1752928255463</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1752928255463</updated>
+    </task>
+    <option name="localTasksCounter" value="57" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="adds less whitespace" />
+    <MESSAGE value="adds login mechanism" />
+    <MESSAGE value="adds basics for time booking" />
+    <MESSAGE value="adds basic menu for time booking" />
+    <MESSAGE value="updates Base Controller and Interface" />
+    <MESSAGE value="sets up Timestamp Controller and DAO" />
+    <MESSAGE value="saving loggedin person in context" />
+    <MESSAGE value="preloads login data" />
+    <MESSAGE value="updates the login" />
+    <MESSAGE value="updates the documentation" />
+    <MESSAGE value="builds basics vacation view" />
+    <MESSAGE value="builds and maps vacation controller" />
+    <MESSAGE value="Builds request and maps it to person" />
+    <MESSAGE value="adds validation,adds dao, adds table view" />
+    <MESSAGE value="updates docs, shows the requests,...." />
+    <MESSAGE value="starts setting up pending requests view for managers" />
+    <MESSAGE value="refactors vacation controller" />
+    <MESSAGE value="adds basic of manager allow and rejection" />
+    <MESSAGE value="adds updating of old requests, comments" />
+    <MESSAGE value="adds comments,adds this, updates docu" />
+    <MESSAGE value="adds validation for request with same start time" />
+    <MESSAGE value="updates documentation" />
+    <MESSAGE value="makes sure that no accepted requests get set to expired" />
+    <MESSAGE value="changes the GUI in the vacation for managers and books the vacation automatically" />
+    <MESSAGE value="updates docu" />
+    <option name="LAST_COMMIT_MESSAGE" value="updates docu" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="params[1]" language="JAVA" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           lÃ…òï4í˚Âº‰~“3âÂøø\
+ÚÌ®±U$tÓµÇ˛6à1-úW˜5!√eÑê”≈ïÁıWÈ€À⁄∞([ qøËgaØƒÙYBﬂ`Ëöu3—êÏÍµ]¿˛Ökã#—\ﬂöã˝2øù≥+Ü·îA=Go‚WËö™XÏ¨b∑Xˇ€
+w?çB° _ô_pFF©4ãë&xï/M‚É]&≥ëFß†Ô¶Ìá∞(áAÇ˛1è$ë«›ZËQz8Hj[a˝	îQ1®ÏÕﬂ≈Ó4
+R⁄vÙt~_∏≈„Ó√9Ø‹$™ﬁµΩwgN©¸_HöÇ’á7.CÎëºG9“äKk{*1ZÄ‡ŒDZå>_÷õÕ%"ïDA fz,ÿ—ÑŸFíuøb™,'\º¯$“aVø!Tös˚]Fw¿ppôäH(ª∏Ôœ∏ïá\ø»pfå˛s¥Ì’	¶2HËÃ+PÍÅΩıjlôåÇ˝,òŸ(ùÃ≥úi∫◊Aˆ-Ö˜uÄGL?["õ˙Z@ZBmò2…e¥K∞⁄A$z,K8öq˝&$ë)s˙·rÊ$ﬂ§VFÅ%*Ù†,MàÜŒ?¨Q ﬂ”ª‘4unÑ≤|Wi…\F¨∏¥~Ì:Aàù≠l“cNâá¬8Í«sÄÂ≈;n±jC@bº?ëœ#˜bŒùogk%ª"2ı:g–Z9Û]ú. Vﬂåh¢$≤Ÿ∫FÔÜπÈ≈ﬁz‰7æâÎaìÇb-^‰¯G-≈‰±Æ≠®\(‚Y;§'ZÖÀáL3¢ßzÎ†≈ê‡`ãÀ&©e¸ä◊”QÍ∑#≤ÀŒL&ü+†”˜¨{ÇÒÄÇÁ|*±πËîtı∆É1 4ôQ
