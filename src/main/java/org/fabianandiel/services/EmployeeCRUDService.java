@@ -4,7 +4,7 @@ import jakarta.persistence.EntityManager;
 import javafx.collections.ObservableList;
 import org.fabianandiel.constants.Role;
 import org.fabianandiel.constants.Status;
-import org.fabianandiel.context.UpdateContext;
+import org.fabianandiel.context.SelectedEmployeeContext;
 import org.fabianandiel.entities.Address;
 import org.fabianandiel.entities.Person;
 
@@ -93,7 +93,7 @@ public class EmployeeCRUDService {
         if (em == null || createdPerson == null)
             return;
 
-        createdPerson.setId(UpdateContext.getPersonToUpdate().getId());
+        createdPerson.setId(SelectedEmployeeContext.getPersonToUpdate().getId());
 
         Set<Person> selectedSubordinates;
         try {

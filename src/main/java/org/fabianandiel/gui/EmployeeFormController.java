@@ -11,7 +11,7 @@ import javafx.scene.text.Text;
 import org.fabianandiel.constants.Constants;
 import org.fabianandiel.constants.Role;
 import org.fabianandiel.constants.Status;
-import org.fabianandiel.context.UpdateContext;
+import org.fabianandiel.context.SelectedEmployeeContext;
 import org.fabianandiel.context.UserContext;
 import org.fabianandiel.controller.AddressController;
 import org.fabianandiel.controller.PersonController;
@@ -122,7 +122,7 @@ public class EmployeeFormController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        Person personToUpdate = UpdateContext.getPersonToUpdate();
+        Person personToUpdate = SelectedEmployeeContext.getPersonToUpdate();
 
         this.hasManagerRole = UserContext.getInstance().hasRole(Role.EMPLOYEE) && UserContext.getInstance().hasRole(Role.MANAGER) && !UserContext.getInstance().hasRole(Role.ADMIN);
         this.hasManagerAndAdminRole = UserContext.getInstance().hasRole(Role.ADMIN);
@@ -186,7 +186,7 @@ public class EmployeeFormController implements Initializable {
         Set<Person> selectedSubordinates = new HashSet<>();
 
 
-        if (UpdateContext.getPersonToUpdate() == null) {
+        if (SelectedEmployeeContext.getPersonToUpdate() == null) {
             createdPerson.setStatus(Status.JUST_CREATED);
             EmployeeCRUDService.createNewPerson(em, createdPerson, this.subordinates, this.superiors);
         } else {
@@ -229,7 +229,7 @@ public class EmployeeFormController implements Initializable {
      */
     public void goBackEmployeeOverview() {
         try {
-            UpdateContext.clearSession();
+            SelectedEmployeeContext.clearSession();
             SceneManager.switchScene("/org/fabianandiel/gui/employeeOverviewView.fxml", 630, 732, "Employee Overview");
         } catch (IllegalArgumentException e) {
             e.printStackTrace();

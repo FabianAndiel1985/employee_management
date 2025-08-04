@@ -111,16 +111,11 @@ public class VacationsController implements Initializable {
     }
 
 
+    /**
+     * goes back to main view
+     */
     public void goBackToMainView() {
-        try {
-            SceneManager.goBackToMain();
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, this.vacationsErrorText);
-        } catch (IOException e) {
-            System.out.println("IO Exception: " + e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, this.vacationsErrorText);
-        }
+        SceneManager.goBackToMainView(this.vacationsErrorText);
     }
 
     /**

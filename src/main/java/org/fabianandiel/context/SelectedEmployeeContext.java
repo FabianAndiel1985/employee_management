@@ -2,11 +2,11 @@ package org.fabianandiel.context;
 
 import org.fabianandiel.entities.Person;
 
-public class UpdateContext {
+public class SelectedEmployeeContext {
 
         private static Person personToUpdate=null;
 
-        private UpdateContext() {
+        private SelectedEmployeeContext() {
         }
 
         public static Person getPersonToUpdate() {

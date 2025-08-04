@@ -131,18 +131,13 @@ public class RequestsController implements Initializable {
     }
 
 
-
+    /**
+     * goes back to main view
+     */
     public void goBackToMainView() {
-        try {
-            SceneManager.goBackToMain();
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, requestsErrorText);
-        } catch (IOException e) {
-            System.out.println("IO Exception: " + e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, requestsErrorText);
-        }
+        SceneManager.goBackToMainView( requestsErrorText);
     }
+
 
     /**
      * Initializes the table columns

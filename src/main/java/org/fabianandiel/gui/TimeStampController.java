@@ -111,7 +111,9 @@ public class TimeStampController implements Initializable {
     private void initializeActualHours() {
         List<TimeStamp> timeStamps = this.timeStampController.getTimeStampsOfCurrentMonth(UserContext.getInstance().getId(),LocalDate.now());
         if(timeStamps == null) {
-            //TODO set error
+            //TODO set error here
+            double noBookingsYet = 0.00;
+            this.timeBookingActualHours.setText(String.valueOf(noBookingsYet));
             return;
         }
         double workedHoursThisMonth = timeStamps.stream().mapToDouble(TimeStamp::getWorkedHours).sum();
@@ -151,16 +153,11 @@ public class TimeStampController implements Initializable {
     }
 
 
+    /**
+     * goes back to main view
+     */
     public void goBackToMainView() {
-        try {
-            SceneManager.goBackToMain();
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, timeBookingErrorText);
-        } catch (IOException e) {
-            System.out.println("IO Exception: " + e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, timeBookingErrorText);
-        }
+        SceneManager.goBackToMainView( timeBookingErrorText);
     }
 
     /**
