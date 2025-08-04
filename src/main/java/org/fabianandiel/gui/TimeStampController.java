@@ -111,7 +111,9 @@ public class TimeStampController implements Initializable {
     private void initializeActualHours() {
         List<TimeStamp> timeStamps = this.timeStampController.getTimeStampsOfCurrentMonth(UserContext.getInstance().getId(),LocalDate.now());
         if(timeStamps == null) {
-            //TODO set error
+            //TODO set error here
+            double noBookingsYet = 0.00;
+            this.timeBookingActualHours.setText(String.valueOf(noBookingsYet));
             return;
         }
         double workedHoursThisMonth = timeStamps.stream().mapToDouble(TimeStamp::getWorkedHours).sum();

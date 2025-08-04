@@ -186,7 +186,7 @@ public class EmployeeOverviewController implements Initializable {
      * initializes view for all Employees
      */
     private void initializeAllEmployees() {
-        this.employeeOverviewAllEmployees.getSelectionModel().setSelectionMode(null);
+        this.employeeOverviewAllEmployees.setSelectionModel(null);
         this.employeeOverviewId.setCellValueFactory(new PropertyValueFactory<Person, String>("id"));
         this.employeeOverviewFirstname.setCellValueFactory(new PropertyValueFactory<Person, String>("firstname"));
         this.employeeOverviewLastname.setCellValueFactory(new PropertyValueFactory<Person, String>("lastname"));
