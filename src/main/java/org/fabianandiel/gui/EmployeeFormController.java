@@ -115,17 +115,17 @@ public class EmployeeFormController implements Initializable {
     //TODO when I create a address add it here
     private final ObservableList<Address> addresses = FXCollections.observableArrayList();
 
-    private boolean hasManagerRole;
+    private boolean userHasManagerRole;
 
-    private boolean hasManagerAndAdminRole;
+    private boolean userHasManagerAndAdminRole;
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Person personToUpdate = SelectedEmployeeContext.getPersonToUpdate();
 
-        this.hasManagerRole = UserContext.getInstance().hasRole(Role.EMPLOYEE) && UserContext.getInstance().hasRole(Role.MANAGER) && !UserContext.getInstance().hasRole(Role.ADMIN);
-        this.hasManagerAndAdminRole = UserContext.getInstance().hasRole(Role.ADMIN);
+        this.userHasManagerRole = UserContext.getInstance().hasRole(Role.EMPLOYEE) && UserContext.getInstance().hasRole(Role.MANAGER) && !UserContext.getInstance().hasRole(Role.ADMIN);
+        this.userHasManagerAndAdminRole = UserContext.getInstance().hasRole(Role.ADMIN);
         initializeAddressDropDown();
         initalizeSuperiorDropdown();
         initializeCheckBoxesAccordingToAuthorization();
@@ -133,12 +133,23 @@ public class EmployeeFormController implements Initializable {
 
         if (personToUpdate != null) {
             this.changeGUIintoUpdateMode();
-            if (this.hasManagerAndAdminRole) {
+            if (this.userHasManagerAndAdminRole) {
+                this.createEmployeeRolesBoxEmployee.setDisable(true);
+                this.createEmployeeRolesBoxManager.setDisable(true);
+
                 List<Person> persons = this.personController.getPersonBySuperiorID(personToUpdate.getId());
                 if (persons != null) {
                     this.subordinates.addAll(persons);
                 }
             }
+           if (this.userHasManagerRole) {
+               this.createEmployeeRolesBoxEmployee.setDisable(true);
+               if(this.createEmployeeRolesBoxManager.isDisabled()){
+                   this.createEmployeeRolesBoxManager.setDisable(false);
+               }
+               this.createEmployeeRolesBoxAdmin.setDisable(true);
+           }
+
             this.fillTheFieldsWithPersonToUpdatesValue(personToUpdate);
         }
     }
@@ -300,7 +311,7 @@ public class EmployeeFormController implements Initializable {
          */
         private void initializeEmployeeTableViewAccordingToAuthorization () {
             this.createEmployeeSubordinates.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-            if (hasManagerAndAdminRole) {
+            if (userHasManagerAndAdminRole) {
                 this.createEmployeeSubordinateFirstName.setCellValueFactory(new PropertyValueFactory<Person, String>("firstname"));
                 this.createEmployeeSubordinateLastName.setCellValueFactory(new PropertyValueFactory<Person, String>("lastname"));
                 List<Person> subordinates = this.personController.getEmployeesWithoutSuperior();
@@ -316,11 +327,20 @@ public class EmployeeFormController implements Initializable {
          * Displays the role checkboxes according to authorization
          */
         private void initializeCheckBoxesAccordingToAuthorization () {
-            if (this.hasManagerRole) {
+            if (this.userHasManagerRole) {
                 this.createEmployeeRolesBoxEmployee.setSelected(true);
+                this.createEmployeeRolesBoxEmployee.setDisable(true);
                 this.createEmployeeRolesBoxManager.setDisable(true);
                 this.createEmployeeRolesBoxAdmin.setDisable(true);
             }
+            if(this.userHasManagerAndAdminRole) {
+                this.createEmployeeRolesBoxEmployee.setSelected(true);
+                this.createEmployeeRolesBoxEmployee.setDisable(true);
+                this.createEmployeeRolesBoxManager.setSelected(true);
+                this.createEmployeeRolesBoxManager.setDisable(true);
+                this.createEmployeeSuperior.setDisable(true);
+            }
+
         }
 
         /**

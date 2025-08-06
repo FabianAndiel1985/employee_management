@@ -197,7 +197,7 @@ public class EmployeeOverviewController implements Initializable {
             return false;
         }
         Person person = selectedPersons.getFirst();
-        if (person.getStatus().equals(Status.INACTIVE)) {
+        if (person.getStatus() != null && person.getStatus().equals(Status.INACTIVE)) {
             GUIService.setErrorText("You can not update an inactive employee", employeeOverviewErrorText);
             return false;
         }
@@ -291,7 +291,7 @@ public class EmployeeOverviewController implements Initializable {
      */
     public void goToCreateEmployee() {
         try {
-            SceneManager.switchScene("/org/fabianandiel/gui/employeeFormView.fxml", 530, 607, "Create Employee");
+            SceneManager.switchScene("/org/fabianandiel/gui/employeeFormView.fxml", 530, 691, "Create Employee");
         } catch (IOException e) {
             e.printStackTrace();
             GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, employeeOverviewErrorText);

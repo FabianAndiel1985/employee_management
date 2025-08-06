@@ -80,6 +80,7 @@ public class Person {
     @Column(name = "role")
     private Set<Role> roles = new HashSet<>();
 
+    @NotNull(message = "Status can`t be empty") //Jakarta Valdiation
     @Enumerated(EnumType.STRING)
     @Column(name = "status",nullable = false)
     private Status status;
