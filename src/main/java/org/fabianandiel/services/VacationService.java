@@ -23,6 +23,7 @@ public class VacationService {
      * @param personController the person controller with whom I can update the person
      */
     public static void updateRemainingVacation(Request request, short remainingDays, PersonController personController) {
+        //TODO check in database and context the remaining vacation
         Person person = request.getCreator();
         person.setVacation_remaining(remainingDays);
         personController.update(person);

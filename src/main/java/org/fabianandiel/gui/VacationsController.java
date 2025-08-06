@@ -8,7 +8,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
-import org.fabianandiel.constants.Constants;
 import org.fabianandiel.constants.RequestStatus;
 import org.fabianandiel.constants.Role;
 import org.fabianandiel.context.UserContext;
@@ -98,6 +97,7 @@ public class VacationsController implements Initializable {
                 //set pending requests, with start date in the past to expired status
                 this.requestController.changeRequestStatusBeforeDate(LocalDate.now(), RequestStatus.PENDING, RequestStatus.EXPIRED);
                 this.vacationsRequestVacationEntitlement.setText(String.valueOf(UserContext.getInstance().getPerson().getVacation_entitlement()));
+                //ToDO get this from DB
                 this.vacationsRequestRestVacation.setText(String.valueOf(UserContext.getInstance().getPerson().getVacation_remaining()));
                 Platform.runLater(() -> {
                     this.requestList.addAll(this.requestController.getRequestsByCreator(UserContext.getInstance().getId()));

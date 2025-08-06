@@ -87,7 +87,7 @@ public class Person {
     @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER)
     List<Request> requests = new ArrayList<>();
 
-    @NotBlank(message = "Vacation entitilement can`t be empty") //Jakarta Valdiation
+    @NotNull(message = "Vacation entitilement can`t be empty") //Jakarta Valdiation
     @Min(value = 0, message = "Vacation entitlement cannot be negative")
     @Max(value = 35, message = "Vacation entitlement cannot exceed 35 days")
     @Column(name = "vacation_entitlement",nullable = false, updatable = false)
@@ -98,7 +98,7 @@ public class Person {
     @Column(name = "vacation_remaining",nullable = false)
     private short vacation_remaining;
 
-    @NotBlank(message = "Working hours can`t be empty") //Jakarta Valdiation
+    @NotNull(message = "Working hours can`t be empty") //Jakarta Valdiation
     @Min(value = 0, message = "Working hours per week cannot be negative")
     @Max(value = 60, message = "Working hours per week cannot exceed 60 hours")
     @Column(name = "week_work_hours")
