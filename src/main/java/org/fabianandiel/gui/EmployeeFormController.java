@@ -24,7 +24,6 @@ import org.fabianandiel.services.EntityManagerProvider;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
 import org.fabianandiel.validation.EmployeeFormValidationService;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -176,6 +175,7 @@ public class EmployeeFormController implements Initializable {
                 this.createEmployeeSubordinates.getSelectionModel().select(subordinate);
             }
         }
+        this.createEmployeeHoursWeek.setText(String.valueOf(person.getWeek_work_hours()));
     }
 
     /**
@@ -201,6 +201,7 @@ public class EmployeeFormController implements Initializable {
             createdPerson.setStatus(Status.JUST_CREATED);
             EmployeeCRUDService.createNewPerson(em, createdPerson, this.subordinates, this.superiors);
         } else {
+            createdPerson.setStatus(SelectedEmployeeContext.getPersonToUpdate().getStatus());
             EmployeeCRUDService.updatePerson(em, createdPerson, this.subordinates, this.superiors);
         }
         this.onReset();
@@ -279,9 +280,15 @@ public class EmployeeFormController implements Initializable {
                 GUIService.setErrorText("Vacation entitlement can not be empty", this.createEmployeeErrorText);
                 return null;
             }
+            String workHoursPerWeek = this.createEmployeeHoursWeek.getText();
+            if (workHoursPerWeek.trim().isEmpty()) {
+                GUIService.setErrorText("Work hours per week can not be empty", this.createEmployeeErrorText);
+                return null;
+            }
             personToCreate.setVacation_entitlement(Short.parseShort(vacationEntitlement));
+            personToCreate.setWeek_work_hours(Short.parseShort(workHoursPerWeek));
         } catch (NumberFormatException e) {
-            GUIService.setErrorText("Invalid vacation number format", this.createEmployeeErrorText);
+            GUIService.setErrorText("Invalid work hours per week number format", this.createEmployeeErrorText);
             return null;
         }
             personToCreate.setEmail(createEmployeeEmail.getText());
@@ -371,6 +378,7 @@ public class EmployeeFormController implements Initializable {
             this.createEmployeeRolesBoxAdmin.setSelected(false);
             this.createEmployeeSubordinates.getSelectionModel().clearSelection();
             this.createEmployeeErrorText.setVisible(false);
+            this.createEmployeeHoursWeek.clear();
         }
 
 

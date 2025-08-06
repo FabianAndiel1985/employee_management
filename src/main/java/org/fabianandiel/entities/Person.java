@@ -80,7 +80,6 @@ public class Person {
     @Column(name = "role")
     private Set<Role> roles = new HashSet<>();
 
-    @NotNull(message = "Status can`t be empty") //Jakarta Valdiation
     @Enumerated(EnumType.STRING)
     @Column(name = "status",nullable = false)
     private Status status;
@@ -91,7 +90,7 @@ public class Person {
     @NotNull(message = "Vacation entitilement can`t be empty") //Jakarta Valdiation
     @Min(value = 0, message = "Vacation entitlement cannot be negative")
     @Max(value = 35, message = "Vacation entitlement cannot exceed 35 days")
-    @Column(name = "vacation_entitlement",nullable = false, updatable = false)
+    @Column(name = "vacation_entitlement",nullable = false)
     private short vacation_entitlement;
 
     @Min(value = 0, message = "Remaining vacation cannot be negative")

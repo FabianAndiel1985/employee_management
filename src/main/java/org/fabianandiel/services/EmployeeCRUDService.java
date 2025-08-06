@@ -7,7 +7,6 @@ import org.fabianandiel.constants.Status;
 import org.fabianandiel.context.SelectedEmployeeContext;
 import org.fabianandiel.entities.Address;
 import org.fabianandiel.entities.Person;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -164,6 +163,11 @@ public class EmployeeCRUDService {
         if ((createdPerson.getRoles().size() == 2 || createdPerson.getRoles().size() == 3) && (createdPerson.getRoles().contains(Role.MANAGER) || createdPerson.getRoles().contains(Role.ADMIN))) {
             superiors.add(createdPerson);
         }
+
+        SelectedEmployeeContext.clearSession();
+        SelectedEmployeeContext.initSession(createdPerson);
+        Person person = SelectedEmployeeContext.getPersonToUpdate();
+        System.out.println(person);
     }
 
 
