@@ -165,14 +165,20 @@ public class TimeStampController implements Initializable {
      */
     public void clockIn() {
         if (timeBookingStartTime.getText().isEmpty() && this.currentTimeStamp.getTimeBookingStartTime() == null) {
-            LocalTime time = LocalTime.now();
-            this.currentTimeStamp.setTimeBookingStartTime(time);
-            this.timeBookingStartTime.setText(time.toString());
-            //TODO error handling here
-            this.timeStampController.update(currentTimeStamp);
-            this.timeBookingClockIn.setDisable(true);
-            UserContext.getInstance().getPerson().setStatus(Status.PRESENT);
-            this.personController.update(UserContext.getInstance().getPerson());
+                //HIBERNATE TODO Transaction hier machen
+            try {
+                LocalTime time = LocalTime.now();
+                this.timeStampController.update(currentTimeStamp);
+                this.currentTimeStamp.setTimeBookingStartTime(time);
+                this.timeBookingStartTime.setText(time.toString());
+                this.timeBookingClockIn.setDisable(true);
+                UserContext.getInstance().getPerson().setStatus(Status.PRESENT);
+                this.personController.update(UserContext.getInstance().getPerson());
+            }
+            catch(RuntimeException e) {
+                GUIService.setErrorText(Constants.PLEASE_CONTACT_SUPPORT,this.timeBookingErrorText);
+            }
+
         }
     }
 
