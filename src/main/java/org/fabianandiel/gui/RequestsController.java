@@ -11,7 +11,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
-import org.fabianandiel.constants.Constants;
 import org.fabianandiel.constants.RequestStatus;
 import org.fabianandiel.context.UserContext;
 import org.fabianandiel.controller.PersonController;
@@ -74,8 +73,7 @@ public class RequestsController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Set<Person> subordinates = UserContext.getInstance().getPerson().getSubordinates();
         if (subordinates.isEmpty()) {
-            //TODO show error text that no subordinates are found
-            return;
+            GUIService.setErrorText("You dont have subordinates",this.requestsErrorText);
         }
         this.executorService = Executors.newFixedThreadPool(2);
         this.executorService.submit(() -> {
