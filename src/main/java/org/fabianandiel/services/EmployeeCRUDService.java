@@ -2,16 +2,25 @@ package org.fabianandiel.services;
 
 import jakarta.persistence.EntityManager;
 import javafx.collections.ObservableList;
+import javafx.scene.text.Text;
 import org.fabianandiel.constants.Role;
 import org.fabianandiel.constants.Status;
 import org.fabianandiel.context.SelectedEmployeeContext;
 import org.fabianandiel.entities.Address;
 import org.fabianandiel.entities.Person;
+
 import java.util.HashSet;
 import java.util.Set;
 
 public class EmployeeCRUDService {
 
+    /**
+     * creates a new person of any role
+     * @param em EntityManager instance
+     * @param createdPerson person that shall be saved in the DB
+     * @param subordinates potential subordinates of the person to save
+     * @param superiors potential superiors of the person to save
+     */
     public static void createNewPerson(EntityManager em, Person createdPerson, ObservableList<Person> subordinates, ObservableList<Person> superiors) {
         if (em == null || createdPerson == null)
             return;
@@ -40,6 +49,7 @@ public class EmployeeCRUDService {
             em.persist(createdPerson);
             em.flush();
 
+
             //makes subordinates managed and updates them with the new superior
             if (selectedSubordinates != null) {
                 int batchSize = 30;
@@ -63,13 +73,14 @@ public class EmployeeCRUDService {
                 }
                 em.getTransaction().commit();
             }
+
+
         } catch (Exception e) {
-            e.printStackTrace();
-            //TODO error handling mti Fehlermeldung
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            return;
+            em.close();
+            throw new RuntimeException("Error creating the person");
         }
 
         for (Person p : selectedSubordinates) {
@@ -85,9 +96,18 @@ public class EmployeeCRUDService {
         if ((createdPerson.getRoles().size() == 2 || createdPerson.getRoles().size() == 3) && (createdPerson.getRoles().contains(Role.MANAGER) || createdPerson.getRoles().contains(Role.ADMIN))) {
             superiors.add(createdPerson);
         }
+
     }
 
 
+
+    /**
+     * updates a new person of any role
+     * @param em EntityManager instance
+     * @param createdPerson person that shall be updated in the DB
+     * @param subordinates potential subordinates of the person to save
+     * @param superiors potential superiors of the person to save
+     */
     public static void updatePerson(EntityManager em, Person createdPerson, ObservableList<Person> subordinates, ObservableList<Person> superiors) {
         if (em == null || createdPerson == null)
             return;
@@ -143,7 +163,7 @@ public class EmployeeCRUDService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            //TODO error handling mti Fehlermeldung
+            //TODO error handling mti Fehlermeldung analog oben - nicht testen
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
@@ -242,7 +262,7 @@ public class EmployeeCRUDService {
 
         allEmployees.remove(personToSetToInactive);
 
-        if(updateableEmployees.contains(personToSetToInactive)) {
+        if (updateableEmployees.contains(personToSetToInactive)) {
             updateableEmployees.remove(personToSetToInactive);
         }
 

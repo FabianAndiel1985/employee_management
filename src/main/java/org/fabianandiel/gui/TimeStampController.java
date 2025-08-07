@@ -14,7 +14,6 @@ import org.fabianandiel.dao.TimeStampDAO;
 import org.fabianandiel.entities.TimeStamp;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
-import java.io.IOException;
 import java.net.URL;
 import java.time.*;
 import java.util.ResourceBundle;
@@ -111,7 +110,6 @@ public class TimeStampController implements Initializable {
     private void initializeActualHours() {
         List<TimeStamp> timeStamps = this.timeStampController.getTimeStampsOfCurrentMonth(UserContext.getInstance().getId(),LocalDate.now());
         if(timeStamps == null) {
-            //TODO set error here
             double noBookingsYet = 0.00;
             this.timeBookingActualHours.setText(String.valueOf(noBookingsYet));
             return;
