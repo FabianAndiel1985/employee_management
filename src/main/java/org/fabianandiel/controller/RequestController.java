@@ -63,7 +63,12 @@ public class RequestController<T, ID> extends BaseController<T, ID> {
      * @return a List of all the vacation requests of an employee
      */
     public List<Request> getRequestsByCreator(UUID id) {
-        return this.requestDAO.getRequestsByCreator(id);
+        try {
+            return this.requestDAO.getRequestsByCreator(id);
+        }
+        catch(RuntimeException e) {
+            throw e;
+        }
     }
 
     /**
@@ -73,7 +78,11 @@ public class RequestController<T, ID> extends BaseController<T, ID> {
      * @param statusToSetTo set requests to this status
      */
     public void changeRequestStatusBeforeDate(LocalDate date, RequestStatus originalStatus, RequestStatus statusToSetTo) {
-        this.requestDAO.changeRequestStatusBeforeDate(date,originalStatus,statusToSetTo);
+        try {
+            this.requestDAO.changeRequestStatusBeforeDate(date, originalStatus, statusToSetTo);
+        } catch (RuntimeException e) {
+            throw e;
+        }
     }
 
     /**

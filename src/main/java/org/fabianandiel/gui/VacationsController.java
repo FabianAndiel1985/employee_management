@@ -88,25 +88,25 @@ public class VacationsController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        initalizeTableColumn();
-        if (isManagerOrAdmin()) {
-            this.vacationsText.setText("Book your vacation");
-        }
         executorService = Executors.newFixedThreadPool(2);
         executorService.submit(() -> {
             try {
                 //set pending requests, with start date in the past to expired status
                 this.requestController.changeRequestStatusBeforeDate(LocalDate.now(), RequestStatus.PENDING, RequestStatus.EXPIRED);
                 this.vacationsRequestVacationEntitlement.setText(String.valueOf(UserContext.getInstance().getPerson().getVacation_entitlement()));
-                //ToDO get this from DB
                 this.vacationsRequestRestVacation.setText(String.valueOf(UserContext.getInstance().getPerson().getVacation_remaining()));
+                List<Request> requests = this.requestController.getRequestsByCreator(UserContext.getInstance().getId());
                 Platform.runLater(() -> {
-                    this.requestList.addAll(this.requestController.getRequestsByCreator(UserContext.getInstance().getId()));
+                    initalizeTableColumn();
+                    if (isManagerOrAdmin()) {
+                        this.vacationsText.setText("Book your vacation");
+                    }
+                    this.requestList.addAll(requests);
                     this.vacationsRequestTable.setItems(this.requestList);
                 });
             } catch (Exception e) {
-                //TODO Error handling mit Fehlermeldung für User
-                throw new RuntimeException(e);
+                e.printStackTrace();
+                GUIService.setErrorText(e.getMessage(),this.vacationsErrorText);
             }
         });
     }

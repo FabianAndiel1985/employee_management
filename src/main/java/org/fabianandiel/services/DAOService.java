@@ -31,10 +31,13 @@ public class DAOService {
             } else {
                 throw new IllegalArgumentException("Max 3 parameters are allowed");
             }
-        } finally {
-            em.close();
-            return items;
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
         }
+        finally {
+            em.close();
+        }
+        return items;
     }
 
     /**
@@ -63,7 +66,7 @@ public class DAOService {
         } catch (Exception e) {
             if (tx.isActive())
                 tx.rollback();
-            e.printStackTrace();
+            throw new RuntimeException("Error occurred with changing request status before date");
         } finally {
             em.close();
         }

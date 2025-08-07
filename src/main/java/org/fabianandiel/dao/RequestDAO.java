@@ -29,8 +29,12 @@ public class RequestDAO<T,ID> extends BaseDAO<T,ID> {
      * @return requests of the creator with the id
      */
     public List<Request> getRequestsByCreator(UUID id) {
-        List<Request> requests = DAOService.findItemsWithPropertyOrProperties("SELECT r FROM Request r WHERE r.creator.id = :param",Request.class,EntityManagerProvider.getEntityManager(),id);
-        return requests;
+        try {
+            List<Request> requests = DAOService.findItemsWithPropertyOrProperties("SELECT r FROM Request r WHERE r.creator.id = :param", Request.class, EntityManagerProvider.getEntityManager(), id);
+            return requests;
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error getting requests from this id: "+id);
+        }
     }
 
 
@@ -41,7 +45,11 @@ public class RequestDAO<T,ID> extends BaseDAO<T,ID> {
      * @param statusToSetTo set requests to this status
      */
     public void changeRequestStatusBeforeDate(LocalDate date, RequestStatus originalStatus, RequestStatus statusToSetTo) {
-    DAOService.changeRequestStatusBeforeDate(date,originalStatus,statusToSetTo);
+        try {
+            DAOService.changeRequestStatusBeforeDate(date,originalStatus,statusToSetTo);
+        } catch (RuntimeException e) {
+            throw e;
+        }
     }
 
     /**
