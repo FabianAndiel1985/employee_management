@@ -8,6 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
+import org.fabianandiel.constants.Constants;
 import org.fabianandiel.constants.RequestStatus;
 import org.fabianandiel.constants.Role;
 import org.fabianandiel.context.UserContext;
@@ -140,19 +141,17 @@ public class VacationsController implements Initializable {
 
             try {
                 this.requestController.create(request);
-
                 Platform.runLater(() -> {
                     this.requestList.add(request);
                     if(isManagerOrAdmin() && remainingDaysTextFinal  != null) {
                         this.vacationsRequestRestVacation.setText(remainingDaysTextFinal);
                     }
                 });
-            } catch (Exception e) {
-                //TODO add an error text
-                throw new RuntimeException(e);
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+                GUIService.setErrorText(Constants.PLEASE_CONTACT_SUPPORT,this.vacationsErrorText);
             }
         });
-        //TODO error handling
     }
 
     /**

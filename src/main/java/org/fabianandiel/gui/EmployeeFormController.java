@@ -96,8 +96,6 @@ public class EmployeeFormController implements Initializable {
     @FXML
     private Text vacationsRequestVacationEntitlement;
 
-    //TODO continue the vaction fields
-
     @FXML
     private Text vacationsRequestRestVacation;
 
@@ -105,13 +103,10 @@ public class EmployeeFormController implements Initializable {
 
     private AddressController addressController = new AddressController<>(new AddressDAO<>());
 
-    //TODO when I add a person with role Manager also add to superiors list
     private final ObservableList<Person> superiors = FXCollections.observableArrayList();
 
-    //TODO when I add a person with role employee also add to subordinates list
     private final ObservableList<Person> subordinates = FXCollections.observableArrayList();
 
-    //TODO when I create a address add it here
     private final ObservableList<Address> addresses = FXCollections.observableArrayList();
 
     private boolean userHasManagerRole;
@@ -242,7 +237,7 @@ public class EmployeeFormController implements Initializable {
     public void goBackEmployeeOverview() {
         try {
             SelectedEmployeeContext.clearSession();
-            SceneManager.switchScene("/org/fabianandiel/gui/employeeOverviewView.fxml", 630, 732, "Employee Overview");
+            SceneManager.switchScene("/org/fabianandiel/gui/employeeOverviewView.fxml", 632, 732, "Employee Overview");
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, this.createEmployeeErrorText);

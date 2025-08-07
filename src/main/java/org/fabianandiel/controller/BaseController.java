@@ -31,16 +31,14 @@ public abstract class BaseController<T,ID> implements ControllerInterface<T,ID> 
         try {
             return dao.save(entity);
         } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+            throw e;
         }
-        return null;
     }
 
     public T update(T entity) {
         try {
             return dao.update(entity);
         } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
             e.printStackTrace();
         }
         return null;
