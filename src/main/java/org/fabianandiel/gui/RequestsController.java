@@ -77,15 +77,13 @@ public class RequestsController implements Initializable {
             //TODO show error text that no subordinates are found
             return;
         }
-        initalizeTableColumn();
-
         this.executorService = Executors.newFixedThreadPool(2);
-
         this.executorService.submit(() -> {
             //set pending requests, with start date in the past tp expired status
             this.requestController.changeRequestStatusBeforeDate(LocalDate.now(), RequestStatus.PENDING, RequestStatus.EXPIRED);
             try {
                 List<Request> pendingRequests = requestController.getRequestsOfSubordinatesByStatus(subordinates, RequestStatus.PENDING);
+                this.initalizeTableColumn();
                 Platform.runLater(() -> {
                     this.pendingRequestsList.addAll(pendingRequests);
                     this.pendingRequestsTableView.setItems(this.pendingRequestsList);
@@ -135,7 +133,7 @@ public class RequestsController implements Initializable {
      * goes back to main view
      */
     public void goBackToMainView() {
-        SceneManager.goBackToMainView( requestsErrorText);
+        SceneManager.goBackToMainView(requestsErrorText);
     }
 
 
