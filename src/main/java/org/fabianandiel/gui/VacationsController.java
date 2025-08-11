@@ -22,8 +22,6 @@ import org.fabianandiel.services.SceneManager;
 import org.fabianandiel.services.VacationService;
 import org.fabianandiel.services.ValidatorProvider;
 import javafx.application.Platform;
-
-import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -93,11 +91,11 @@ public class VacationsController implements Initializable {
             try {
                 //set pending requests, with start date in the past to expired status
                 this.requestController.changeRequestStatusBeforeDate(LocalDate.now(), RequestStatus.PENDING, RequestStatus.EXPIRED);
-                this.vacationsRequestVacationEntitlement.setText(String.valueOf(UserContext.getInstance().getPerson().getVacation_entitlement()));
-                this.vacationsRequestRestVacation.setText(String.valueOf(UserContext.getInstance().getPerson().getVacation_remaining()));
                 List<Request> requests = this.requestController.getRequestsByCreator(UserContext.getInstance().getId());
                 Platform.runLater(() -> {
                     initalizeTableColumn();
+                    this.vacationsRequestVacationEntitlement.setText(String.valueOf(UserContext.getInstance().getPerson().getVacation_entitlement()));
+                    this.vacationsRequestRestVacation.setText(String.valueOf(UserContext.getInstance().getPerson().getVacation_remaining()));
                     if (isManagerOrAdmin()) {
                         this.vacationsText.setText("Book your vacation");
                     }
@@ -155,12 +153,12 @@ public class VacationsController implements Initializable {
     }
 
     /**
-     * Checks if the current user is a manager
+     * Checks if the current user is manager or admin
      *
      * @return true if user is at least a manager, false if not
      */
     private boolean isManagerOrAdmin() {
-        return UserContext.getInstance().hasRole(Role.EMPLOYEE) && UserContext.getInstance().hasRole(Role.MANAGER);
+        return UserContext.getInstance().hasRole(Role.MANAGER) || UserContext.getInstance().hasRole(Role.ADMIN);
     }
 
 
@@ -198,7 +196,6 @@ public class VacationsController implements Initializable {
         short totalDaysOfCurrentRequest = (short) (endDate.toEpochDay() - startDate.toEpochDay() + 1);
 
         short totalDaysOfPastRequest = pastRequests == null || pastRequests.size() == 0 ? 0 : this.calculateDaysOfPastRequests(pastRequests);
-        //TODO take remaining days calculate from here and update admin and manager
         if (UserContext.getInstance().getPerson().getVacation_remaining() - totalDaysOfCurrentRequest - totalDaysOfPastRequest <= 0) {
             GUIService.setErrorText("You're asking fore more holiday than you're entitled to", this.vacationsErrorText);
             return false;

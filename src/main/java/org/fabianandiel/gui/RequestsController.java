@@ -117,7 +117,7 @@ public class RequestsController implements Initializable {
                             this.pendingRequestsList.remove(request);
                         });
                     } catch (Exception e) {
-                        GUIService.setErrorText("There is an issue with approving/denying request",this.requestsErrorText);
+                        GUIService.setErrorText(e.getMessage(),this.requestsErrorText);
                         e.printStackTrace();
                     }
                 }

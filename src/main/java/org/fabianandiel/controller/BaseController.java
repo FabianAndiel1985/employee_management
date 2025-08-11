@@ -2,7 +2,6 @@ package org.fabianandiel.controller;
 
 import org.fabianandiel.interfaces.ControllerInterface;
 import org.fabianandiel.interfaces.DAOInterface;
-
 import java.util.List;
 
 
@@ -39,9 +38,8 @@ public abstract class BaseController<T,ID> implements ControllerInterface<T,ID> 
         try {
             return dao.update(entity);
         } catch (RuntimeException e) {
-            e.printStackTrace();
+          throw e;
         }
-        return null;
     }
 
     @Override
