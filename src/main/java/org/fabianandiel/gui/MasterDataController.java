@@ -9,7 +9,6 @@ import org.fabianandiel.constants.Role;
 import org.fabianandiel.context.SelectedEmployeeContext;
 import org.fabianandiel.entities.Person;
 import org.fabianandiel.services.SceneManager;
-
 import java.util.Set;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -153,6 +152,8 @@ public class MasterDataController implements Initializable {
      * @param person person in the selected employee context
      */
     private void displaySuperior(Person person) {
+        if(person.getSuperior() == null)
+            return;
         this.masterDataSuperior.setText(person.getSuperior().getFirstname() + " " + person.getSuperior().getLastname());
         this.masterDataSubordinates.setVisible(false);
         this.masterDataSubordinates.setManaged(false);

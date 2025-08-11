@@ -63,7 +63,6 @@ public class TimeStampController implements Initializable {
         this.initializeActualHours();
         this.initializeDifferenceBetweenActualAndTarget();
 
-        //TODO validate if any timestamp has null values up until the day before -> error message
         this.personController = new PersonController<>(new PersonDAO());
 
         TimeStamp existingStamp = timeStampController.getTimeStampByDateAndPerson(LocalDate.now(), UserContext.getInstance().getId());

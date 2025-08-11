@@ -20,7 +20,6 @@ import org.fabianandiel.services.EmployeeCRUDService;
 import org.fabianandiel.services.EntityManagerProvider;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -132,13 +131,7 @@ public class EmployeeOverviewController implements Initializable {
         this.employeeOverviewRTMaddress.setCellValueFactory(new PropertyValueFactory<Person, String>("address"));
         if (UserContext.getInstance().hasRole(Role.MANAGER) && UserContext.getInstance().getRoles().size() == 2) {
             List<Person> personsWithUserAsSuperior = this.allEmployees.stream()
-                    .filter((empl) -> {
-                        if (empl.getSuperior() != null) {
-                            //TODO think if managers may assign unassigned employees to themselves why doesnt this work
-                            return empl.getSuperior().getId().equals(UserContext.getInstance().getId()) || empl.getSuperior() == null;
-                        }
-                        return false;
-                    })
+                    .filter((empl) -> empl.getSuperior() == null || empl.getSuperior().getId().equals(UserContext.getInstance().getId())  )
                     .toList();
 
             this.updateableEmployees.addAll(personsWithUserAsSuperior);

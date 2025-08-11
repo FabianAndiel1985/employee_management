@@ -48,7 +48,7 @@ public class DAOService {
      * @param statusToSetTo  set requests to this status
      */
     public static void changeRequestStatusBeforeDate(LocalDate date, RequestStatus originalStatus, RequestStatus statusToSetTo) {
-        String jpql = "UPDATE Request r SET r.status = :param WHERE r.status = :param1 AND r.startDate < :param2 AND WHERE r.status <> :param3 ";
+        String jpql = "UPDATE Request r SET r.status = :param WHERE r.status = :param1 AND r.startDate < :param2 AND r.status <> :param3 ";
 
         EntityManager em = EntityManagerProvider.getEntityManager();
         EntityTransaction tx = em.getTransaction();
