@@ -24,7 +24,6 @@ import org.fabianandiel.services.EntityManagerProvider;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
 import org.fabianandiel.validation.EmployeeFormValidationService;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -202,7 +201,7 @@ public class EmployeeFormController implements Initializable {
             this.onReset();
         } catch (RuntimeException e) {
             e.printStackTrace();
-            GUIService.setErrorText("Error creating person. Contact support.",this.createEmployeeErrorText);
+            GUIService.setErrorText(e.getMessage(),this.createEmployeeErrorText);
         }
     }
 

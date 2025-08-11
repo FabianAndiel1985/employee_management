@@ -104,6 +104,7 @@ public class EmployeeOverviewController implements Initializable {
         initializeAllEmployees();
         initializeUpdateableEmployees();
         this.employeeOverviewUpdateEmployee.setDisable(true);
+        this.employeeOverviewDeleteEmployee.setDisable(true);
         this.employeeOverviewMasterData.setDisable(true);
         if (UserContext.getInstance().hasRole(Role.ADMIN)) {
             this.employeeOverviewText.setText("Managers and Admins");
@@ -115,6 +116,7 @@ public class EmployeeOverviewController implements Initializable {
      */
     private void handleRowSelection() {
         this.employeeOverviewUpdateEmployee.setDisable(false);
+        this.employeeOverviewDeleteEmployee.setDisable(false);
         this.employeeOverviewMasterData.setDisable(false);
     }
 
@@ -132,8 +134,8 @@ public class EmployeeOverviewController implements Initializable {
             List<Person> personsWithUserAsSuperior = this.allEmployees.stream()
                     .filter((empl) -> {
                         if (empl.getSuperior() != null) {
-                            //TODO think if managers may assign unassigned employees to themselves
-                            return empl.getSuperior().getId().equals(UserContext.getInstance().getId());
+                            //TODO think if managers may assign unassigned employees to themselves why doesnt this work
+                            return empl.getSuperior().getId().equals(UserContext.getInstance().getId()) || empl.getSuperior() == null;
                         }
                         return false;
                     })
@@ -161,6 +163,8 @@ public class EmployeeOverviewController implements Initializable {
                     if (newValue != null) {
                         handleRowSelection();
                     } else {
+                        this.employeeOverviewDeleteEmployee.setDisable(true);
+                        this.employeeOverviewMasterData.setDisable(true);
                         this.employeeOverviewUpdateEmployee.setDisable(true);
                     }
                 });

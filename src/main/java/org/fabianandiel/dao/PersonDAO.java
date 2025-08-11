@@ -47,9 +47,6 @@ public class PersonDAO<T, ID> extends BaseDAO<T, ID> {
         return persons;
     }
 
-
-
-    //TODO look at member in closer
     /**
      * Gets all the persons who have at least the role
      * @param role role that persons at least have to have
@@ -59,8 +56,6 @@ public class PersonDAO<T, ID> extends BaseDAO<T, ID> {
         String jpql = "SELECT p FROM Person p WHERE :param MEMBER OF p.roles";
         return DAOService.findItemsWithPropertyOrProperties(jpql,Person.class,EntityManagerProvider.getEntityManager(),role);
     }
-
-
 
     /**
      * gets all persons that have only one role
@@ -76,11 +71,6 @@ public class PersonDAO<T, ID> extends BaseDAO<T, ID> {
         String jpql = "SELECT p FROM Person p WHERE p.superior.id = :param";
         return DAOService.findItemsWithPropertyOrProperties(jpql,Person.class,EntityManagerProvider.getEntityManager(),id);
     }
-
-    //TODO when time and login is done -
-    //find person by name
-    //find persons by role
-    //find personByNameAndRole
 
 }
 

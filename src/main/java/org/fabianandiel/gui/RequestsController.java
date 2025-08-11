@@ -22,8 +22,6 @@ import org.fabianandiel.entities.Request;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
 import org.fabianandiel.services.VacationService;
-
-import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
@@ -77,7 +75,7 @@ public class RequestsController implements Initializable {
         }
         this.executorService = Executors.newFixedThreadPool(2);
         this.executorService.submit(() -> {
-            //set pending requests, with start date in the past tp expired status
+            //set pending requests, with start date in the past to expired status
             this.requestController.changeRequestStatusBeforeDate(LocalDate.now(), RequestStatus.PENDING, RequestStatus.EXPIRED);
             try {
                 List<Request> pendingRequests = requestController.getRequestsOfSubordinatesByStatus(subordinates, RequestStatus.PENDING);
@@ -87,8 +85,8 @@ public class RequestsController implements Initializable {
                     this.pendingRequestsTableView.setItems(this.pendingRequestsList);
                 });
             } catch (Exception e) {
-                //TODO error handling loading requests to approve
-                throw new RuntimeException(e);
+                e.printStackTrace();
+                GUIService.setErrorText("Error loading requests",this.requestsErrorText);
             }
         });
     }
@@ -119,8 +117,8 @@ public class RequestsController implements Initializable {
                             this.pendingRequestsList.remove(request);
                         });
                     } catch (Exception e) {
-                        //TODO error message issues with approving request
-                        throw new RuntimeException(e);
+                        GUIService.setErrorText("There is an issue with approving/denying request",this.requestsErrorText);
+                        e.printStackTrace();
                     }
                 }
         );

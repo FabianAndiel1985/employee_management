@@ -2,13 +2,11 @@ package org.fabianandiel.services;
 
 import jakarta.persistence.EntityManager;
 import javafx.collections.ObservableList;
-import javafx.scene.text.Text;
 import org.fabianandiel.constants.Role;
 import org.fabianandiel.constants.Status;
 import org.fabianandiel.context.SelectedEmployeeContext;
 import org.fabianandiel.entities.Address;
 import org.fabianandiel.entities.Person;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -163,11 +161,11 @@ public class EmployeeCRUDService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            //TODO error handling mti Fehlermeldung analog oben - nicht testen
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            return;
+            em.close();
+            throw new RuntimeException("Error updating the person");
         }
 
         for (Person p : selectedSubordinates) {
@@ -253,11 +251,11 @@ public class EmployeeCRUDService {
             em.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace();
-            //TODO error handling mti Fehlermeldung
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            return;
+            em.close();
+            throw new RuntimeException("Error setting person to inactive");
         }
 
         allEmployees.remove(personToSetToInactive);
