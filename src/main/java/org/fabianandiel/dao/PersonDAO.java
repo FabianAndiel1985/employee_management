@@ -36,12 +36,11 @@ public class PersonDAO<T, ID> extends BaseDAO<T, ID> {
      * @return List of persons who fulfill the query
      */
     public List<Person> getPersonByUsername(String username) {
-        //TODO look at left join fetch closer
         List<Person> persons = DAOService.findItemsWithPropertyOrProperties("""
             SELECT DISTINCT p 
             FROM Person p
             LEFT JOIN FETCH p.subordinates s
-            LEFT JOIN FETCH p.roles
+            JOIN FETCH p.roles
             WHERE p.username = :param
         """, Person.class, EntityManagerProvider.getEntityManager(), username);
         return persons;
