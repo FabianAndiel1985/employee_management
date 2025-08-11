@@ -168,6 +168,7 @@ public class EmployeeCRUDService {
             throw new RuntimeException("Error updating the person");
         }
 
+        //removes the subordinates from the observable list
         for (Person p : selectedSubordinates) {
             subordinates.remove(p);
         }
