@@ -117,9 +117,18 @@ public class EmployeeFormController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Person personToUpdate = SelectedEmployeeContext.getPersonToUpdate();
-
         this.userHasManagerRole = UserContext.getInstance().hasRole(Role.EMPLOYEE) && UserContext.getInstance().hasRole(Role.MANAGER) && !UserContext.getInstance().hasRole(Role.ADMIN);
         this.userHasManagerAndAdminRole = UserContext.getInstance().hasRole(Role.ADMIN);
+        List<Person> persons = null;
+        try {
+            if (personToUpdate != null && this.userHasManagerAndAdminRole) {
+                persons = this.personController.getPersonBySuperiorID(personToUpdate.getId());
+            }
+        } catch (RuntimeException e) {
+            GUIService.setErrorText("Error loading subordinates",this.createEmployeeErrorText);
+            e.printStackTrace();
+        }
+
         initializeAddressDropDown();
         initalizeSuperiorDropdown();
         initializeCheckBoxesAccordingToAuthorization();
@@ -131,7 +140,7 @@ public class EmployeeFormController implements Initializable {
                 this.createEmployeeRolesBoxEmployee.setDisable(true);
                 this.createEmployeeRolesBoxManager.setDisable(true);
 
-                List<Person> persons = this.personController.getPersonBySuperiorID(personToUpdate.getId());
+              //  List<Person> persons = this.personController.getPersonBySuperiorID(personToUpdate.getId());
                 if (persons != null) {
                     this.subordinates.addAll(persons);
                 }
@@ -201,7 +210,7 @@ public class EmployeeFormController implements Initializable {
             this.onReset();
         } catch (RuntimeException e) {
             e.printStackTrace();
-            GUIService.setErrorText(e.getMessage(),this.createEmployeeErrorText);
+            GUIService.setErrorText(e.getMessage(), this.createEmployeeErrorText);
         }
     }
 

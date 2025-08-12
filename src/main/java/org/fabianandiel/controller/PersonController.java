@@ -41,11 +41,15 @@ public class PersonController<T, ID> extends BaseController<T, ID> {
      * @param id of the superior
      */
     public List<Person> getPersonBySuperiorID(UUID id) {
-        List<Person> persons = this.personDAO.getPersonBySuperiorID(id);
-        if (persons.size() == 0) {
-            return null;
+        try {
+            List<Person> persons = this.personDAO.getPersonBySuperiorID(id);
+            if (persons.size() == 0) {
+                return null;
+            }
+            return persons;
+        } catch (RuntimeException e) {
+            throw e;
         }
-        return persons;
     }
 
     /**

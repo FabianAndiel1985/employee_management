@@ -186,18 +186,24 @@ public class VacationsController implements Initializable {
             return false;
         }
 
-        List<Request> pastRequests = this.requestController.getRequestsByStatus(RequestStatus.ACCEPTED, RequestStatus.PENDING);
+        try {
+            List<Request> pastRequests = this.requestController.getRequestsByStatus(RequestStatus.ACCEPTED, RequestStatus.PENDING);
 
-        if (pastRequests != null && this.checkIfStartDateOrEndDateIsInPastRequestRange(startDate, endDate, pastRequests)) {
-            GUIService.setErrorText("The start date or end date can not lie in the range of a past request", this.vacationsErrorText);
-            return false;
-        }
+            if (pastRequests != null && this.checkIfStartDateOrEndDateIsInPastRequestRange(startDate, endDate, pastRequests)) {
+                GUIService.setErrorText("The start date or end date can not lie in the range of a past request", this.vacationsErrorText);
+                return false;
+            }
 
-        short totalDaysOfCurrentRequest = (short) (endDate.toEpochDay() - startDate.toEpochDay() + 1);
+            short totalDaysOfCurrentRequest = (short) (endDate.toEpochDay() - startDate.toEpochDay() + 1);
 
-        short totalDaysOfPastRequest = pastRequests == null || pastRequests.size() == 0 ? 0 : this.calculateDaysOfPastRequests(pastRequests);
-        if (UserContext.getInstance().getPerson().getVacation_remaining() - totalDaysOfCurrentRequest - totalDaysOfPastRequest <= 0) {
-            GUIService.setErrorText("You're asking fore more holiday than you're entitled to", this.vacationsErrorText);
+            short totalDaysOfPastRequest = pastRequests == null || pastRequests.size() == 0 ? 0 : this.calculateDaysOfPastRequests(pastRequests);
+            if (UserContext.getInstance().getPerson().getVacation_remaining() - totalDaysOfCurrentRequest - totalDaysOfPastRequest <= 0) {
+                GUIService.setErrorText("You're asking fore more holiday than you're entitled to", this.vacationsErrorText);
+                return false;
+            }
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            GUIService.setErrorText(Constants.PLEASE_CONTACT_SUPPORT, this.vacationsErrorText);
             return false;
         }
 
