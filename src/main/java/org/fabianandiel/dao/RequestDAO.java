@@ -22,8 +22,8 @@ public class RequestDAO<T,ID> extends BaseDAO<T,ID> {
        try {
            List<Request> requests = DAOService.findItemsWithPropertyOrProperties("SELECT r FROM Request r WHERE r.creator.id = :param AND r.status = :param1 ", Request.class, EntityManagerProvider.getEntityManager(), id, requestStatus);
            return requests;
-       } catch (RuntimeException e) {
-           throw new RuntimeException("Error loading requests by creator and status");
+       } catch (Exception e) {
+           throw new RuntimeException("Error loading requests by creator and status",e);
        }
     }
 
@@ -36,8 +36,8 @@ public class RequestDAO<T,ID> extends BaseDAO<T,ID> {
         try {
             List<Request> requests = DAOService.findItemsWithPropertyOrProperties("SELECT r FROM Request r WHERE r.creator.id = :param", Request.class, EntityManagerProvider.getEntityManager(), id);
             return requests;
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Error getting requests from this id: "+id);
+        } catch (Exception e) {
+            throw new RuntimeException("Error getting requests from this id: "+id,e);
         }
     }
 
@@ -51,8 +51,8 @@ public class RequestDAO<T,ID> extends BaseDAO<T,ID> {
     public void changeRequestStatusBeforeDate(LocalDate date, RequestStatus originalStatus, RequestStatus statusToSetTo) {
         try {
             DAOService.changeRequestStatusBeforeDate(date,originalStatus,statusToSetTo);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Error setting the requests to expired");
+        } catch (Exception e) {
+            throw new RuntimeException("Error setting the requests to expired",e);
         }
     }
 
@@ -72,8 +72,8 @@ public class RequestDAO<T,ID> extends BaseDAO<T,ID> {
                 return null;
             }
             return requests;
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Error loading requests by status");
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading requests by status",e);
         }
     }
 }

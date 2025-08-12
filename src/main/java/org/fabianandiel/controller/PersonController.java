@@ -20,19 +20,22 @@ public class PersonController<T, ID> extends BaseController<T, ID> {
         }
     }
 
-
     /**
      * Get person object by username.
      *
      * @param username of the person you are searching for
      */
     public Person getPersonByUsername(String username) {
-        List<Person> personList = this.personDAO.getPersonByUsername(username);
-        if (personList.size() == 0) {
-            return null;
+        try {
+            List<Person> personList = this.personDAO.getPersonByUsername(username);
+            if (personList.size() == 0) {
+                return null;
+            }
+            Person person = personList.getFirst();
+            return person;
+        } catch (RuntimeException e) {
+            throw e;
         }
-        Person person = personList.getFirst();
-        return person;
     }
 
     /**
@@ -58,15 +61,26 @@ public class PersonController<T, ID> extends BaseController<T, ID> {
      * @param role of the persons you are searching for
      */
     public List<Person> getPersonsByRole(Role role) {
-        return this.personDAO.getPersonsByRole(role);
+        try {
+            return this.personDAO.getPersonsByRole(role);
+        } catch (RuntimeException e) {
+            throw e;
+        }
     }
+
+
 
     /**
      * gets all employees without a superior
      * @return a list of employees with no other role and no superior
      */
     public List<Person> getEmployeesWithoutSuperior() {
-        return this.personDAO.getEmployeesWithoutSuperior(Role.EMPLOYEE);
+        try{
+            return this.personDAO.getEmployeesWithoutSuperior(Role.EMPLOYEE);
+        }
+        catch(RuntimeException e) {
+            throw e;
+        }
     }
 
 }

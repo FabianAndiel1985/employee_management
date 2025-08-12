@@ -19,14 +19,18 @@ public class PersonDAO<T, ID> extends BaseDAO<T, ID> {
      * @return List of persons who fulfill the query
      */
     public List<Person> getPersonByUsername(String username) {
-        List<Person> persons = DAOService.findItemsWithPropertyOrProperties("""
-                    SELECT DISTINCT p 
-                    FROM Person p
-                    LEFT JOIN FETCH p.subordinates s
-                    JOIN FETCH p.roles
-                    WHERE p.username = :param
-                """, Person.class, EntityManagerProvider.getEntityManager(), username);
-        return persons;
+        try {
+            List<Person> persons = DAOService.findItemsWithPropertyOrProperties("""
+                        SELECT DISTINCT p 
+                        FROM Person p
+                        LEFT JOIN FETCH p.subordinates s
+                        JOIN FETCH p.roles
+                        WHERE p.username = :param
+                    """, Person.class, EntityManagerProvider.getEntityManager(), username);
+            return persons;
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading person by username.",e);
+        }
     }
 
     /**
@@ -36,9 +40,14 @@ public class PersonDAO<T, ID> extends BaseDAO<T, ID> {
      * @return a list of persons that at least have that role
      */
     public List<Person> getPersonsByRole(Role role) {
-        String jpql = "SELECT p FROM Person p WHERE :param MEMBER OF p.roles";
-        return DAOService.findItemsWithPropertyOrProperties(jpql, Person.class, EntityManagerProvider.getEntityManager(), role);
+        try {
+            String jpql = "SELECT p FROM Person p WHERE :param MEMBER OF p.roles";
+            return DAOService.findItemsWithPropertyOrProperties(jpql, Person.class, EntityManagerProvider.getEntityManager(), role);
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading person by role",e);
+        }
     }
+
 
     /**
      * gets all persons that have only one role
@@ -47,13 +56,18 @@ public class PersonDAO<T, ID> extends BaseDAO<T, ID> {
      * @return a list of persons that at least have only that role
      */
     public List<Person> getEmployeesWithoutSuperior(Role role) {
-        String jpql = "SELECT p FROM Person p WHERE SIZE(p.roles) = 1 AND :param MEMBER OF p.roles AND p.superior IS NULL";
-        return DAOService.findItemsWithPropertyOrProperties(jpql, Person.class, EntityManagerProvider.getEntityManager(), role);
+        try {
+            String jpql = "SELECT p FROM Person p WHERE SIZE(p.roles) = 1 AND :param MEMBER OF p.roles AND p.superior IS NULL";
+            return DAOService.findItemsWithPropertyOrProperties(jpql, Person.class, EntityManagerProvider.getEntityManager(), role);
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading employees without superiors",e);
+        }
     }
 
 
     /**
      * gets person by their superior
+     *
      * @param id of the superior of the person
      * @return liste von personen mit einem superior
      */
@@ -61,8 +75,8 @@ public class PersonDAO<T, ID> extends BaseDAO<T, ID> {
         try {
             String jpql = "SELECT p FROM Person p WHERE p.superior.id = :param";
             return DAOService.findItemsWithPropertyOrProperties(jpql, Person.class, EntityManagerProvider.getEntityManager(), id);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Error loading person without superior.");
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading person without superior.",e);
         }
     }
 

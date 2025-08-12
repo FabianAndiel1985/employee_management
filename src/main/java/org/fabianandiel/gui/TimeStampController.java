@@ -58,17 +58,31 @@ public class TimeStampController implements Initializable {
 
     private PersonController personController;
 
+    private List<TimeStamp> timeStampsOfCurrentMonth=null;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        TimeStamp existingStamp = null;
+        try {
+            this.timeStampsOfCurrentMonth = this.timeStampController.getTimeStampsOfCurrentMonth(UserContext.getInstance().getId(), LocalDate.now());
+            existingStamp = timeStampController.getTimeStampByDateAndPerson(LocalDate.now(), UserContext.getInstance().getId());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            GUIService.setErrorText(e.getMessage(),this.timeBookingErrorText);
+            if(e.getMessage().equals(Constants.LOADING_TIMESTAMP_BY_DATE)){
+                this.timeBookingStartTime.setDisable(true);
+                this.timeBookingEndTime.setDisable(true);
+            }
+        }
         this.timeBookingStartTime.clear();
         this.timeBookingEndTime.clear();
         this.initializeTargetHours();
-        this.initializeActualHours();
+        this.initializeActualHours(this.timeStampsOfCurrentMonth);
         this.initializeDifferenceBetweenActualAndTarget();
 
         this.personController = new PersonController<>(new PersonDAO());
 
-        TimeStamp existingStamp = timeStampController.getTimeStampByDateAndPerson(LocalDate.now(), UserContext.getInstance().getId());
+
         if (existingStamp != null) {
             this.currentTimeStamp = existingStamp;
             if (existingStamp.getTimeBookingStartTime() != null)
@@ -109,8 +123,7 @@ public class TimeStampController implements Initializable {
     /**
      * Initialize the actual hours worked by the user
      */
-    private void initializeActualHours() {
-        List<TimeStamp> timeStamps = this.timeStampController.getTimeStampsOfCurrentMonth(UserContext.getInstance().getId(), LocalDate.now());
+    private void initializeActualHours(List<TimeStamp> timeStamps) {
         if (timeStamps == null) {
             double noBookingsYet = 0.00;
             this.timeBookingActualHours.setText(String.valueOf(noBookingsYet));
@@ -211,7 +224,7 @@ public class TimeStampController implements Initializable {
                 em.getTransaction().commit();
                 this.timeBookingEndTime.setText(time.toString());
                 this.timeBookingClockOut.setDisable(true);
-                this.initializeActualHours();
+                this.initializeActualHours(this.timeStampsOfCurrentMonth);
                 this.initializeDifferenceBetweenActualAndTarget();
             } catch (RuntimeException e) {
                 this.currentTimeStamp.setTimeBookingEndTime(null);

@@ -28,7 +28,11 @@ public class TimeStampController<T,ID> extends BaseController<T,ID> {
      * @return timestamp of the certain date and person
      */
     public TimeStamp getTimeStampByDateAndPerson(LocalDate queryDate, UUID id){
-        return timeStampDAO.findTimeStampByDate(queryDate, id);
+        try {
+            return timeStampDAO.findTimeStampByDate(queryDate, id);
+        } catch (RuntimeException e) {
+            throw e;
+        }
     }
 
 
@@ -39,7 +43,11 @@ public class TimeStampController<T,ID> extends BaseController<T,ID> {
      * @return timestamps of a certain person up to a certain date of the month
      */
     public List<TimeStamp> getTimeStampsOfCurrentMonth(UUID id, LocalDate upToDate) {
-        return this.timeStampDAO.getTimeStampsOfCurrentMonth(id, upToDate);
+        try {
+            return this.timeStampDAO.getTimeStampsOfCurrentMonth(id, upToDate);
+        } catch (RuntimeException e) {
+            throw e;
+        }
     }
 
 

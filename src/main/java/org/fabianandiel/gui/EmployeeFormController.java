@@ -120,19 +120,26 @@ public class EmployeeFormController implements Initializable {
         this.userHasManagerRole = UserContext.getInstance().hasRole(Role.EMPLOYEE) && UserContext.getInstance().hasRole(Role.MANAGER) && !UserContext.getInstance().hasRole(Role.ADMIN);
         this.userHasManagerAndAdminRole = UserContext.getInstance().hasRole(Role.ADMIN);
         List<Person> persons = null;
+        List<Person> subordinates = null;
+        List<Person> possibleSuperiors = null;
+
         try {
+            if (this.userHasManagerAndAdminRole) {
+                subordinates = this.personController.getEmployeesWithoutSuperior();
+            }
             if (personToUpdate != null && this.userHasManagerAndAdminRole) {
                 persons = this.personController.getPersonBySuperiorID(personToUpdate.getId());
             }
+            possibleSuperiors = this.personController.getPersonsByRole(Role.MANAGER);
         } catch (RuntimeException e) {
-            GUIService.setErrorText("Error loading subordinates",this.createEmployeeErrorText);
+            GUIService.setErrorText(e.getMessage(), this.createEmployeeErrorText);
             e.printStackTrace();
         }
 
         initializeAddressDropDown();
-        initalizeSuperiorDropdown();
+        initalizeSuperiorDropdown(possibleSuperiors);
         initializeCheckBoxesAccordingToAuthorization();
-        initializeEmployeeTableViewAccordingToAuthorization();
+        initializeEmployeeTableViewAccordingToAuthorization(subordinates);
 
         if (personToUpdate != null) {
             this.changeGUIintoUpdateMode();
@@ -140,7 +147,6 @@ public class EmployeeFormController implements Initializable {
                 this.createEmployeeRolesBoxEmployee.setDisable(true);
                 this.createEmployeeRolesBoxManager.setDisable(true);
 
-              //  List<Person> persons = this.personController.getPersonBySuperiorID(personToUpdate.getId());
                 if (persons != null) {
                     this.subordinates.addAll(persons);
                 }
@@ -323,14 +329,15 @@ public class EmployeeFormController implements Initializable {
     /**
      * Initializes the Subordinates Table View
      */
-    private void initializeEmployeeTableViewAccordingToAuthorization() {
+    private void initializeEmployeeTableViewAccordingToAuthorization(List<Person> subordinates) {
         this.createEmployeeSubordinates.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         if (userHasManagerAndAdminRole) {
             this.createEmployeeSubordinateFirstName.setCellValueFactory(new PropertyValueFactory<Person, String>("firstname"));
             this.createEmployeeSubordinateLastName.setCellValueFactory(new PropertyValueFactory<Person, String>("lastname"));
-            List<Person> subordinates = this.personController.getEmployeesWithoutSuperior();
-            this.subordinates.addAll(subordinates);
-            this.createEmployeeSubordinates.setItems(this.subordinates);
+            if (subordinates != null) {
+                this.subordinates.addAll(subordinates);
+                this.createEmployeeSubordinates.setItems(this.subordinates);
+            }
         } else {
             this.createEmployeeSubordinates.setDisable(true);
         }
@@ -392,8 +399,9 @@ public class EmployeeFormController implements Initializable {
     /**
      * Initializes the Superior Dropdown
      */
-    private void initalizeSuperiorDropdown() {
-        List<Person> possibleSuperiors = this.personController.getPersonsByRole(Role.MANAGER);
+    private void initalizeSuperiorDropdown(List<Person> possibleSuperiors) {
+        if (possibleSuperiors == null)
+            return;
         this.superiors.addAll(possibleSuperiors);
         this.createEmployeeSuperior.setItems(this.superiors);
 

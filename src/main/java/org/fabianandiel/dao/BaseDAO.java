@@ -19,7 +19,6 @@ public abstract class BaseDAO<T,ID> implements DAOInterface<T,ID> {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            System.err.println("Error when saving: " + e.getMessage());
             throw new RuntimeException("Error when saving ", e);
         } finally {
             em.close();
@@ -39,7 +38,6 @@ public abstract class BaseDAO<T,ID> implements DAOInterface<T,ID> {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            System.err.println("Error actualizing the data: " + e.getMessage());
             throw new RuntimeException("Error actualizing the data ", e);
         } finally {
             em.close();
@@ -52,7 +50,10 @@ public abstract class BaseDAO<T,ID> implements DAOInterface<T,ID> {
         EntityManager em = EntityManagerProvider.getEntityManager();
         try {
             return em.find(entityClass, id);
-        } finally {
+        } catch (Exception e) {
+            throw new RuntimeException("error finding by id", e);
+        }
+        finally {
             em.close();
         }
     }
@@ -73,7 +74,6 @@ public abstract class BaseDAO<T,ID> implements DAOInterface<T,ID> {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            System.err.println("Fehler beim Löschen: " + e.getMessage());
             throw new RuntimeException("Fehler beim Löschen", e);
         } finally {
             em.close();
@@ -86,7 +86,10 @@ public abstract class BaseDAO<T,ID> implements DAOInterface<T,ID> {
         try {
             String jpql = "SELECT e FROM " + entityClass.getSimpleName() + " e";
             return em.createQuery(jpql, entityClass).getResultList();
-        } finally {
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding all entities",e);
+        }
+        finally {
             em.close();
         }
     }
