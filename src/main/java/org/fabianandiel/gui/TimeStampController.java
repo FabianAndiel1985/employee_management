@@ -17,7 +17,6 @@ import org.fabianandiel.entities.TimeStamp;
 import org.fabianandiel.services.EntityManagerProvider;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
-
 import java.net.URL;
 import java.time.*;
 import java.util.ResourceBundle;

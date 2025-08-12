@@ -1,6 +1,5 @@
 package org.fabianandiel.controller;
 
-import jakarta.persistence.EntityManager;
 import org.fabianandiel.constants.Role;
 import org.fabianandiel.dao.PersonDAO;
 import org.fabianandiel.entities.Person;
@@ -18,20 +17,6 @@ public class PersonController<T, ID> extends BaseController<T, ID> {
             this.personDAO = (PersonDAO<T, ID>) dao;
         } else {
             throw new IllegalArgumentException("Ungültiges DAO übergeben.");
-        }
-    }
-
-    /**
-     * save person to database using one specific entity manager instance
-     * @param person the person I want to save
-     * @param em specific entity manager instance
-     * @return the created person
-     */
-    public Person create(Person person, EntityManager em) throws RuntimeException {
-        try {
-            return this.personDAO.save(person, em);
-        } catch (RuntimeException e) {
-            throw e;
         }
     }
 
