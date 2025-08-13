@@ -152,15 +152,9 @@ public class TimeStampController implements Initializable {
 
 
     public void goBackToMainView() {
-        try {
-            SceneManager.goBackToMain();
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, timeBookingErrorText);
-        } catch (IOException e) {
-            System.out.println("IO Exception: " + e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, timeBookingErrorText);
-        }
+
+            SceneManager.goBackToMainView(this.timeBookingErrorText);
+
     }
 
     /**
