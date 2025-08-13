@@ -1,5 +1,6 @@
 package org.fabianandiel.gui;
 
+import java.util.function.Consumer;
 import jakarta.validation.ConstraintViolation;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,10 +18,7 @@ import org.fabianandiel.controller.RequestController;
 import org.fabianandiel.dao.PersonDAO;
 import org.fabianandiel.dao.RequestDAO;
 import org.fabianandiel.entities.Request;
-import org.fabianandiel.services.GUIService;
-import org.fabianandiel.services.SceneManager;
-import org.fabianandiel.services.VacationService;
-import org.fabianandiel.services.ValidatorProvider;
+import org.fabianandiel.services.*;
 import javafx.application.Platform;
 import java.net.URL;
 import java.time.LocalDate;
@@ -29,7 +27,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+
 
 public class VacationsController implements Initializable {
 
@@ -86,8 +84,8 @@ public class VacationsController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        executorService = Executors.newFixedThreadPool(2);
-        executorService.submit(() -> {
+        this.executorService = ExecutorServiceProvider.getExecutorService();
+        this.executorService.submit(() -> {
             try {
                 //set pending requests, with start date in the past to expired status
                 this.requestController.changeRequestStatusBeforeDate(LocalDate.now(), RequestStatus.PENDING, RequestStatus.EXPIRED);
@@ -104,7 +102,7 @@ public class VacationsController implements Initializable {
                 });
             } catch (Exception e) {
                 e.printStackTrace();
-                GUIService.setErrorText(e.getMessage(),this.vacationsErrorText);
+                Platform.runLater(() -> GUIService.setErrorText(e.getMessage(), this.vacationsErrorText));
             }
         });
     }
@@ -122,32 +120,45 @@ public class VacationsController implements Initializable {
      */
     public void submit() {
         Request request = new Request();
-        fillRequestObject(request);
+        this.fillRequestObject(request);
 
-        if (!validateRequest(request)) return;
+        this.validateRequest(request, (isValid) -> {
+            this.handleValidationResult(request,isValid);
+        });
+    }
 
-        UserContext.getInstance().getPerson().getRequests().add(request);
+
+    /**
+     * submits the result of the validation
+     * @param request request for vacation
+     * @param isValid result of the validation
+     */
+    private void handleValidationResult(Request request, boolean isValid) {
+        if(!isValid) return;
+        Short remainingDays = null;
+        String remainingDaysText = null;
+        if (this.isManagerOrAdmin()) {
+            remainingDays = VacationService.getRemainingDays(request);
+            remainingDaysText = String.valueOf(remainingDays);
+        }
+        final String remainingDaysTextFinal = remainingDaysText;
 
         executorService.submit(() -> {
-            Short remainingDays=null;
-            String remainingDaysText=null;
-            if(isManagerOrAdmin()) {
-                remainingDays = VacationService.getRemainingDays(request);
-                remainingDaysText = String.valueOf(remainingDays);
-            }
-            final String remainingDaysTextFinal = remainingDaysText;
 
             try {
                 this.requestController.create(request);
+                UserContext.getInstance().getPerson().getRequests().add(request);
                 Platform.runLater(() -> {
                     this.requestList.add(request);
-                    if(isManagerOrAdmin() && remainingDaysTextFinal  != null) {
+                    if (isManagerOrAdmin() && remainingDaysTextFinal != null) {
                         this.vacationsRequestRestVacation.setText(remainingDaysTextFinal);
                     }
                 });
             } catch (RuntimeException e) {
                 e.printStackTrace();
-                GUIService.setErrorText(Constants.PLEASE_CONTACT_SUPPORT,this.vacationsErrorText);
+                Platform.runLater(() -> {
+                    GUIService.setErrorText(Constants.PLEASE_CONTACT_SUPPORT, this.vacationsErrorText);
+                });
             }
         });
     }
@@ -163,18 +174,18 @@ public class VacationsController implements Initializable {
 
 
     /**
-     * checks if the request is valid
+     * validates the request
      *
-     * @param request the request to be checked
-     * @return if the request is valid
+     * @param request request to be validated
      */
-    private boolean validateRequest(Request request) {
+    private void validateRequest(Request request, Consumer<Boolean> onComplete) {
         Set<ConstraintViolation<Request>> violations = ValidatorProvider.getValidator().validate(request);
 
         if (!violations.isEmpty()) {
             ConstraintViolation<Request> firstViolation = violations.iterator().next();
             GUIService.setErrorText(firstViolation.getMessage(), this.vacationsErrorText);
-            return false;
+            onComplete.accept(false);
+            return;
         }
         this.vacationsErrorText.setVisible(false);
 
@@ -183,32 +194,38 @@ public class VacationsController implements Initializable {
 
         if (!endDate.isAfter(startDate) && !startDate.equals(endDate)) {
             GUIService.setErrorText("End date has to be after start date", this.vacationsErrorText);
-            return false;
+            onComplete.accept(false);
+            return;
         }
 
-        try {
-            List<Request> pastRequests = this.requestController.getRequestsByStatus(RequestStatus.ACCEPTED, RequestStatus.PENDING);
+        executorService.submit(() -> {
+            try {
+                List<Request> pastRequests = this.requestController.getRequestsByStatus(RequestStatus.ACCEPTED, RequestStatus.PENDING);
 
-            if (pastRequests != null && this.checkIfStartDateOrEndDateIsInPastRequestRange(startDate, endDate, pastRequests)) {
-                GUIService.setErrorText("The start date or end date can not lie in the range of a past request", this.vacationsErrorText);
-                return false;
+                if (pastRequests != null && this.checkIfStartDateOrEndDateIsInPastRequestRange(startDate, endDate, pastRequests)) {
+                   Platform.runLater(()->GUIService.setErrorText("The start date or end date can not lie in the range of a past request", this.vacationsErrorText));
+                    onComplete.accept(false);
+                    return;
+                }
+
+                short totalDaysOfCurrentRequest = (short) (endDate.toEpochDay() - startDate.toEpochDay() + 1);
+
+                short totalDaysOfPastRequest = pastRequests == null || pastRequests.size() == 0 ? 0 : this.calculateDaysOfPastRequests(pastRequests);
+                if (UserContext.getInstance().getPerson().getVacation_remaining() - totalDaysOfCurrentRequest - totalDaysOfPastRequest <= 0) {
+                   Platform.runLater(()->GUIService.setErrorText("You're asking fore more holiday than you're entitled to", this.vacationsErrorText)); ;
+                    onComplete.accept(false);
+                    return;
+                }
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+                Platform.runLater(()->GUIService.setErrorText(Constants.PLEASE_CONTACT_SUPPORT, this.vacationsErrorText));
+                onComplete.accept(false);
+                return;
             }
-
-            short totalDaysOfCurrentRequest = (short) (endDate.toEpochDay() - startDate.toEpochDay() + 1);
-
-            short totalDaysOfPastRequest = pastRequests == null || pastRequests.size() == 0 ? 0 : this.calculateDaysOfPastRequests(pastRequests);
-            if (UserContext.getInstance().getPerson().getVacation_remaining() - totalDaysOfCurrentRequest - totalDaysOfPastRequest <= 0) {
-                GUIService.setErrorText("You're asking fore more holiday than you're entitled to", this.vacationsErrorText);
-                return false;
-            }
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            GUIService.setErrorText(Constants.PLEASE_CONTACT_SUPPORT, this.vacationsErrorText);
-            return false;
-        }
-
-        return true;
+            onComplete.accept(true);
+        });
     }
+
 
 
     /**
