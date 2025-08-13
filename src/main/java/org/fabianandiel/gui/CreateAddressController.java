@@ -13,7 +13,6 @@ import org.fabianandiel.entities.Address;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
 import org.fabianandiel.services.ValidatorProvider;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
