@@ -1,5 +1,6 @@
 package org.fabianandiel.gui;
 
+import jakarta.persistence.EntityManager;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -11,10 +12,11 @@ import org.fabianandiel.context.UserContext;
 import org.fabianandiel.controller.PersonController;
 import org.fabianandiel.dao.PersonDAO;
 import org.fabianandiel.dao.TimeStampDAO;
+import org.fabianandiel.entities.Person;
 import org.fabianandiel.entities.TimeStamp;
+import org.fabianandiel.services.EntityManagerProvider;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
-import java.io.IOException;
 import java.net.URL;
 import java.time.*;
 import java.util.ResourceBundle;
@@ -56,18 +58,31 @@ public class TimeStampController implements Initializable {
 
     private PersonController personController;
 
+    private List<TimeStamp> timeStampsOfCurrentMonth=null;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        TimeStamp existingStamp = null;
+        try {
+            this.timeStampsOfCurrentMonth = this.timeStampController.getTimeStampsOfCurrentMonth(UserContext.getInstance().getId(), LocalDate.now());
+            existingStamp = timeStampController.getTimeStampByDateAndPerson(LocalDate.now(), UserContext.getInstance().getId());
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            GUIService.setErrorText(e.getMessage(),this.timeBookingErrorText);
+            if(e.getMessage().equals(Constants.LOADING_TIMESTAMP_BY_DATE)){
+                this.timeBookingStartTime.setDisable(true);
+                this.timeBookingEndTime.setDisable(true);
+            }
+        }
         this.timeBookingStartTime.clear();
         this.timeBookingEndTime.clear();
         this.initializeTargetHours();
-        this.initializeActualHours();
+        this.initializeActualHours(this.timeStampsOfCurrentMonth);
         this.initializeDifferenceBetweenActualAndTarget();
 
-        //TODO validate if any timestamp has null values up until the day before -> error message
         this.personController = new PersonController<>(new PersonDAO());
 
-        TimeStamp existingStamp = timeStampController.getTimeStampByDateAndPerson(LocalDate.now(), UserContext.getInstance().getId());
+
         if (existingStamp != null) {
             this.currentTimeStamp = existingStamp;
             if (existingStamp.getTimeBookingStartTime() != null)
@@ -88,8 +103,8 @@ public class TimeStampController implements Initializable {
             TimeStamp timeStamp = new TimeStamp();
             timeStamp.setTimeBookingDate(LocalDate.now());
             timeStamp.setPerson(UserContext.getInstance().getPerson());
-            this.currentTimeStamp = timeStamp;
-            this.timeStampController.create(timeStamp);
+            TimeStamp createdTimeStamp = (TimeStamp) this.timeStampController.create(timeStamp);
+            this.currentTimeStamp = createdTimeStamp;
         }
     }
 
@@ -97,10 +112,10 @@ public class TimeStampController implements Initializable {
      * Initializes the field between target and actual hours
      */
     private void initializeDifferenceBetweenActualAndTarget() {
-        if(!this.timeBookingTargetHours.getText().isBlank() && !this.timeBookingActualHours.getText().isBlank()){
+        if (!this.timeBookingTargetHours.getText().isBlank() && !this.timeBookingActualHours.getText().isBlank()) {
             int targetHours = Integer.parseInt(this.timeBookingTargetHours.getText());
             double actualHours = Double.parseDouble(this.timeBookingActualHours.getText());
-            double difference = Math.round((targetHours-actualHours) * 100.0) / 100.0;
+            double difference = Math.round((targetHours - actualHours) * 100.0) / 100.0;
             this.timeBookingDifference.setText(String.valueOf(difference));
         }
     }
@@ -108,10 +123,10 @@ public class TimeStampController implements Initializable {
     /**
      * Initialize the actual hours worked by the user
      */
-    private void initializeActualHours() {
-        List<TimeStamp> timeStamps = this.timeStampController.getTimeStampsOfCurrentMonth(UserContext.getInstance().getId(),LocalDate.now());
-        if(timeStamps == null) {
-            //TODO set error
+    private void initializeActualHours(List<TimeStamp> timeStamps) {
+        if (timeStamps == null) {
+            double noBookingsYet = 0.00;
+            this.timeBookingActualHours.setText(String.valueOf(noBookingsYet));
             return;
         }
         double workedHoursThisMonth = timeStamps.stream().mapToDouble(TimeStamp::getWorkedHours).sum();
@@ -123,12 +138,13 @@ public class TimeStampController implements Initializable {
      */
     private void initializeTargetHours() {
         int workdaysOfMonth = this.calculateWorkDaysOfTheMonth();
-        int workingHoursAday= UserContext.getInstance().getPerson().getWeek_work_hours()/5;
-        this.timeBookingTargetHours.setText(String.valueOf(workdaysOfMonth*workingHoursAday));
+        int workingHoursAday = UserContext.getInstance().getPerson().getWeek_work_hours() / 5;
+        this.timeBookingTargetHours.setText(String.valueOf(workdaysOfMonth * workingHoursAday));
     }
 
     /**
      * This method calculates how many workdays (Monday to Friday) have occurred from the 1st of the current month up to today.
+     *
      * @return amount of workdays
      */
     private int calculateWorkDaysOfTheMonth() {
@@ -151,10 +167,11 @@ public class TimeStampController implements Initializable {
     }
 
 
+    /**
+     * goes back to main view
+     */
     public void goBackToMainView() {
-
-            SceneManager.goBackToMainView(this.timeBookingErrorText);
-
+        SceneManager.goBackToMainView(timeBookingErrorText);
     }
 
     /**
@@ -162,14 +179,30 @@ public class TimeStampController implements Initializable {
      */
     public void clockIn() {
         if (timeBookingStartTime.getText().isEmpty() && this.currentTimeStamp.getTimeBookingStartTime() == null) {
-            LocalTime time = LocalTime.now();
-            this.currentTimeStamp.setTimeBookingStartTime(time);
-            this.timeBookingStartTime.setText(time.toString());
-            //TODO error handling here
-            this.timeStampController.update(currentTimeStamp);
-            this.timeBookingClockIn.setDisable(true);
-            UserContext.getInstance().getPerson().setStatus(Status.PRESENT);
-            this.personController.update(UserContext.getInstance().getPerson());
+            EntityManager em = EntityManagerProvider.getEntityManager();
+            try {
+                em.getTransaction().begin();
+                LocalTime time = LocalTime.now();
+                this.currentTimeStamp.setTimeBookingStartTime(time);
+                em.merge(this.currentTimeStamp);
+                this.timeBookingClockIn.setDisable(true);
+                Person currentUser = UserContext.getInstance().getPerson();
+                currentUser.setStatus(Status.PRESENT);
+                em.merge(currentUser);
+                em.getTransaction().commit();
+                this.timeBookingStartTime.setText(time.toString());
+            } catch (RuntimeException e) {
+                this.currentTimeStamp.setTimeBookingStartTime(null);
+                this.timeBookingStartTime.clear();
+                this.timeBookingClockIn.setDisable(false);
+                e.printStackTrace();
+                if (em.getTransaction().isActive()) {
+                    em.getTransaction().rollback();
+                }
+                GUIService.setErrorText(Constants.PLEASE_CONTACT_SUPPORT, this.timeBookingErrorText);
+            } finally {
+                em.close();
+            }
         }
     }
 
@@ -178,29 +211,46 @@ public class TimeStampController implements Initializable {
      */
     public void clockOut() {
         if (!timeBookingStartTime.getText().isEmpty() && timeBookingEndTime.getText().isEmpty() && this.currentTimeStamp.getTimeBookingEndTime() == null) {
-            LocalTime time = LocalTime.now();
-            this.currentTimeStamp.setTimeBookingEndTime(time);
-            this.timeBookingEndTime.setText(time.toString());
-            this.updateWorkedHours(this.currentTimeStamp);
-            this.timeStampController.update(currentTimeStamp);
-            this.timeBookingClockOut.setDisable(true);
-            UserContext.getInstance().getPerson().setStatus(Status.ABSENT);
-            this.personController.update(UserContext.getInstance().getPerson());
-            this.initializeActualHours();
-            this.initializeDifferenceBetweenActualAndTarget();
+            EntityManager em = EntityManagerProvider.getEntityManager();
+            try {
+                em.getTransaction().begin();
+                LocalTime time = LocalTime.now();
+                this.currentTimeStamp.setTimeBookingEndTime(time);
+                this.updateWorkedHours(this.currentTimeStamp);
+                em.merge(this.currentTimeStamp);
+                Person currentUser = UserContext.getInstance().getPerson();
+                currentUser.setStatus(Status.ABSENT);
+                em.merge(currentUser);
+                em.getTransaction().commit();
+                this.timeBookingEndTime.setText(time.toString());
+                this.timeBookingClockOut.setDisable(true);
+                this.initializeActualHours(this.timeStampsOfCurrentMonth);
+                this.initializeDifferenceBetweenActualAndTarget();
+            } catch (RuntimeException e) {
+                this.currentTimeStamp.setTimeBookingEndTime(null);
+                this.timeBookingEndTime.clear();
+                this.timeBookingClockOut.setDisable(false);
+                e.printStackTrace();
+                if (em.getTransaction().isActive()) {
+                    em.getTransaction().rollback();
+                }
+                GUIService.setErrorText(Constants.PLEASE_CONTACT_SUPPORT, this.timeBookingErrorText);
+            }
         }
+
+
     }
 
     /**
      * adds the worked hours to the time stamp entity
+     *
      * @param currentTimeStamp timeStamp where i want to set the worked hours
      */
     private void updateWorkedHours(TimeStamp currentTimeStamp) {
         Duration duration = Duration.between(this.currentTimeStamp.getTimeBookingStartTime(), this.currentTimeStamp.getTimeBookingEndTime());
         double hours = duration.toMinutes() / 60.0;
-        hours =  Math.round(hours * 100.0) / 100.0;
+        hours = Math.round(hours * 100.0) / 100.0;
         currentTimeStamp.setWorkedHours(hours);
     }
-
 
 }
