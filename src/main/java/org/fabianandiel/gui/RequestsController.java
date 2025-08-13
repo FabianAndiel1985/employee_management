@@ -79,14 +79,14 @@ public class RequestsController implements Initializable {
             this.requestController.changeRequestStatusBeforeDate(LocalDate.now(), RequestStatus.PENDING, RequestStatus.EXPIRED);
             try {
                 List<Request> pendingRequests = requestController.getRequestsOfSubordinatesByStatus(subordinates, RequestStatus.PENDING);
-                this.initalizeTableColumn();
                 Platform.runLater(() -> {
+                    this.initalizeTableColumn();
                     this.pendingRequestsList.addAll(pendingRequests);
                     this.pendingRequestsTableView.setItems(this.pendingRequestsList);
                 });
             } catch (Exception e) {
                 e.printStackTrace();
-                GUIService.setErrorText("Error loading requests",this.requestsErrorText);
+                Platform.runLater(()->GUIService.setErrorText("Error loading requests",this.requestsErrorText));
             }
         });
     }
