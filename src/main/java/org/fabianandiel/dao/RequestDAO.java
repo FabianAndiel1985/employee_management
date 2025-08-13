@@ -19,8 +19,12 @@ public class RequestDAO<T,ID> extends BaseDAO<T,ID> {
      * @return requests of the creator with the id and status
      */
     public List<Request> findRequestsByCreatorAndStatus(UUID id, RequestStatus requestStatus) {
-        List<Request> requests = DAOService.findItemsWithPropertyOrProperties("SELECT r FROM Request r WHERE r.creator.id = :param AND r.status = :param1 ",Request.class,EntityManagerProvider.getEntityManager(),id,requestStatus);
-        return requests;
+       try {
+           List<Request> requests = DAOService.findItemsWithPropertyOrProperties("SELECT r FROM Request r WHERE r.creator.id = :param AND r.status = :param1 ", Request.class, EntityManagerProvider.getEntityManager(), id, requestStatus);
+           return requests;
+       } catch (Exception e) {
+           throw new RuntimeException("Error loading requests by creator and status",e);
+       }
     }
 
     /**
@@ -29,8 +33,12 @@ public class RequestDAO<T,ID> extends BaseDAO<T,ID> {
      * @return requests of the creator with the id
      */
     public List<Request> getRequestsByCreator(UUID id) {
-        List<Request> requests = DAOService.findItemsWithPropertyOrProperties("SELECT r FROM Request r WHERE r.creator.id = :param",Request.class,EntityManagerProvider.getEntityManager(),id);
-        return requests;
+        try {
+            List<Request> requests = DAOService.findItemsWithPropertyOrProperties("SELECT r FROM Request r WHERE r.creator.id = :param", Request.class, EntityManagerProvider.getEntityManager(), id);
+            return requests;
+        } catch (Exception e) {
+            throw new RuntimeException("Error getting requests from this id: "+id,e);
+        }
     }
 
 
@@ -41,18 +49,14 @@ public class RequestDAO<T,ID> extends BaseDAO<T,ID> {
      * @param statusToSetTo set requests to this status
      */
     public void changeRequestStatusBeforeDate(LocalDate date, RequestStatus originalStatus, RequestStatus statusToSetTo) {
-    DAOService.changeRequestStatusBeforeDate(date,originalStatus,statusToSetTo);
+        try {
+            DAOService.changeRequestStatusBeforeDate(date,originalStatus,statusToSetTo);
+        } catch (Exception e) {
+            throw new RuntimeException("Error setting the requests to expired",e);
+        }
     }
 
-    /**
-     * returns requests by StartDate
-     * @param startDate date where the request starts
-     * @return a list of requests with the same start date
-     */
-    public List<Request> getRequestsByStartDate(LocalDate startDate) {
-        List<Request> requests = DAOService.findItemsWithPropertyOrProperties("SELECT r FROM Request r WHERE r.startDate = :param AND r.creator.id = :param1",Request.class,EntityManagerProvider.getEntityManager(),startDate,UserContext.getInstance().getId());
-        return requests;
-    }
+
 
     /**
      * get requests that have either one statur or another one
@@ -61,11 +65,15 @@ public class RequestDAO<T,ID> extends BaseDAO<T,ID> {
      * @return a list of possible statuses
      */
     public List<Request> getRequestsByStatus(RequestStatus status, RequestStatus statusOne) {
-        List<Request> requests = DAOService.findItemsWithPropertyOrProperties("SELECT r FROM Request r WHERE (r.status = :param OR r.status = :param1)  " +
-                "AND r.creator.id = :param2",Request.class,EntityManagerProvider.getEntityManager(),status, statusOne, UserContext.getInstance().getId());
-        if(requests.size() == 0) {
-            return null;
+        try {
+            List<Request> requests = DAOService.findItemsWithPropertyOrProperties("SELECT r FROM Request r WHERE (r.status = :param OR r.status = :param1)  " +
+                    "AND r.creator.id = :param2", Request.class, EntityManagerProvider.getEntityManager(), status, statusOne, UserContext.getInstance().getId());
+            if (requests.size() == 0) {
+                return null;
+            }
+            return requests;
+        } catch (Exception e) {
+            throw new RuntimeException("Error loading requests by status",e);
         }
-        return requests;
     }
 }

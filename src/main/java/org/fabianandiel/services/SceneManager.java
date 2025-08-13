@@ -2,6 +2,8 @@ package org.fabianandiel.services;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import lombok.Setter;
 import org.fabianandiel.constants.Constants;
@@ -29,8 +31,6 @@ public class SceneManager {
     public static void switchScene(String view, int width,int height, String title) throws IllegalArgumentException,IOException {
         try {
 
-
-
             if(title.trim().isEmpty() || title == null) {
                 throw new IllegalArgumentException("Title has to be valid text");
             }
@@ -38,9 +38,6 @@ public class SceneManager {
             if(!view.endsWith(".fxml")) {
                 throw new IllegalArgumentException("Only valid fxml files are allowed");
             }
-
-
-                //TODO Check if the title file exists in resource directory - usage of file system classes
 
             FXMLLoader fxmlLoader = new FXMLLoader(SceneManager.class.getResource(view));
             Scene scene = new Scene(fxmlLoader.load(), width, height);
@@ -59,12 +56,20 @@ public class SceneManager {
     }
 
     /**
-     * Goes back to the main scene
-     * @throws IOException
-     * @throws IllegalArgumentException
+     * goes back to the main view
+     *
+     * @param errorText place to display the error when going back to the main view goes wrong
      */
-    public static void goBackToMain() throws IOException, IllegalArgumentException {
+    public static void goBackToMainView(Text errorText) {
+        try {
             switchScene("/org/fabianandiel/gui/mainView.fxml", 400, 400, "Main");
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, errorText);
+        } catch (IOException e) {
+            System.out.println("IO Exception: " + e.getMessage());
+            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, errorText);
+        }
     }
 
 

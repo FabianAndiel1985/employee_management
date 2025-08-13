@@ -16,7 +16,6 @@ public interface ControllerInterface<T,ID> {
      * Updates an existing entity object in the database.
      *
      * @param entity The entity object to be updated
-     * @return The updated entity object
      */
     T update(T entity);
 

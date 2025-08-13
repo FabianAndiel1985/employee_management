@@ -11,7 +11,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
-import org.fabianandiel.constants.Constants;
 import org.fabianandiel.constants.RequestStatus;
 import org.fabianandiel.context.UserContext;
 import org.fabianandiel.controller.PersonController;
@@ -23,8 +22,6 @@ import org.fabianandiel.entities.Request;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
 import org.fabianandiel.services.VacationService;
-
-import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
@@ -74,25 +71,22 @@ public class RequestsController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Set<Person> subordinates = UserContext.getInstance().getPerson().getSubordinates();
         if (subordinates.isEmpty()) {
-            //TODO show error text that no subordinates are found
-            return;
+            GUIService.setErrorText("You dont have subordinates",this.requestsErrorText);
         }
-        initalizeTableColumn();
-
         this.executorService = Executors.newFixedThreadPool(2);
-
         this.executorService.submit(() -> {
-            //set pending requests, with start date in the past tp expired status
+            //set pending requests, with start date in the past to expired status
             this.requestController.changeRequestStatusBeforeDate(LocalDate.now(), RequestStatus.PENDING, RequestStatus.EXPIRED);
             try {
                 List<Request> pendingRequests = requestController.getRequestsOfSubordinatesByStatus(subordinates, RequestStatus.PENDING);
+                this.initalizeTableColumn();
                 Platform.runLater(() -> {
                     this.pendingRequestsList.addAll(pendingRequests);
                     this.pendingRequestsTableView.setItems(this.pendingRequestsList);
                 });
             } catch (Exception e) {
-                //TODO error handling loading requests to approve
-                throw new RuntimeException(e);
+                e.printStackTrace();
+                GUIService.setErrorText("Error loading requests",this.requestsErrorText);
             }
         });
     }
@@ -123,26 +117,21 @@ public class RequestsController implements Initializable {
                             this.pendingRequestsList.remove(request);
                         });
                     } catch (Exception e) {
-                        //TODO error message issues with approving request
-                        throw new RuntimeException(e);
+                        GUIService.setErrorText(e.getMessage(),this.requestsErrorText);
+                        e.printStackTrace();
                     }
                 }
         );
     }
 
 
-
+    /**
+     * goes back to main view
+     */
     public void goBackToMainView() {
-        try {
-            SceneManager.goBackToMain();
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, requestsErrorText);
-        } catch (IOException e) {
-            System.out.println("IO Exception: " + e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, requestsErrorText);
-        }
+        SceneManager.goBackToMainView(requestsErrorText);
     }
+
 
     /**
      * Initializes the table columns

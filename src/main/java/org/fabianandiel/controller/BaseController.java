@@ -2,7 +2,6 @@ package org.fabianandiel.controller;
 
 import org.fabianandiel.interfaces.ControllerInterface;
 import org.fabianandiel.interfaces.DAOInterface;
-
 import java.util.List;
 
 
@@ -14,15 +13,13 @@ public abstract class BaseController<T,ID> implements ControllerInterface<T,ID> 
         this.dao = dao;
     }
 
-
     @Override
     public T getById(ID id, Class<T> entityClass ) {
         try {
             return dao.findById(id,entityClass);
         } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+           throw e;
         }
-        return null;
     }
 
 
@@ -31,19 +28,16 @@ public abstract class BaseController<T,ID> implements ControllerInterface<T,ID> 
         try {
             return dao.save(entity);
         } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+            throw e;
         }
-        return null;
     }
 
     public T update(T entity) {
         try {
             return dao.update(entity);
         } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+          throw e;
         }
-        return null;
     }
 
     @Override
@@ -51,11 +45,8 @@ public abstract class BaseController<T,ID> implements ControllerInterface<T,ID> 
         try {
             return dao.findAll(entityClass);
         } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+            throw e;
         }
-        return null;
     }
-
-
 
 }

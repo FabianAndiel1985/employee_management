@@ -11,7 +11,7 @@ import javafx.scene.text.Text;
 import org.fabianandiel.constants.Constants;
 import org.fabianandiel.constants.Role;
 import org.fabianandiel.constants.Status;
-import org.fabianandiel.context.UpdateContext;
+import org.fabianandiel.context.SelectedEmployeeContext;
 import org.fabianandiel.context.UserContext;
 import org.fabianandiel.controller.PersonController;
 import org.fabianandiel.dao.PersonDAO;
@@ -20,7 +20,6 @@ import org.fabianandiel.services.EmployeeCRUDService;
 import org.fabianandiel.services.EntityManagerProvider;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -84,10 +83,13 @@ public class EmployeeOverviewController implements Initializable {
     private TableColumn employeeOverviewRTMstatus;
 
     @FXML
-    private TableColumn<Person, String>  employeeOverviewRTMrole;
+    private TableColumn<Person, String> employeeOverviewRTMrole;
 
     @FXML
     private Text employeeOverviewText;
+
+    @FXML
+    private Button employeeOverviewMasterData;
 
     private ObservableList<Person> allEmployees = FXCollections.observableArrayList();
 
@@ -101,13 +103,20 @@ public class EmployeeOverviewController implements Initializable {
         initializeAllEmployees();
         initializeUpdateableEmployees();
         this.employeeOverviewUpdateEmployee.setDisable(true);
+        this.employeeOverviewDeleteEmployee.setDisable(true);
+        this.employeeOverviewMasterData.setDisable(true);
         if (UserContext.getInstance().hasRole(Role.ADMIN)) {
             this.employeeOverviewText.setText("Managers and Admins");
         }
     }
 
-    private void handleRowSelection(Person person) {
+    /**
+     * disables the update and master data button when person is selected
+     */
+    private void handleRowSelection() {
         this.employeeOverviewUpdateEmployee.setDisable(false);
+        this.employeeOverviewDeleteEmployee.setDisable(false);
+        this.employeeOverviewMasterData.setDisable(false);
     }
 
 
@@ -120,15 +129,9 @@ public class EmployeeOverviewController implements Initializable {
         this.employeeOverviewRTMfirstname.setCellValueFactory(new PropertyValueFactory<Person, String>("firstname"));
         this.employeeOverviewRTMlastname.setCellValueFactory(new PropertyValueFactory<Person, String>("lastname"));
         this.employeeOverviewRTMaddress.setCellValueFactory(new PropertyValueFactory<Person, String>("address"));
-        if (UserContext.getInstance().hasRole(Role.MANAGER) && UserContext.getInstance().getRoles().size() == 2 ) {
+        if (UserContext.getInstance().hasRole(Role.MANAGER) && UserContext.getInstance().getRoles().size() == 2) {
             List<Person> personsWithUserAsSuperior = this.allEmployees.stream()
-                    .filter((empl) -> {
-                        if (empl.getSuperior() != null) {
-                            //TODO think if managers may assign unassigned employees to themselves
-                            return empl.getSuperior().getId().equals(UserContext.getInstance().getId());
-                        }
-                        return false;
-                    })
+                    .filter((empl) -> empl.getSuperior() == null || empl.getSuperior().getId().equals(UserContext.getInstance().getId())  )
                     .toList();
 
             this.updateableEmployees.addAll(personsWithUserAsSuperior);
@@ -151,8 +154,10 @@ public class EmployeeOverviewController implements Initializable {
                 .selectedItemProperty()
                 .addListener((observable, oldValue, newValue) -> {
                     if (newValue != null) {
-                        handleRowSelection(newValue);
+                        handleRowSelection();
                     } else {
+                        this.employeeOverviewDeleteEmployee.setDisable(true);
+                        this.employeeOverviewMasterData.setDisable(true);
                         this.employeeOverviewUpdateEmployee.setDisable(true);
                     }
                 });
@@ -160,25 +165,45 @@ public class EmployeeOverviewController implements Initializable {
 
 
     /**
-     * saves the person to update to a context and continue
+     * saves the person to update to a context and continues to Update View
      */
     public void onUpdate() {
+        if (this.savePersonToContext(this.employeeOverviewUpdateEmployee))
+            this.goToCreateEmployee();
+    }
+
+
+    /**
+     * saves the person to update to a context and continues to MasterData View
+     */
+    public void onCheckMasterData() {
+        if (this.savePersonToContext(this.employeeOverviewMasterData))
+            this.goToMasterDataView();
+    }
+
+
+    /**
+     * saves the selected person to the context
+     * @param button to disable
+     * @return true if saving to context was successfull, false if not
+     */
+    private boolean savePersonToContext(Button button) {
         ObservableList<Person> selectedPersons = this.employeeOverviewUpdateableEmployees.getSelectionModel().getSelectedItems();
         if (selectedPersons.size() == 0 || selectedPersons.size() > 1) {
-            this.employeeOverviewUpdateEmployee.setDisable(true);
-            return;
+            button.setDisable(true);
+            return false;
         }
         Person person = selectedPersons.getFirst();
-        if(person.getStatus().equals(Status.INACTIVE)) {
+        if (person.getStatus() != null && person.getStatus().equals(Status.INACTIVE)) {
             GUIService.setErrorText("You can not update an inactive employee", employeeOverviewErrorText);
-            return;
+            return false;
         }
 
-        UpdateContext.clearSession();
-        this.employeeOverviewUpdateEmployee.setDisable(false);
+        SelectedEmployeeContext.clearSession();
+        button.setDisable(false);
 
-        UpdateContext.initSession(person);
-        this.goToCreateEmployee();
+        SelectedEmployeeContext.initSession(person);
+        return true;
     }
 
 
@@ -206,26 +231,24 @@ public class EmployeeOverviewController implements Initializable {
         this.employeeOverviewRole.setCellValueFactory(param ->
                 new ReadOnlyStringWrapper(getHighestRoleAsString(param.getValue()))
         );
-        List<Person> allEmployees = personController.getAll(Person.class);
+        List<Person> allEmployees = this.personController.getAll(Person.class);
         this.allEmployees.addAll(allEmployees);
         this.employeeOverviewAllEmployees.setItems(this.allEmployees);
     }
 
     /**
      * returns the highest role a person has
+     *
      * @param person of which the highest role shall be returned
      * @return a String representation of the highest role a person has
      */
     private String getHighestRoleAsString(Person person) {
         Set<Role> roles = person.getRoles();
-        if(roles.contains(Role.EMPLOYEE) && roles.size() == 1) {
+        if (roles.contains(Role.EMPLOYEE) && roles.size() == 1) {
             return "EMPLOYEE";
-        }
-        else if(roles.contains(Role.MANAGER) && roles.size() == 2) {
+        } else if (roles.contains(Role.MANAGER) && roles.size() == 2) {
             return "MANAGER";
-        }
-        else if(roles.contains(Role.ADMIN) && roles.size() == 3)
-        {
+        } else if (roles.contains(Role.ADMIN) && roles.size() == 3) {
             return "ADMIN";
         }
         return null;
@@ -240,8 +263,23 @@ public class EmployeeOverviewController implements Initializable {
 
         Person person = selectedPersons.getFirst();
 
-        EmployeeCRUDService.setPersonInactive(EntityManagerProvider.getEntityManager(),person,this.allEmployees,this.updateableEmployees);
+        EmployeeCRUDService.setPersonInactive(EntityManagerProvider.getEntityManager(), person, this.allEmployees, this.updateableEmployees);
         this.initializeAllEmployees();
+    }
+
+
+
+    /**
+     * goes to master data view
+     *
+     */
+    public void goToMasterDataView() {
+        try {
+            SceneManager.switchScene("/org/fabianandiel/gui/masterDataView.fxml", 600, 599, "Master Data");
+        } catch (IOException e) {
+            e.printStackTrace();
+            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, employeeOverviewErrorText);
+        }
     }
 
 
@@ -250,7 +288,7 @@ public class EmployeeOverviewController implements Initializable {
      */
     public void goToCreateEmployee() {
         try {
-            SceneManager.switchScene("/org/fabianandiel/gui/employeeFormView.fxml", 530, 607, "Create Employee");
+            SceneManager.switchScene("/org/fabianandiel/gui/employeeFormView.fxml", 530, 691, "Create Employee");
         } catch (IOException e) {
             e.printStackTrace();
             GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, employeeOverviewErrorText);
@@ -261,14 +299,6 @@ public class EmployeeOverviewController implements Initializable {
      * goes to main view
      */
     public void goBackToMainView() {
-        try {
-            SceneManager.goBackToMain();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, employeeOverviewErrorText);
-        } catch (IOException e) {
-            e.printStackTrace();
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, employeeOverviewErrorText);
-        }
+        SceneManager.goBackToMainView(employeeOverviewErrorText);
     }
 }

@@ -23,9 +23,14 @@ public class VacationService {
      * @param personController the person controller with whom I can update the person
      */
     public static void updateRemainingVacation(Request request, short remainingDays, PersonController personController) {
-        Person person = request.getCreator();
-        person.setVacation_remaining(remainingDays);
-        personController.update(person);
+        try{
+            Person person = request.getCreator();
+            person.setVacation_remaining(remainingDays);
+            personController.update(person);
+        } catch (RuntimeException e) {
+            throw e;
+        }
+
     }
 
 

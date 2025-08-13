@@ -2,7 +2,6 @@ package org.fabianandiel.gui;
 
 import jakarta.validation.ConstraintViolation;
 import javafx.fxml.FXML;
-
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
@@ -17,11 +16,8 @@ import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
 import org.fabianandiel.services.ValidatorProvider;
 import org.fabianandiel.validation.LoginRequest;
-
-
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.UUID;
@@ -67,9 +63,14 @@ public class LoginController implements Initializable {
 
         PersonDAO<Person, UUID> dao = new PersonDAO<>();
         PersonController<Person, UUID> personController = new PersonController<>(dao);
-        Person person = personController.getPersonByUsername(username);
-
-
+        Person person;
+        try {
+            person = personController.getPersonByUsername(username);
+        } catch (RuntimeException e) {
+            GUIService.setErrorText(e.getMessage(),this.loginErrorText);
+            e.printStackTrace();
+            return;
+        }
 
         if (person == null) {
             GUIService.setErrorText(Constants.LOGIN_ERROR_MESSAGE, loginErrorText);

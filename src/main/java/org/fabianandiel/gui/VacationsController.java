@@ -22,8 +22,6 @@ import org.fabianandiel.services.SceneManager;
 import org.fabianandiel.services.VacationService;
 import org.fabianandiel.services.ValidatorProvider;
 import javafx.application.Platform;
-
-import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -88,39 +86,35 @@ public class VacationsController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        initalizeTableColumn();
-        if (isManagerOrAdmin()) {
-            this.vacationsText.setText("Book your vacation");
-        }
         executorService = Executors.newFixedThreadPool(2);
         executorService.submit(() -> {
             try {
                 //set pending requests, with start date in the past to expired status
                 this.requestController.changeRequestStatusBeforeDate(LocalDate.now(), RequestStatus.PENDING, RequestStatus.EXPIRED);
-                this.vacationsRequestVacationEntitlement.setText(String.valueOf(UserContext.getInstance().getPerson().getVacation_entitlement()));
-                this.vacationsRequestRestVacation.setText(String.valueOf(UserContext.getInstance().getPerson().getVacation_remaining()));
+                List<Request> requests = this.requestController.getRequestsByCreator(UserContext.getInstance().getId());
                 Platform.runLater(() -> {
-                    this.requestList.addAll(this.requestController.getRequestsByCreator(UserContext.getInstance().getId()));
+                    initalizeTableColumn();
+                    this.vacationsRequestVacationEntitlement.setText(String.valueOf(UserContext.getInstance().getPerson().getVacation_entitlement()));
+                    this.vacationsRequestRestVacation.setText(String.valueOf(UserContext.getInstance().getPerson().getVacation_remaining()));
+                    if (isManagerOrAdmin()) {
+                        this.vacationsText.setText("Book your vacation");
+                    }
+                    this.requestList.addAll(requests);
                     this.vacationsRequestTable.setItems(this.requestList);
                 });
             } catch (Exception e) {
-                //TODO Error handling mit Fehlermeldung für User
-                throw new RuntimeException(e);
+                e.printStackTrace();
+                GUIService.setErrorText(e.getMessage(),this.vacationsErrorText);
             }
         });
     }
 
 
+    /**
+     * goes back to main view
+     */
     public void goBackToMainView() {
-        try {
-            SceneManager.goBackToMain();
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, this.vacationsErrorText);
-        } catch (IOException e) {
-            System.out.println("IO Exception: " + e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, this.vacationsErrorText);
-        }
+        SceneManager.goBackToMainView(this.vacationsErrorText);
     }
 
     /**
@@ -145,28 +139,26 @@ public class VacationsController implements Initializable {
 
             try {
                 this.requestController.create(request);
-
                 Platform.runLater(() -> {
                     this.requestList.add(request);
                     if(isManagerOrAdmin() && remainingDaysTextFinal  != null) {
                         this.vacationsRequestRestVacation.setText(remainingDaysTextFinal);
                     }
                 });
-            } catch (Exception e) {
-                //TODO add an error text
-                throw new RuntimeException(e);
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+                GUIService.setErrorText(Constants.PLEASE_CONTACT_SUPPORT,this.vacationsErrorText);
             }
         });
-        //TODO error handling
     }
 
     /**
-     * Checks if the current user is a manager
+     * Checks if the current user is manager or admin
      *
      * @return true if user is at least a manager, false if not
      */
     private boolean isManagerOrAdmin() {
-        return UserContext.getInstance().hasRole(Role.EMPLOYEE) && UserContext.getInstance().hasRole(Role.MANAGER);
+        return UserContext.getInstance().hasRole(Role.MANAGER) || UserContext.getInstance().hasRole(Role.ADMIN);
     }
 
 
@@ -194,19 +186,24 @@ public class VacationsController implements Initializable {
             return false;
         }
 
-        List<Request> pastRequests = this.requestController.getRequestsByStatus(RequestStatus.ACCEPTED, RequestStatus.PENDING);
+        try {
+            List<Request> pastRequests = this.requestController.getRequestsByStatus(RequestStatus.ACCEPTED, RequestStatus.PENDING);
 
-        if (pastRequests != null && this.checkIfStartDateOrEndDateIsInPastRequestRange(startDate, endDate, pastRequests)) {
-            GUIService.setErrorText("The start date or end date can not lie in the range of a past request", this.vacationsErrorText);
-            return false;
-        }
+            if (pastRequests != null && this.checkIfStartDateOrEndDateIsInPastRequestRange(startDate, endDate, pastRequests)) {
+                GUIService.setErrorText("The start date or end date can not lie in the range of a past request", this.vacationsErrorText);
+                return false;
+            }
 
-        short totalDaysOfCurrentRequest = (short) (endDate.toEpochDay() - startDate.toEpochDay() + 1);
+            short totalDaysOfCurrentRequest = (short) (endDate.toEpochDay() - startDate.toEpochDay() + 1);
 
-        short totalDaysOfPastRequest = pastRequests == null || pastRequests.size() == 0 ? 0 : this.calculateDaysOfPastRequests(pastRequests);
-        //TODO take remaining days calculate from here and update admin and manager
-        if (UserContext.getInstance().getPerson().getVacation_remaining() - totalDaysOfCurrentRequest - totalDaysOfPastRequest <= 0) {
-            GUIService.setErrorText("You're asking fore more holiday than you're entitled to", this.vacationsErrorText);
+            short totalDaysOfPastRequest = pastRequests == null || pastRequests.size() == 0 ? 0 : this.calculateDaysOfPastRequests(pastRequests);
+            if (UserContext.getInstance().getPerson().getVacation_remaining() - totalDaysOfCurrentRequest - totalDaysOfPastRequest <= 0) {
+                GUIService.setErrorText("You're asking fore more holiday than you're entitled to", this.vacationsErrorText);
+                return false;
+            }
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            GUIService.setErrorText(Constants.PLEASE_CONTACT_SUPPORT, this.vacationsErrorText);
             return false;
         }
 

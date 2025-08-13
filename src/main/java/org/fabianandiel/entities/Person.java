@@ -87,10 +87,10 @@ public class Person {
     @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER)
     List<Request> requests = new ArrayList<>();
 
-    @NotBlank(message = "Vacation entitilement can`t be empty") //Jakarta Valdiation
+    @NotNull(message = "Vacation entitilement can`t be empty") //Jakarta Valdiation
     @Min(value = 0, message = "Vacation entitlement cannot be negative")
     @Max(value = 35, message = "Vacation entitlement cannot exceed 35 days")
-    @Column(name = "vacation_entitlement",nullable = false, updatable = false)
+    @Column(name = "vacation_entitlement",nullable = false)
     private short vacation_entitlement;
 
     @Min(value = 0, message = "Remaining vacation cannot be negative")
@@ -98,14 +98,14 @@ public class Person {
     @Column(name = "vacation_remaining",nullable = false)
     private short vacation_remaining;
 
-    @NotBlank(message = "Working hours can`t be empty") //Jakarta Valdiation
+    @NotNull(message = "Working hours can`t be empty") //Jakarta Valdiation
     @Min(value = 0, message = "Working hours per week cannot be negative")
     @Max(value = 60, message = "Working hours per week cannot exceed 60 hours")
     @Column(name = "week_work_hours")
     private short week_work_hours;
 
 
-    //TODO rework toString();
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -113,12 +113,26 @@ public class Person {
         sb.append("ID: ").append(id).append("\n");
         sb.append("Firstname: ").append(firstname).append("\n");
         sb.append("Lastname: ").append(lastname).append("\n");
-        sb.append("Address: ").append(address).append("\n");
+        sb.append("Username: ").append(username).append("\n");
+        sb.append("Address: ").append(address != null ? address.getId() : null).append("\n");
         sb.append("Telephone: ").append(telephone).append("\n");
         sb.append("Email: ").append(email).append("\n");
         sb.append("Roles: ").append(roles != null ? roles.stream().map(Role::name).toList() : "[]").append("\n");
-        sb.append("Subordinates: ").append(subordinates != null ? subordinates.stream().map(Person::getId).toList() : "[]").append("\n");
+        sb.append("Superior: ").append(superior != null
+                ? superior.getFirstname() + " " + superior.getLastname()
+                : null).append("\n");
+        sb.append("Subordinates: ").append(subordinates != null
+                ? subordinates.stream()
+                .map(p -> p.getFirstname() + " " + p.getLastname())
+                .toList()
+                : "[]").append("\n");
+        sb.append("Requests: ").append(requests != null
+                ? requests.stream().map(Request::getId).toList()
+                : "[]").append("\n");
         sb.append("Status: ").append(status).append("\n");
+        sb.append("Vacation Entitlement: ").append(vacation_entitlement).append("\n");
+        sb.append("Vacation Remaining: ").append(vacation_remaining).append("\n");
+        sb.append("Week Work Hours: ").append(week_work_hours).append("\n");
         sb.append("================================");
         return sb.toString();
     }
