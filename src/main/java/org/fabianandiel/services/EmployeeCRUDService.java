@@ -185,8 +185,6 @@ public class EmployeeCRUDService {
 
         SelectedEmployeeContext.clearSession();
         SelectedEmployeeContext.initSession(createdPerson);
-        Person person = SelectedEmployeeContext.getPersonToUpdate();
-        System.out.println(person);
     }
 
 

@@ -1,6 +1,7 @@
 package org.fabianandiel.gui;
 
 import jakarta.persistence.EntityManager;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -19,14 +20,12 @@ import org.fabianandiel.dao.AddressDAO;
 import org.fabianandiel.dao.PersonDAO;
 import org.fabianandiel.entities.Address;
 import org.fabianandiel.entities.Person;
-import org.fabianandiel.services.EmployeeCRUDService;
-import org.fabianandiel.services.EntityManagerProvider;
-import org.fabianandiel.services.GUIService;
-import org.fabianandiel.services.SceneManager;
+import org.fabianandiel.services.*;
 import org.fabianandiel.validation.EmployeeFormValidationService;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 
 public class EmployeeFormController implements Initializable {
 
@@ -113,56 +112,119 @@ public class EmployeeFormController implements Initializable {
 
     private boolean userHasManagerAndAdminRole;
 
+    private ExecutorService executorService;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         Person personToUpdate = SelectedEmployeeContext.getPersonToUpdate();
         this.userHasManagerRole = UserContext.getInstance().hasRole(Role.EMPLOYEE) && UserContext.getInstance().hasRole(Role.MANAGER) && !UserContext.getInstance().hasRole(Role.ADMIN);
         this.userHasManagerAndAdminRole = UserContext.getInstance().hasRole(Role.ADMIN);
-        List<Person> persons = null;
-        List<Person> subordinates = null;
-        List<Person> possibleSuperiors = null;
+        this.executorService = ExecutorServiceProvider.getExecutorService();
 
-        try {
-            if (this.userHasManagerAndAdminRole) {
-                subordinates = this.personController.getEmployeesWithoutSuperior();
-            }
-            if (personToUpdate != null && this.userHasManagerAndAdminRole) {
-                persons = this.personController.getPersonBySuperiorID(personToUpdate.getId());
-            }
-            possibleSuperiors = this.personController.getPersonsByRole(Role.MANAGER);
-        } catch (RuntimeException e) {
-            GUIService.setErrorText(e.getMessage(), this.createEmployeeErrorText);
-            e.printStackTrace();
-        }
+        this.executorService.submit(() -> {
 
-        initializeAddressDropDown();
-        initalizeSuperiorDropdown(possibleSuperiors);
-        initializeCheckBoxesAccordingToAuthorization();
-        initializeEmployeeTableViewAccordingToAuthorization(subordinates);
+            List<Person> personsWithSuperiorTemp = null;
+            List<Person> personsWithoutSuperiorTemp = null;
+            List<Person> possibleSuperiorsTemp = null;
 
-        if (personToUpdate != null) {
-            this.changeGUIintoUpdateMode();
-            if (this.userHasManagerAndAdminRole) {
-                this.createEmployeeRolesBoxEmployee.setDisable(true);
-                this.createEmployeeRolesBoxManager.setDisable(true);
-
-                if (persons != null) {
-                    this.subordinates.addAll(persons);
+            try {
+                if (this.userHasManagerAndAdminRole) {
+                    personsWithoutSuperiorTemp = this.personController.getEmployeesWithoutSuperior();
                 }
-            }
-            if (this.userHasManagerRole) {
-                this.createEmployeeRolesBoxEmployee.setDisable(true);
-                if (this.createEmployeeRolesBoxManager.isDisabled()) {
-                    this.createEmployeeRolesBoxManager.setDisable(false);
+                if (personToUpdate != null && this.userHasManagerAndAdminRole) {
+                    personsWithSuperiorTemp = this.personController.getPersonBySuperiorID(personToUpdate.getId());
                 }
-                this.createEmployeeRolesBoxAdmin.setDisable(true);
+                possibleSuperiorsTemp = this.personController.getPersonsByRole(Role.MANAGER);
+            } catch (RuntimeException e) {
+                Platform.runLater(() -> {
+                    GUIService.setErrorText(e.getMessage(), this.createEmployeeErrorText);
+                });
+                e.printStackTrace();
             }
 
-            this.fillTheFieldsWithPersonToUpdatesValue(personToUpdate);
-        }
+            final List<Address> queriedAddresses = this.addressController.getAll(Address.class);
+            final List<Person> personsWithSuperior = personsWithSuperiorTemp;
+            final List<Person> personsWithoutSuperior = personsWithoutSuperiorTemp;
+            final List<Person> possibleSuperiors = possibleSuperiorsTemp;
+
+            Platform.runLater(() -> {
+                initializeAddressDropDown(queriedAddresses);
+                initalizeSuperiorDropdown(possibleSuperiors);
+                initializeCheckBoxesAccordingToAuthorization();
+                initializeEmployeeTableViewAccordingToAuthorization(personsWithoutSuperior);
+
+                //Update path
+
+                if (personToUpdate != null) {
+                    this.changeGUIintoUpdateMode();
+                    if (this.userHasManagerAndAdminRole) {
+                        this.createEmployeeRolesBoxEmployee.setDisable(true);
+                        this.createEmployeeRolesBoxManager.setDisable(true);
+                        if (personsWithSuperior != null) {
+                            this.subordinates.addAll(personsWithSuperior);
+                        }
+                    }
+                    if (this.userHasManagerRole) {
+                        this.createEmployeeRolesBoxEmployee.setDisable(true);
+                        if (this.createEmployeeRolesBoxManager.isDisabled()) {
+                            this.createEmployeeRolesBoxManager.setDisable(false);
+                        }
+                        this.createEmployeeRolesBoxAdmin.setDisable(true);
+                    }
+                    this.fillTheFieldsWithPersonToUpdatesValue(personToUpdate);
+                }
+            });
+
+        });
     }
 
+
+    /**
+     * submits and validates the new employee
+     */
+    public void employeeFormUpdateCreate() {
+
+        Person createdPerson = this.createPersonFromFields();
+        if (createdPerson == null) {
+            return;
+        }
+
+        if (!EmployeeFormValidationService.validateCreatedPerson(createdPerson, this.createEmployeeErrorText))
+            return;
+
+        if (this.createEmployeeErrorText.isVisible())
+            this.createEmployeeErrorText.setVisible(false);
+
+        EntityManager em = EntityManagerProvider.getEntityManager();
+
+        this.executorService.submit(() -> {
+            try {
+                if (SelectedEmployeeContext.getPersonToUpdate() == null) {
+                    createdPerson.setStatus(Status.JUST_CREATED);
+                    EmployeeCRUDService.createNewPerson(em, createdPerson, this.subordinates, this.superiors);
+                } else {
+                    createdPerson.setStatus(SelectedEmployeeContext.getPersonToUpdate().getStatus());
+                    EmployeeCRUDService.updatePerson(em, createdPerson, this.subordinates, this.superiors);
+                }
+                this.onReset();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+                Platform.runLater(()->GUIService.setErrorText(e.getMessage(), this.createEmployeeErrorText));
+            }
+        });
+    }
+
+
+    //=======================================================================================
+    //=========================HELPER METHODS ===============================================
+
+
+    /**
+     * fills the form fields with the values of the person
+     *
+     * @param person the person whoose values should fill up the form fields
+     */
     private void fillTheFieldsWithPersonToUpdatesValue(Person person) {
 
         this.createEmployeeFirstname.setText(person.getFirstname());
@@ -187,42 +249,6 @@ public class EmployeeFormController implements Initializable {
         }
         this.createEmployeeHoursWeek.setText(String.valueOf(person.getWeek_work_hours()));
     }
-
-    /**
-     * submits and validates the new employee
-     */
-    public void employeeFormUpdateCreate() {
-        Person createdPerson = this.createPersonFromFields();
-        if (createdPerson == null) {
-            return;
-        }
-
-        if (!EmployeeFormValidationService.validateCreatedPerson(createdPerson, this.createEmployeeErrorText))
-            return;
-
-        if (this.createEmployeeErrorText.isVisible())
-            this.createEmployeeErrorText.setVisible(false);
-
-        EntityManager em = EntityManagerProvider.getEntityManager();
-
-        try {
-            if (SelectedEmployeeContext.getPersonToUpdate() == null) {
-                createdPerson.setStatus(Status.JUST_CREATED);
-                EmployeeCRUDService.createNewPerson(em, createdPerson, this.subordinates, this.superiors);
-            } else {
-                createdPerson.setStatus(SelectedEmployeeContext.getPersonToUpdate().getStatus());
-                EmployeeCRUDService.updatePerson(em, createdPerson, this.subordinates, this.superiors);
-            }
-            this.onReset();
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-            GUIService.setErrorText(e.getMessage(), this.createEmployeeErrorText);
-        }
-    }
-
-
-    //=======================================================================================
-    //=========================HELPER METHODS ===============================================
 
 
     /**
@@ -367,8 +393,7 @@ public class EmployeeFormController implements Initializable {
     /**
      * Initializes AddressDropdown
      */
-    private void initializeAddressDropDown() {
-        List<Address> queriedAddresses = this.addressController.getAll(Address.class);
+    private void initializeAddressDropDown(List<Address> queriedAddresses) {
         this.addresses.addAll(queriedAddresses);
         this.createEmployeeAddress.setItems(this.addresses);
     }

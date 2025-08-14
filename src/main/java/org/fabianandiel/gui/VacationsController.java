@@ -147,8 +147,8 @@ public class VacationsController implements Initializable {
 
             try {
                 this.requestController.create(request);
-                UserContext.getInstance().getPerson().getRequests().add(request);
                 Platform.runLater(() -> {
+                    UserContext.getInstance().getPerson().getRequests().add(request);
                     this.requestList.add(request);
                     if (isManagerOrAdmin() && remainingDaysTextFinal != null) {
                         this.vacationsRequestRestVacation.setText(remainingDaysTextFinal);

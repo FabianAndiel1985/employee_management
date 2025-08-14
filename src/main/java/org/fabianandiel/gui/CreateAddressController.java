@@ -1,6 +1,7 @@
 package org.fabianandiel.gui;
 
 import jakarta.validation.ConstraintViolation;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -10,6 +11,7 @@ import org.fabianandiel.constants.Constants;
 import org.fabianandiel.controller.AddressController;
 import org.fabianandiel.dao.AddressDAO;
 import org.fabianandiel.entities.Address;
+import org.fabianandiel.services.ExecutorServiceProvider;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
 import org.fabianandiel.services.ValidatorProvider;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 public class CreateAddressController implements Initializable {
 
@@ -76,8 +79,13 @@ public class CreateAddressController implements Initializable {
         }
 
         this.newAddressErrorText.setVisible(false);
-        this.addressController.create(address);
-        this.clearFields();
+
+        ExecutorService executorService = ExecutorServiceProvider.getExecutorService();
+
+        executorService.submit(()->{
+            this.addressController.create(address);
+            Platform.runLater(()->this.clearFields());
+        });
     }
 
     /**

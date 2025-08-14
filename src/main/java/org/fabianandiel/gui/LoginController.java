@@ -1,6 +1,7 @@
 package org.fabianandiel.gui;
 
 import jakarta.validation.ConstraintViolation;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
@@ -11,16 +12,14 @@ import org.fabianandiel.context.UserContext;
 import org.fabianandiel.controller.PersonController;
 import org.fabianandiel.dao.PersonDAO;
 import org.fabianandiel.entities.Person;
-import org.fabianandiel.services.EntityManagerProvider;
-import org.fabianandiel.services.GUIService;
-import org.fabianandiel.services.SceneManager;
-import org.fabianandiel.services.ValidatorProvider;
+import org.fabianandiel.services.*;
 import org.fabianandiel.validation.LoginRequest;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
 
 
 public class LoginController implements Initializable {
@@ -63,32 +62,36 @@ public class LoginController implements Initializable {
 
         PersonDAO<Person, UUID> dao = new PersonDAO<>();
         PersonController<Person, UUID> personController = new PersonController<>(dao);
-        Person person;
-        try {
-            person = personController.getPersonByUsername(username);
-        } catch (RuntimeException e) {
-            GUIService.setErrorText(e.getMessage(),this.loginErrorText);
-            e.printStackTrace();
-            return;
-        }
-
-        if (person == null) {
-            GUIService.setErrorText(Constants.LOGIN_ERROR_MESSAGE, loginErrorText);
-            return;
-        }
-
-        if(person.getStatus().equals(Status.INACTIVE)) {
-            GUIService.setErrorText("Inactive employee can not login", loginErrorText);
-            return;
-        }
-
-        if (!person.getPassword().equals(password)) {
-            GUIService.setErrorText(Constants.LOGIN_ERROR_MESSAGE, loginErrorText);
-            return;
-        }
 
 
-        UserContext.getInstance().initSession(username, person.getRoles(), person.getId(), person);
+        ExecutorService executorService = ExecutorServiceProvider.getExecutorService();
+
+        executorService.submit(() -> {
+            Person person;
+            try {
+                person = personController.getPersonByUsername(username);
+            } catch (RuntimeException e) {
+               Platform.runLater(()->GUIService.setErrorText(e.getMessage(), this.loginErrorText));
+                e.printStackTrace();
+                return;
+            }
+
+            if (person == null) {
+                Platform.runLater(()->GUIService.setErrorText(Constants.LOGIN_ERROR_MESSAGE, loginErrorText));
+                return;
+            }
+
+            if (person.getStatus().equals(Status.INACTIVE)) {
+                Platform.runLater(()->GUIService.setErrorText("Inactive employee can not login", loginErrorText));
+                return;
+            }
+
+            if (!person.getPassword().equals(password)) {
+                Platform.runLater(()->GUIService.setErrorText(Constants.LOGIN_ERROR_MESSAGE, loginErrorText));
+                return;
+            }
+            Platform.runLater(()->UserContext.getInstance().initSession(username, person.getRoles(), person.getId(), person));
+        });
 
         //Go to main view
         try {
