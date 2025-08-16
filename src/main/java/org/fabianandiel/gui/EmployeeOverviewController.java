@@ -1,5 +1,6 @@
 package org.fabianandiel.gui;
 
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,15 +17,13 @@ import org.fabianandiel.context.UserContext;
 import org.fabianandiel.controller.PersonController;
 import org.fabianandiel.dao.PersonDAO;
 import org.fabianandiel.entities.Person;
-import org.fabianandiel.services.EmployeeCRUDService;
-import org.fabianandiel.services.EntityManagerProvider;
-import org.fabianandiel.services.GUIService;
-import org.fabianandiel.services.SceneManager;
+import org.fabianandiel.services.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 
 public class EmployeeOverviewController implements Initializable {
 
@@ -95,19 +94,31 @@ public class EmployeeOverviewController implements Initializable {
 
     private ObservableList<Person> updateableEmployees = FXCollections.observableArrayList();
 
-
     private PersonController personController = new PersonController(new PersonDAO());
+
+    private ExecutorService executorService;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        initializeAllEmployees();
-        initializeUpdateableEmployees();
-        this.employeeOverviewUpdateEmployee.setDisable(true);
-        this.employeeOverviewDeleteEmployee.setDisable(true);
-        this.employeeOverviewMasterData.setDisable(true);
-        if (UserContext.getInstance().hasRole(Role.ADMIN)) {
-            this.employeeOverviewText.setText("Managers and Admins");
-        }
+        this.executorService = ExecutorServiceProvider.getExecutorService();
+        this.executorService.submit(
+                () -> {
+                    List<Person> allEmployees = this.personController.getAll(Person.class);
+                    Platform.runLater(
+                            () -> {
+                                if (allEmployees != null && !allEmployees.isEmpty())
+                                    initializeAllEmployees(allEmployees);
+                                initializeUpdateableEmployees();
+                                this.employeeOverviewUpdateEmployee.setDisable(true);
+                                this.employeeOverviewDeleteEmployee.setDisable(true);
+                                this.employeeOverviewMasterData.setDisable(true);
+                                if (UserContext.getInstance().hasRole(Role.ADMIN)) {
+                                    this.employeeOverviewText.setText("Managers and Admins");
+                                }
+                            }
+                    );
+                }
+        );
     }
 
     /**
@@ -131,7 +142,7 @@ public class EmployeeOverviewController implements Initializable {
         this.employeeOverviewRTMaddress.setCellValueFactory(new PropertyValueFactory<Person, String>("address"));
         if (UserContext.getInstance().hasRole(Role.MANAGER) && UserContext.getInstance().getRoles().size() == 2) {
             List<Person> personsWithUserAsSuperior = this.allEmployees.stream()
-                    .filter((empl) -> empl.getSuperior() == null || empl.getSuperior().getId().equals(UserContext.getInstance().getId())  )
+                    .filter((empl) -> empl.getSuperior() == null || empl.getSuperior().getId().equals(UserContext.getInstance().getId()))
                     .toList();
 
             this.updateableEmployees.addAll(personsWithUserAsSuperior);
@@ -184,6 +195,7 @@ public class EmployeeOverviewController implements Initializable {
 
     /**
      * saves the selected person to the context
+     *
      * @param button to disable
      * @return true if saving to context was successfull, false if not
      */
@@ -210,7 +222,7 @@ public class EmployeeOverviewController implements Initializable {
     /**
      * initializes view for all Employees
      */
-    private void initializeAllEmployees() {
+    private void initializeAllEmployees(List<Person> allEmployees) {
         this.employeeOverviewAllEmployees.setSelectionModel(null);
         this.employeeOverviewId.setCellValueFactory(new PropertyValueFactory<Person, String>("id"));
         this.employeeOverviewFirstname.setCellValueFactory(new PropertyValueFactory<Person, String>("firstname"));
@@ -231,7 +243,7 @@ public class EmployeeOverviewController implements Initializable {
         this.employeeOverviewRole.setCellValueFactory(param ->
                 new ReadOnlyStringWrapper(getHighestRoleAsString(param.getValue()))
         );
-        List<Person> allEmployees = this.personController.getAll(Person.class);
+
         this.allEmployees.addAll(allEmployees);
         this.employeeOverviewAllEmployees.setItems(this.allEmployees);
     }
@@ -259,19 +271,35 @@ public class EmployeeOverviewController implements Initializable {
      * Sets the employee to update to inactive and removes subordinates and superiors
      */
     public void setEmployeeToInactive() {
+
         ObservableList<Person> selectedPersons = this.employeeOverviewUpdateableEmployees.getSelectionModel().getSelectedItems();
+        if (selectedPersons == null || selectedPersons.isEmpty()) {
+            return;
+        }
 
-        Person person = selectedPersons.getFirst();
+        Person selectedPerson = selectedPersons.getFirst();
 
-        EmployeeCRUDService.setPersonInactive(EntityManagerProvider.getEntityManager(), person, this.allEmployees, this.updateableEmployees);
-        this.initializeAllEmployees();
+        this.executorService.submit(() -> {
+            try {
+                EmployeeCRUDService.setPersonInactive(EntityManagerProvider.getEntityManager(), selectedPerson);
+                List<Person> reloadedPersons = personController.getAll(Person.class);
+
+                Platform.runLater(() -> {
+                    this.initializeAllEmployees(reloadedPersons);
+                    this.initializeUpdateableEmployees();
+                });
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+                Platform.runLater(() -> {
+                    GUIService.setErrorText("Errror  setting employee to innactive.", employeeOverviewErrorText);
+                });
+            }
+        });
     }
-
 
 
     /**
      * goes to master data view
-     *
      */
     public void goToMasterDataView() {
         try {

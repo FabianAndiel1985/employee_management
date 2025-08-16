@@ -46,51 +46,75 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        if(userContext.hasRole(Role.EMPLOYEE) && userContext.getRoles().size() == 1 ) {
+        if (userContext.hasRole(Role.EMPLOYEE) && userContext.getRoles().size() == 1) {
             this.mainManagerAdminRow.setVisible(false);
         }
-
         Status status = UserContext.getInstance().getPerson().getStatus();
-        if(status != null)
+        if (status != null)
             this.mainStatus.setText(String.valueOf(status));
         else {
             this.mainStatus.setText("Status could not be found");
         }
+
     }
 
-
+    /**
+     * switches to vacation view
+     */
     public void switchToVacation() {
-        this.switchView("/org/fabianandiel/gui/vacationsView.fxml",600,600,"Vacations");
+        this.switchView("/org/fabianandiel/gui/vacationsView.fxml", 600, 600, "Vacations");
     }
 
 
+    /**
+     * switches to time booking view
+     */
     public void switchToTimeBooking() {
-        this.switchView("/org/fabianandiel/gui/timeBookingView.fxml",400,400,"Time Booking");
+        this.switchView("/org/fabianandiel/gui/timeBookingView.fxml", 400, 400, "Time Booking");
     }
 
+
+    /**
+     * switches to requests view
+     */
     public void switchToRequests() {
-        this.switchView("/org/fabianandiel/gui/requestsView.fxml",600,600,"Pending Requests");
+        this.switchView("/org/fabianandiel/gui/requestsView.fxml", 600, 600, "Pending Requests");
     }
 
+
+    /**
+     * switches to employee overview
+     */
     public void switchToEmployeeOverview() {
-        this.switchView("/org/fabianandiel/gui/employeeOverviewView.fxml",632,730,"Employee Overview");
+        this.switchView("/org/fabianandiel/gui/employeeOverviewView.fxml", 632, 730, "Employee Overview");
     }
 
 
+    /**
+     * switches to login view
+     */
     public void switchToLoginView() {
         UserContext.getInstance().clearSession();
-        this.switchView("/org/fabianandiel/gui/loginView.fxml",400,400,"Login");
+        this.switchView("/org/fabianandiel/gui/loginView.fxml", 400, 400, "Login");
     }
 
-    private void switchView(String view, int width, int height, String title){
+
+    /**
+     * switches the view
+     * @param view string of view to switch to
+     * @param width desired width of view to switch to
+     * @param height desired height of view to switch to
+     * @param title desired title of view to switch to
+     */
+    private void switchView(String view, int width, int height, String title) {
         try {
             SceneManager.switchScene(view, width, height, title);
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE,mainErrorText);
+            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, mainErrorText);
         } catch (IOException e) {
             System.out.println("IO Exception: " + e.getMessage());
-            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE,mainErrorText);
+            GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, mainErrorText);
         }
     }
 

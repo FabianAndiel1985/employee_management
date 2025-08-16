@@ -71,39 +71,41 @@ public class LoginController implements Initializable {
             try {
                 person = personController.getPersonByUsername(username);
             } catch (RuntimeException e) {
-               Platform.runLater(()->GUIService.setErrorText(e.getMessage(), this.loginErrorText));
+                Platform.runLater(() -> GUIService.setErrorText(e.getMessage(), this.loginErrorText));
                 e.printStackTrace();
                 return;
             }
 
             if (person == null) {
-                Platform.runLater(()->GUIService.setErrorText(Constants.LOGIN_ERROR_MESSAGE, loginErrorText));
+                Platform.runLater(() -> GUIService.setErrorText(Constants.LOGIN_ERROR_MESSAGE, loginErrorText));
                 return;
             }
 
             if (person.getStatus().equals(Status.INACTIVE)) {
-                Platform.runLater(()->GUIService.setErrorText("Inactive employee can not login", loginErrorText));
+                Platform.runLater(() -> GUIService.setErrorText("Inactive employee can not login", loginErrorText));
                 return;
             }
 
             if (!person.getPassword().equals(password)) {
-                Platform.runLater(()->GUIService.setErrorText(Constants.LOGIN_ERROR_MESSAGE, loginErrorText));
+                Platform.runLater(() -> GUIService.setErrorText(Constants.LOGIN_ERROR_MESSAGE, loginErrorText));
                 return;
             }
-            Platform.runLater(()->UserContext.getInstance().initSession(username, person.getRoles(), person.getId(), person));
+            Platform.runLater(() ->
+            {
+                UserContext.getInstance().initSession(username, person.getRoles(), person.getId(), person);
+
+                //Go to main view
+                try {
+                    SceneManager.switchScene("/org/fabianandiel/gui/mainView.fxml", 400, 400, "Main");
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                    GUIService.setErrorText(USER_ERROR_MESSAGE, loginErrorText);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    GUIService.setErrorText(USER_ERROR_MESSAGE, loginErrorText);
+                }
+            });
         });
-
-        //Go to main view
-        try {
-            SceneManager.switchScene("/org/fabianandiel/gui/mainView.fxml", 400, 400, "Main");
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-            GUIService.setErrorText(USER_ERROR_MESSAGE, loginErrorText);
-        } catch (IOException e) {
-            System.out.println("IO Exception: " + e.getMessage());
-            GUIService.setErrorText(USER_ERROR_MESSAGE, loginErrorText);
-        }
-
     }
 
 

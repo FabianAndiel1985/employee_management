@@ -14,10 +14,11 @@ public class EmployeeCRUDService {
 
     /**
      * creates a new person of any role
-     * @param em EntityManager instance
+     *
+     * @param em            EntityManager instance
      * @param createdPerson person that shall be saved in the DB
-     * @param subordinates potential subordinates of the person to save
-     * @param superiors potential superiors of the person to save
+     * @param subordinates  potential subordinates of the person to save
+     * @param superiors     potential superiors of the person to save
      */
     public static void createNewPerson(EntityManager em, Person createdPerson, ObservableList<Person> subordinates, ObservableList<Person> superiors) {
         if (em == null || createdPerson == null)
@@ -98,14 +99,6 @@ public class EmployeeCRUDService {
     }
 
 
-
-    /**
-     * updates a new person of any role
-     * @param em EntityManager instance
-     * @param createdPerson person that shall be updated in the DB
-     * @param subordinates potential subordinates of the person to save
-     * @param superiors potential superiors of the person to save
-     */
     public static void updatePerson(EntityManager em, Person createdPerson, ObservableList<Person> subordinates, ObservableList<Person> superiors) {
         if (em == null || createdPerson == null)
             return;
@@ -187,8 +180,97 @@ public class EmployeeCRUDService {
         SelectedEmployeeContext.initSession(createdPerson);
     }
 
+    /*
+     * updates a new person of any role
+     * @param em EntityManager instance
+     * @param createdPerson person that shall be updated in the DB
+     * @param subordinates potential subordinates of the person to save
+     * @param superiors potential superiors of the person to save
+    public static void updatePerson(EntityManager em, Person createdPerson, ObservableList<Person> subordinates, ObservableList<Person> superiors) {
+        if (em == null || createdPerson == null)
+            return;
 
-    public static void setPersonInactive(EntityManager em, Person personToSetToInactive, ObservableList<Person> allEmployees, ObservableList<Person> updateableEmployees) {
+        createdPerson.setId(SelectedEmployeeContext.getPersonToUpdate().getId());
+
+        Set<Person> selectedSubordinates;
+        try {
+            em.getTransaction().begin();
+            Address rawAddress = createdPerson.getAddress();
+            //manage the address in the persistence context
+            if (rawAddress != null) {
+                Address managedAddress = em.find(Address.class, rawAddress.getId());
+                createdPerson.setAddress(managedAddress);
+            }
+
+            Person rawSuperior = createdPerson.getSuperior();
+            //manage the superior in the persistence context
+            if (rawSuperior != null) {
+                Person managedSuperior = em.find(Person.class, rawSuperior.getId());
+                createdPerson.setSuperior(managedSuperior);
+            }
+
+            //Don't need to set subordinates in the person to persist the new person
+            selectedSubordinates = createdPerson.getSubordinates();
+            createdPerson.setSubordinates(new HashSet<>());
+            //persist fully persistence context managed person
+            em.merge(createdPerson);
+            em.flush();
+
+            //makes subordinates managed and updates them with the new superior
+            if (selectedSubordinates != null) {
+                int batchSize = 30;
+                int i = 0;
+
+                for (Person sub : selectedSubordinates) {
+                    Person managedSub = em.find(Person.class, sub.getId());
+                    managedSub.setSuperior(createdPerson);
+                    em.merge(managedSub);
+
+                    if (++i % batchSize == 0) {
+                        em.flush();
+                        em.clear();
+                        createdPerson = em.find(Person.class, createdPerson.getId());
+                    }
+                }
+
+                if (++i % batchSize != 0) {
+                    em.flush();
+                    em.clear();
+                }
+                em.getTransaction().commit();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            em.close();
+            throw new RuntimeException("Error updating the person");
+        }
+
+        //removes the subordinates from the observable list
+        for (Person p : selectedSubordinates) {
+            subordinates.remove(p);
+        }
+
+        em.close();
+
+        if (createdPerson.getRoles().size() == 1 && createdPerson.getRoles().contains(Role.EMPLOYEE)) {
+            subordinates.add(createdPerson);
+        }
+
+        if ((createdPerson.getRoles().size() == 2 || createdPerson.getRoles().size() == 3) && (createdPerson.getRoles().contains(Role.MANAGER) || createdPerson.getRoles().contains(Role.ADMIN))) {
+            superiors.add(createdPerson);
+        }
+
+        SelectedEmployeeContext.clearSession();
+        SelectedEmployeeContext.initSession(createdPerson);
+    }
+
+     */
+
+
+    public static void setPersonInactive(EntityManager em, Person personToSetToInactive) {
         if (em == null || personToSetToInactive == null)
             return;
 
@@ -255,12 +337,6 @@ public class EmployeeCRUDService {
             }
             em.close();
             throw new RuntimeException("Error setting person to inactive");
-        }
-
-        allEmployees.remove(personToSetToInactive);
-
-        if (updateableEmployees.contains(personToSetToInactive)) {
-            updateableEmployees.remove(personToSetToInactive);
         }
 
         em.close();
