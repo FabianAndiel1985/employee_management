@@ -243,7 +243,6 @@ public class EmployeeOverviewController implements Initializable {
         this.employeeOverviewRole.setCellValueFactory(param ->
                 new ReadOnlyStringWrapper(getHighestRoleAsString(param.getValue()))
         );
-
         this.allEmployees.addAll(allEmployees);
         this.employeeOverviewAllEmployees.setItems(this.allEmployees);
     }
@@ -283,7 +282,6 @@ public class EmployeeOverviewController implements Initializable {
             try {
                 EmployeeCRUDService.setPersonInactive(EntityManagerProvider.getEntityManager(), selectedPerson);
                 List<Person> reloadedPersons = personController.getAll(Person.class);
-
                 Platform.runLater(() -> {
                     this.initializeAllEmployees(reloadedPersons);
                     this.initializeUpdateableEmployees();

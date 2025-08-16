@@ -202,12 +202,17 @@ public class EmployeeFormController implements Initializable {
             try {
                 if (SelectedEmployeeContext.getPersonToUpdate() == null) {
                     createdPerson.setStatus(Status.JUST_CREATED);
-                    EmployeeCRUDService.createNewPerson(em, createdPerson, this.subordinates, this.superiors);
+                    EmployeeCRUDService.createNewPerson(em, createdPerson);
+                    Platform.runLater(()->{
+                        this.goBackEmployeeOverview();
+                    });
                 } else {
                     createdPerson.setStatus(SelectedEmployeeContext.getPersonToUpdate().getStatus());
-                    EmployeeCRUDService.updatePerson(em, createdPerson, this.subordinates, this.superiors);
+                    EmployeeCRUDService.updatePerson(em, createdPerson);
+                    Platform.runLater(()->{
+                        this.goBackEmployeeOverview();
+                    });
                 }
-                this.onReset();
             } catch (RuntimeException e) {
                 e.printStackTrace();
                 Platform.runLater(()->GUIService.setErrorText(e.getMessage(), this.createEmployeeErrorText));
