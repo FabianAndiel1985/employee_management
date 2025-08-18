@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 
 public class EmployeeOverviewController implements Initializable {
@@ -265,34 +266,60 @@ public class EmployeeOverviewController implements Initializable {
         return null;
     }
 
-
-    /**
-     * Sets the employee to update to inactive and removes subordinates and superiors
-     */
     public void setEmployeeToInactive() {
+        Person selected = employeeOverviewUpdateableEmployees.getSelectionModel().getSelectedItem();
+        final var selectedId = selected.getId();
 
-        ObservableList<Person> selectedPersons = this.employeeOverviewUpdateableEmployees.getSelectionModel().getSelectedItems();
-        if (selectedPersons == null || selectedPersons.isEmpty()) {
-            return;
-        }
-
-        Person selectedPerson = selectedPersons.getFirst();
-
-        this.executorService.submit(() -> {
+        executorService.submit(() -> {
             try {
-                EmployeeCRUDService.setPersonInactive(EntityManagerProvider.getEntityManager(), selectedPerson);
-                List<Person> reloadedPersons = personController.getAll(Person.class);
+                EmployeeCRUDService.setPersonInactive(EntityManagerProvider.getEntityManager(), selected);
+
+                //reloading the values for rerendering on update
+                Person updated = (Person) this.personController.getById(selectedId,Person.class);
+                List<Person> persons = this.personController.getAll(Person.class);
+
                 Platform.runLater(() -> {
-                    this.initializeAllEmployees(reloadedPersons);
-                    this.initializeUpdateableEmployees();
+                    this.allEmployees.clear();
+                    this.allEmployees.addAll(persons);
+
+                    //TODO fortsetzen
+
+                    //making a 100% sure that the most actual version of updated person is seen in the list
+                    int indexOfUpdatedEmployee = getIndexUpdatedEmployeeInList(allEmployees, selectedId);
+                    if (indexOfUpdatedEmployee >= 0) {
+                        this.allEmployees.set(indexOfUpdatedEmployee, updated);
+                    }
+
+
+                    //Refresh for good measure
+                    this.employeeOverviewAllEmployees.refresh();
+                    this.employeeOverviewUpdateableEmployees.refresh();
+
+                    employeeOverviewUpdateableEmployees.getSelectionModel().clearSelection();
+                    employeeOverviewUpdateEmployee.setDisable(true);
+                    employeeOverviewDeleteEmployee.setDisable(true);
+                    employeeOverviewMasterData.setDisable(true);
                 });
             } catch (RuntimeException e) {
                 e.printStackTrace();
-                Platform.runLater(() -> {
-                    GUIService.setErrorText("Errror  setting employee to innactive.", employeeOverviewErrorText);
-                });
+                Platform.runLater(() ->
+                        GUIService.setErrorText("Error setting employee to INACTIVE.", employeeOverviewErrorText)
+                );
             }
         });
+    }
+
+    /**
+     * get index of employee in list
+     * @param list list of employees where I want to find the provided id
+     * @param id id of the updated employee
+     * @return index of updated employee in list
+     */
+    private static int getIndexUpdatedEmployeeInList(ObservableList<Person> list, UUID id) {
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getId().equals(id)) return i;
+        }
+        return -1;
     }
 
 
