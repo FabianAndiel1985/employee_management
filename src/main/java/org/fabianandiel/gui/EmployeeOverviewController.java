@@ -266,6 +266,9 @@ public class EmployeeOverviewController implements Initializable {
         return null;
     }
 
+    /**
+     * sets the employee to inactive
+     */
     public void setEmployeeToInactive() {
         Person selected = employeeOverviewUpdateableEmployees.getSelectionModel().getSelectedItem();
         final var selectedId = selected.getId();
@@ -282,14 +285,11 @@ public class EmployeeOverviewController implements Initializable {
                     this.allEmployees.clear();
                     this.allEmployees.addAll(persons);
 
-                    //TODO fortsetzen
-
                     //making a 100% sure that the most actual version of updated person is seen in the list
                     int indexOfUpdatedEmployee = getIndexUpdatedEmployeeInList(allEmployees, selectedId);
                     if (indexOfUpdatedEmployee >= 0) {
                         this.allEmployees.set(indexOfUpdatedEmployee, updated);
                     }
-
 
                     //Refresh for good measure
                     this.employeeOverviewAllEmployees.refresh();
