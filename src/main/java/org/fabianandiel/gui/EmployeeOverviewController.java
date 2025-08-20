@@ -144,8 +144,9 @@ public class EmployeeOverviewController implements Initializable {
         if (UserContext.getInstance().hasRole(Role.MANAGER) && UserContext.getInstance().getRoles().size() == 2) {
             List<Person> personsWithUserAsSuperior = this.allEmployees.stream()
                     .filter((empl) -> empl.getSuperior() == null || empl.getSuperior().getId().equals(UserContext.getInstance().getId()))
+                    .filter((empl)-> empl.getStatus() != Status.INACTIVE)
+                    .filter((empl)->empl.getRoles().size() == 1 && empl.getRoles().contains(Role.EMPLOYEE))
                     .toList();
-
             this.updateableEmployees.addAll(personsWithUserAsSuperior);
         }
         this.employeeOverviewRTMstatus.setCellValueFactory(new PropertyValueFactory<>("status"));
