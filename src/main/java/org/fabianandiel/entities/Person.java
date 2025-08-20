@@ -32,7 +32,7 @@ public class Person {
     @Column(name = "lastname", nullable = false, length = 50)
     private String lastname;
 
-    // @NotNull(message = "Address can`t be empty") //Jakarta Valdiation
+    @NotNull(message = "Address can`t be empty") //Jakarta Valdiation
     @ManyToOne
     @JoinColumn(name = "address_id")
     private Address address;
@@ -75,9 +75,10 @@ public class Person {
     @Enumerated(EnumType.STRING)
     @CollectionTable(
             name = "roles",
-            joinColumns = @JoinColumn(name = "person_id")
+            joinColumns = @JoinColumn(name = "person_id"),
+            uniqueConstraints = @UniqueConstraint(columnNames = {"person_id", "role"})
     )
-    @Column(name = "role")
+    @Column(name = "role", nullable = false)
     private Set<Role> roles = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
