@@ -5,7 +5,9 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import org.fabianandiel.constants.Constants;
 
-
+/**
+ * returns a new entity manager instance everytime there is one requested
+ */
 public class EntityManagerProvider {
 
     private static EntityManagerFactory EMF;

@@ -11,7 +11,9 @@ public class GUIService {
     }
 
     /**
-     * Places the error message in the dedicated text field
+     * Displays an error text at a text field
+     * @param errorMessage what the error text is supposed to say
+     * @param errorText where the error message is supposed to be displayed
      */
     public static void setErrorText(String errorMessage, Text errorText ) {
         errorText.setText(errorMessage);

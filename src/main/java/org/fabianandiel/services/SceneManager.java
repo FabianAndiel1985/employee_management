@@ -22,20 +22,21 @@ public class SceneManager {
 
     /**
      * Central method to switch the scene dynamically
-     * @param view fxml you want to load
-     * @param width Width of the scene you want to set
+     *
+     * @param view   fxml you want to load
+     * @param width  Width of the scene you want to set
      * @param height Height of the scene you want to set
-     * @param title Title of the scene
+     * @param title  Title of the scene
      * @throws IllegalArgumentException when the one of the arguments doesnt pass validation
      */
-    public static void switchScene(String view, int width,int height, String title) throws IllegalArgumentException,IOException {
+    public static void switchScene(String view, int width, int height, String title) throws IllegalArgumentException, IOException {
         try {
 
-            if(title.trim().isEmpty() || title == null) {
+            if (title.trim().isEmpty() || title == null) {
                 throw new IllegalArgumentException("Title has to be valid text");
             }
 
-            if(!view.endsWith(".fxml")) {
+            if (!view.endsWith(".fxml")) {
                 throw new IllegalArgumentException("Only valid fxml files are allowed");
             }
 
@@ -56,18 +57,20 @@ public class SceneManager {
     }
 
     /**
-     * goes back to the main view
+     * Navigates the application back to the main view by loading the corresponding FXML scene.
+     * <p>
+     * If loading the main view fails a  error message is displayed in the given node.
      *
-     * @param errorText place to display the error when going back to the main view goes wrong
+     * @param errorText where error messages should be displayed
      */
     public static void goBackToMainView(Text errorText) {
         try {
             switchScene("/org/fabianandiel/gui/mainView.fxml", 400, 400, "Main");
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, errorText);
         } catch (IOException e) {
-            System.out.println("IO Exception: " + e.getMessage());
+            e.printStackTrace();
             GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, errorText);
         }
     }

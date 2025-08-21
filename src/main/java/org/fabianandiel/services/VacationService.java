@@ -16,11 +16,14 @@ public class VacationService {
         return (short) (request.getCreator().getVacation_remaining() - daysCurrentRequest);
     }
 
+
+
     /**
      * Updates the amount of remaining vacation days the request creator has
      * @param request request of the creator
      * @param remainingDays new amount of remaining days
      * @param personController the person controller with whom I can update the person
+     * @throws RuntimeException if updating the person fails
      */
     public static void updateRemainingVacation(Request request, short remainingDays, PersonController personController) {
         try{

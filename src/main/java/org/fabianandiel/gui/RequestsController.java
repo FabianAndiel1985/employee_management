@@ -161,7 +161,6 @@ public class RequestsController implements Initializable {
                     handleApproveOrDisapprove(request, RequestStatus.ACCEPTED);
                 });
             }
-
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
@@ -170,14 +169,12 @@ public class RequestsController implements Initializable {
         });
         this.pendingRequestsDeny.setCellFactory(column -> new TableCell<>() {
             private final Button btn = new Button("Disapprove");
-
             {
                 btn.setOnAction(event -> {
                     Request request = getTableView().getItems().get(getIndex());
                     handleApproveOrDisapprove(request, RequestStatus.DENIED);
                 });
             }
-
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);

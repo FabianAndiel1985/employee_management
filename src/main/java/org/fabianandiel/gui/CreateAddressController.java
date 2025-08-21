@@ -15,6 +15,7 @@ import org.fabianandiel.services.ExecutorServiceProvider;
 import org.fabianandiel.services.GUIService;
 import org.fabianandiel.services.SceneManager;
 import org.fabianandiel.services.ValidatorProvider;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -60,6 +61,9 @@ public class CreateAddressController implements Initializable {
 
     }
 
+    /**
+     * Handles the submission of a new address form.
+     */
     public void submit() {
         Address address = new Address();
         address.setStreet(this.newAddressStreet.getText());
@@ -82,9 +86,9 @@ public class CreateAddressController implements Initializable {
 
         ExecutorService executorService = ExecutorServiceProvider.getExecutorService();
 
-        executorService.submit(()->{
+        executorService.submit(() -> {
             this.addressController.create(address);
-            Platform.runLater(()->this.clearFields());
+            Platform.runLater(() -> this.clearFields());
         });
     }
 
@@ -100,8 +104,6 @@ public class CreateAddressController implements Initializable {
             GUIService.setErrorText(Constants.USER_ERROR_MESSAGE, this.newAddressErrorText);
         }
     }
-
-
 
 
     /**

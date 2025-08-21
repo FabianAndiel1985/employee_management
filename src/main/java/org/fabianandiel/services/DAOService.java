@@ -15,6 +15,22 @@ public class DAOService {
         throw new UnsupportedOperationException(Constants.WARNING_UTILITY_CLASS);
     }
 
+    /**
+     * Executes a JPQL query with up to three parameters and returns the results as a list.
+     *
+     * This method is a generic helper method for querying entities using JPQL.
+     * It supports up to three named parameters, which will be set as "param", "param1", and "param2".
+     *
+     * @param <T>         the type of the result entities
+     * @param <K>         the type of the query parameters
+     * @param jpql        the JPQL query string (must contain named parameters: "param", "param1", "param2")
+     * @param resultClass the entity class expected in the result list
+     * @param em          the  EntityManager instance used to create and execute the query
+     * @param params      one to three parameter values for the query
+     * @return            returns a list of entities matching the query
+     * @throws IllegalArgumentException if more than three parameters are provided
+     * @throws RuntimeException         if query execution fails
+     */
     public static <T, K> List<T> findItemsWithPropertyOrProperties(String jpql, Class<T> resultClass, EntityManager em, K... params) throws IllegalArgumentException {
         List<T> items = new ArrayList<>();
         try {
@@ -41,7 +57,7 @@ public class DAOService {
     }
 
     /**
-     * changes the status of request before certain date
+     * changes the status of request before certain date except for the accepted ones
      *
      * @param date           request statuses before this date get updated
      * @param originalStatus update requests with this status
@@ -62,7 +78,6 @@ public class DAOService {
                     .setParameter("param3", RequestStatus.ACCEPTED)
                     .executeUpdate();
             tx.commit();
-            System.out.println("Expired " + updatedCount + " old pending requests.");
         } catch (Exception e) {
             if (tx.isActive())
                 tx.rollback();

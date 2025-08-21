@@ -46,13 +46,11 @@ public class Person {
     @NotBlank(message = "Email can’t be empty") //Jakarta Valdiation
     @Email(message = "Email must be valid") //Jakarta Valdiation
     @Column(name = "email", nullable = false, unique = true)
-    @EqualsAndHashCode.Include
     private String email;
 
     @NotBlank(message = "Username can’t be empty") //Jakarta Valdiation
     @Size(max = 50, message = "Username can be at most 50 characters") //Jakarta Valdiation
     @Column(name = "username", nullable = false, unique = true, length = 50)
-    @EqualsAndHashCode.Include
     private String username;
 
     @NotBlank(message = "Password can`t be empty") //Jakarta Valdiation

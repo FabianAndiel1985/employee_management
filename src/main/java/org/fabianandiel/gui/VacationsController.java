@@ -262,6 +262,11 @@ public class VacationsController implements Initializable {
     }
 
 
+    /**
+     * Fills the given request object with values from the vacation request form.
+     *
+     * @param request the Request object to populate with form input
+     */
     private void fillRequestObject(Request request) {
         request.setStatus(isManagerOrAdmin() ? RequestStatus.ACCEPTED : RequestStatus.PENDING);
         request.setCreationDate(LocalDateTime.now());

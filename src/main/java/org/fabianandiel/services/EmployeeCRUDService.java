@@ -7,6 +7,7 @@ import org.fabianandiel.constants.Status;
 import org.fabianandiel.context.SelectedEmployeeContext;
 import org.fabianandiel.entities.Address;
 import org.fabianandiel.entities.Person;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -83,34 +84,42 @@ public class EmployeeCRUDService {
     }
 
 
-    public static Person updatePerson(EntityManager em, Person createdPerson) {
-        if (em == null || createdPerson == null)
+    /**
+     * Updates an existing entity in the database
+     *
+     * @param em             the entity manager instance
+     * @param personToUpdate the person to updated
+     * @return the fully updated person
+     * @throws RuntimeException if the update operation fails
+     */
+    public static Person updatePerson(EntityManager em, Person personToUpdate) {
+        if (em == null || personToUpdate == null)
             return null;
 
-        createdPerson.setId(SelectedEmployeeContext.getPersonToUpdate().getId());
+        personToUpdate.setId(SelectedEmployeeContext.getPersonToUpdate().getId());
 
         Set<Person> selectedSubordinates;
         try {
             em.getTransaction().begin();
-            Address rawAddress = createdPerson.getAddress();
+            Address rawAddress = personToUpdate.getAddress();
             //manage the address in the persistence context
             if (rawAddress != null) {
                 Address managedAddress = em.find(Address.class, rawAddress.getId());
-                createdPerson.setAddress(managedAddress);
+                personToUpdate.setAddress(managedAddress);
             }
 
-            Person rawSuperior = createdPerson.getSuperior();
+            Person rawSuperior = personToUpdate.getSuperior();
             //manage the superior in the persistence context
             if (rawSuperior != null) {
                 Person managedSuperior = em.find(Person.class, rawSuperior.getId());
-                createdPerson.setSuperior(managedSuperior);
+                personToUpdate.setSuperior(managedSuperior);
             }
 
             //Don't need to set subordinates in the person to persist the new person
-            selectedSubordinates = createdPerson.getSubordinates();
-            createdPerson.setSubordinates(new HashSet<>());
+            selectedSubordinates = personToUpdate.getSubordinates();
+            personToUpdate.setSubordinates(new HashSet<>());
             //persist fully persistence context managed person
-            em.merge(createdPerson);
+            em.merge(personToUpdate);
             em.flush();
 
             //makes subordinates managed and updates them with the new superior
@@ -120,13 +129,13 @@ public class EmployeeCRUDService {
 
                 for (Person sub : selectedSubordinates) {
                     Person managedSub = em.find(Person.class, sub.getId());
-                    managedSub.setSuperior(createdPerson);
+                    managedSub.setSuperior(personToUpdate);
                     em.merge(managedSub);
 
                     if (++i % batchSize == 0) {
                         em.flush();
                         em.clear();
-                        createdPerson = em.find(Person.class, createdPerson.getId());
+                        personToUpdate = em.find(Person.class, personToUpdate.getId());
                     }
                 }
 
@@ -145,12 +154,21 @@ public class EmployeeCRUDService {
             throw new RuntimeException("Error updating the person");
         }
         em.close();
-        createdPerson.setSubordinates(selectedSubordinates);
+        personToUpdate.setSubordinates(selectedSubordinates);
 
-        return createdPerson;
+        return personToUpdate;
     }
 
 
+    /**
+     * Sets a given person entity to inactive status and updates their relationships accordingly.
+     * This method performs several operations to ensure that the person and all their connected
+     * entities (such as address, superior, and subordinates) are correctly updated.
+     *
+     * @param em                    the entity manager instance used to perform the operation
+     * @param personToSetToInactive the person entity to be set inactive
+     * @throws RuntimeException if a database error occurs while processing
+     */
     public static void setPersonInactive(EntityManager em, Person personToSetToInactive) {
         if (em == null || personToSetToInactive == null)
             return;
@@ -219,9 +237,7 @@ public class EmployeeCRUDService {
             em.close();
             throw new RuntimeException("Error setting person to inactive");
         }
-
         em.close();
-
     }
 
 

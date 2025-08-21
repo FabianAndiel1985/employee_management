@@ -17,6 +17,11 @@ public class UserContext {
     private UserContext() {
     }
 
+    /**
+     * Returns the singleton instance of the context.
+     *
+     * @return the shared instance
+     */
     public static UserContext getInstance() {
         if (instance == null) {
             instance = new UserContext();
@@ -24,6 +29,15 @@ public class UserContext {
         return instance;
     }
 
+
+    /**
+     * Initializes the user session with the provided user data.
+     *
+     * @param username the name of the logged-in user
+     * @param roles the set of roles assigned to the user
+     * @param id the unique identifier (UUID) of the user
+     * @param person the person entity representing the user
+     */
     public void initSession(String username, Set<Role> roles, UUID id, Person person) {
         this.username = username;
         this.roles = roles;
@@ -47,10 +61,19 @@ public class UserContext {
         return person;
     }
 
+    /**
+     * Checks whether the current user has the specified role.
+     *
+     * @param role to check for (e.g., EMPLOYEE, MANAGER, ADMIN)
+     * @return true if the user has the role,  return false otherwise
+     */
     public boolean hasRole(Role role) {
         return roles != null && roles.contains(role);
     }
 
+    /**
+     * Clears all user-related data stored in the context.
+     */
     public void clearSession() {
         this.username = null;
         this.id= null;
