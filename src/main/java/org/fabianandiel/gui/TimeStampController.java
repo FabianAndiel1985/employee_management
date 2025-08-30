@@ -274,6 +274,13 @@ public class TimeStampController implements Initializable {
 
                     em.getTransaction().commit();
 
+                    //actualize the time stamps of the current month
+                    this.timeStampsOfCurrentMonth = null;
+                    this.timeStampsOfCurrentMonth = timeStampController.getTimeStampsOfCurrentMonth(
+                            UserContext.getInstance().getId(),
+                            LocalDate.now()
+                    );
+
                     Platform.runLater(() -> {
                         this.currentTimeStamp.setTimeBookingEndTime(time);
                         this.currentTimeStamp.setWorkedHours(hours);
@@ -282,6 +289,9 @@ public class TimeStampController implements Initializable {
                         this.timeBookingClockOut.setDisable(true);
                         this.initializeActualHours();
                         this.initializeDifferenceBetweenActualAndTarget();
+                        if(this.timeBookingErrorText.isVisible()){
+                            this.timeBookingErrorText.setVisible(false);
+                        }
                     });
                 } catch (RuntimeException e) {
                     e.printStackTrace();
@@ -311,6 +321,7 @@ public class TimeStampController implements Initializable {
     private double calculateWorkedHours(TimeStamp currentTimeStamp) {
         Duration duration = Duration.between(currentTimeStamp.getTimeBookingStartTime(), currentTimeStamp.getTimeBookingEndTime());
         double hours = duration.toMinutes() / 60.0;
+       //rounds the amount of calculted hours
         return Math.round(hours * 100.0) / 100.0;
     }
 }
