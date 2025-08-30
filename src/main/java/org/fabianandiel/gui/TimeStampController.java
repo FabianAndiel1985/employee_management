@@ -151,6 +151,7 @@ public class TimeStampController implements Initializable {
      */
     private void initializeActualHours() {
         if (this.timeStampsOfCurrentMonth == null) {
+            this.timeBookingActualHours.setText("0");
             GUIService.setErrorText("No time bookings for the month yet", this.timeBookingErrorText);
             return;
         }
